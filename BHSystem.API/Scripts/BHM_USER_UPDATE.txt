@@ -1,0 +1,79 @@
+﻿use BHM
+go
+alter proc BHM_USER_UPDATE
+(
+    @UserId int
+   ,@Json nvarchar(4000) = ''
+   ,@Type varchar(30) = 'add'
+)
+as
+/*
+    hainguyen create 2023/06/25
+	desc: lưu thông tin user
+*/
+begin
+    begin try
+
+	    -- khai báo bảng
+	    declare @tblUser table(
+		    UserId int
+		   ,FullName nvarchar(150)
+		   ,[Address] nvarchar(250)
+		   ,Phone varchar(11)
+		   ,Email nvarchar(52)
+		   ,UserName varchar(100)
+		   ,[Password] nvarchar(100)
+		);
+
+		-- insert vào bảng tạm
+		insert into @tblUser
+		select *
+		  from openjson(@Json) with 
+		     (
+		       UserId int '$.UserId'
+		      ,FullName nvarchar(150) '$.FullName'
+		      ,[Address] nvarchar(250) '$.Address'
+		      ,Phone varchar(11) '$.Phone'
+		      ,Email nvarchar(52) '$.Email'
+		      ,UserName varchar(100) '$.UserName'
+		      ,[Password] nvarchar(100) '$.Password'
+		     );
+
+		if @Type = 'Add'
+		begin
+			if exists (select 1 from [USER] as T0 with(nolock) 
+			 inner join @tblUser as T1 on T0.[USERNAME] = T1.UserName)
+			begin
+			    select '-1' AS [Status], N'Tên đăng nhập đã tồn tại mẫu tin' AS [Message];
+				return;
+			end
+
+			begin tran
+			insert into [USER](FullName, [Address], Phone, Email,  UserName, [Password], DATE_CREATE, USER_CREATE)
+			select FullName, [Address], Phone, Email,  UserName, [Password], getdate(), @UserId
+			  from @tblUser
+	
+			select '0' AS [Status], N'Đã thêm thông tin người dùng' AS [Message]; 
+			commit tran;
+		end
+
+		--<> Cập nhật thông tin
+		else if @Type = 'Update'
+		begin
+		    select 1;
+		end
+
+		else if @Type = 'Delete'
+		begin
+		    select 1;
+		end
+		else
+		begin
+		    select '1' AS [Status], N'Action Invalid!!!' AS [Message];
+		end
+	end try
+	begin catch
+	    if @@trancount > 0 rollback
+	    select ERROR_NUMBER() AS [Status], ERROR_MESSAGE() AS [Message]; 
+	end catch
+end
