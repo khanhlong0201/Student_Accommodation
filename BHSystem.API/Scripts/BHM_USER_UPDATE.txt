@@ -8,7 +8,6 @@ alter proc BHM_USER_UPDATE
 )
 as
 /*
-    hainguyen create 2023/06/25
 	desc: lưu thông tin user
 */
 begin
