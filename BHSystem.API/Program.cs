@@ -1,6 +1,8 @@
 ﻿using BHSystem.API;
 using BHSystem.API.Extensions;
+using BHSystem.API.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -34,8 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ClockSkew = TimeSpan.Zero
     };
 });
-
-builder.Services.AddScoped<IBHouseDbContext, BHouseDbContext>(); // Add db Context
+builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BHouseConnection")));
+builder.Services.AddScopeRepository();
 builder.Services.AddClientScopeService(); // đăng kí các service
 var app = builder.Build();
 
@@ -54,3 +56,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// add-migration initial
+// update-database

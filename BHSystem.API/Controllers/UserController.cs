@@ -1,4 +1,5 @@
 ﻿using BHSystem.API.Common;
+using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -17,14 +18,14 @@ namespace BHSystem.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
-        private ILogger<UserController> _logger { get; set; }
         private readonly IConfiguration _configuration;
-        public UserController(IUserService userService, ILogger<UserController> logger, IConfiguration configuration)
+        public UserController(ILogger<UserController> logger, IUserService userService, IConfiguration configuration)
         {
-            _userService = userService;
             _logger = logger;
             _configuration = configuration;
+            _userService = userService;
         }
 
         /// <summary>
@@ -45,9 +46,8 @@ namespace BHSystem.API.Controllers
                 _logger.LogError(ex, "UserController", "Get");
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
-            
-        }
 
+        }
 
         /// <summary>
         /// đăng nhập thông tin
@@ -63,17 +63,17 @@ namespace BHSystem.API.Controllers
                 if (loginRequest == null) return BadRequest();
                 //loginRequest.Password = EncryptHelper.Decrypt(loginRequest.Password+""); // giải mã pass
                 var response = await _userService.LoginAsync(loginRequest);
-                if (response.StatusCode != 0) return StatusCode(StatusCodes.Status400BadRequest, new
+                if(response == null) return BadRequest(new
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    response.Message
+                    Message = "Thông tin đăng nhập không hợp lệ"
                 });
                 var claims = new[]
                 {
-                    new Claim("UserId", response.Data.UserId + ""),
-                    new Claim("FullName", response.Data.FullName + ""),
-                    new Claim("Phone", response.Data.Phone + ""),
-                    new Claim("Email", response.Data.Email + ""),
+                    new Claim("UserId", response.UserId + ""),
+                    new Claim("FullName", response.FullName + ""),
+                    new Claim("Phone", response.Phone + ""),
+                    new Claim("Email", response.Email + ""),
                 }; // thông tin mã hóa (payload)
                 // JWT: json web token: Header - Payload - SIGNATURE (base64UrlEncode(header) + "." + base64UrlEncode(payload), your - 256 - bit - secret)
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:JwtSecurityKey").Value + "")); // key mã hóa
@@ -90,8 +90,8 @@ namespace BHSystem.API.Controllers
                 {
                     Status = StatusCodes.Status200OK,
                     Message = "Success",
-                    response.Data.UserId,
-                    response.Data.FullName, // để hiện thị lên người dùng khỏi phải parse từ clainm
+                    response.UserId,
+                    response.FullName, // để hiện thị lên người dùng khỏi phải parse từ clainm
                     Token = new JwtSecurityTokenHandler().WriteToken(token) // token user
                 });
 
@@ -111,18 +111,16 @@ namespace BHSystem.API.Controllers
         [HttpPost]
         [Route("Update")]
         //[Authorize] khi nào gọi trên web tháo truỳen token
-        public async Task<IActionResult> Update([FromBody] RequestModel request)
+        public async Task<IActionResult> CreateUser(RequestModel user)
         {
             try
             {
-                ResponseModel response = new ResponseModel();
-                response = await _userService.UpdateUserAsync(request);
-                if (response == null || response.Status != 0) return StatusCode(StatusCodes.Status400BadRequest, new
+                await _userService.UpdateUserAsync(user);
+                return Ok(new
                 {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Message = response?.Message ?? "Vui lòng liên hệ IT để được hổ trợ."
+                    StatusCode = 200,
+                    Message = "Thêm thông tin"
                 });
-                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -135,5 +133,6 @@ namespace BHSystem.API.Controllers
 
             }
         }
+
     }
 }
