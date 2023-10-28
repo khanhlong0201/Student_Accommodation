@@ -1,0 +1,52 @@
+@if (Parent?.ActivePage == this) 
+{
+     @ChildContent
+}
+
+@code {
+    //tab chua tabpage
+    [CascadingParameter]
+    private W1TabControl? Parent { get; set; }
+
+    //noi dung cua tabpage
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public string? Name { get; set; }
+
+    bool disabled = false;
+    [Parameter]
+    public bool Disabled  // mờ page này hay không?
+    {
+        get => disabled;
+        set
+        {
+            if (value == disabled)return;
+            disabled = value;
+            if (Parent!=null)  Parent.ChangePage(this);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Parent == null)
+        {
+            throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabControl");
+        }
+        else
+        {
+            //add vao tab cha
+            Parent.AddPage(this);
+        }
+        //Ko set name gan name = text
+        if(Name + "" == "")
+        {
+            Name = Text;
+        }
+        base.OnInitialized();
+    }
+}

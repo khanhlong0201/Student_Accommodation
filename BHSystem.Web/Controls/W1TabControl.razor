@@ -1,0 +1,203 @@
+<CascadingValue Value="this">
+
+    @*header cua tabpage*@
+    <div id="m1GridMinHeight" style="height: 100%">
+        @if(Pages !=null && Pages.Any())
+        {
+            <div class="card-header p-0 border-bottom-0 navbar-light"  style="padding:5px">
+                <div class="nav nav-tabs" role="tablist">
+                    @foreach (W1TabPage tabPage in Pages)
+                    {
+                        <button type="button" class="btn @CssClass  @GetButtonClass(tabPage)" disabled="@tabPage.Disabled"
+                                @onclick=@( () => ActivatePage(tabPage) )>
+                                @tabPage.Text
+                        </button>
+                    }
+                </div>
+                
+            </div>
+        }
+        <div class="card-body" style="@((Pages != null && Pages.Any()) ? "padding: 2px; height: calc(100% - 41px);" : "padding: 2px; height: 100%")">
+             @ChildContent
+        </div>
+    </div>
+  
+</CascadingValue>
+
+@code {
+    [Inject] ILoadingCore? spinner { get; set; } //
+                                                //Noi dung tab pages
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    //Css cho button
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    //LongTran 20230131 bien xoay 
+    [Parameter]
+    public bool IsSpinner { get; set; } = false;
+
+    private string? _value;
+    [Parameter]
+    public string? Value
+    {
+        get => _value;
+        set
+        {
+            if (value == _value)
+            {
+                return;
+            }
+
+            //Active tabpage thong qua name or text
+            if(ActivePage != null && value != ActivePage.Name)
+            {
+                //Change page khi doi value
+                var page = Pages.Where(x => x.Name == value).FirstOrDefault();
+                if(page != null)
+                {
+                    ActivePage = page;
+                }
+            }
+
+            //change value
+            _value = value;
+            if (ValueChanged.HasDelegate)
+            {
+                ValueChanged.InvokeAsync(_value);
+            }
+        }
+
+    }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    //Lay noi dung cua tab page
+    public W1TabPage? ActivePage { get; set; }
+
+    List<W1TabPage> Pages = new List<W1TabPage>();
+
+    /// <summary>
+    /// show loading
+    /// </summary>
+    /// <param name="isShow"></param>
+    /// <returns></returns>
+    async Task showSpinner(bool isShow = true)
+    {
+        try
+        {
+            if (isShow)
+            {
+                spinner?.Show();
+                await Task.Delay(50);
+            }
+            else
+            {
+                await Task.Delay(100);
+                spinner?.Hide();
+            }
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// set tab actibe
+    /// </summary>
+    /// <param name="tabName"></param>
+    public void SetTabPageActive(string tabName){
+        try {
+            //Active tabpage thong qua name or text
+            if(ActivePage != null && tabName != ActivePage.Name)
+            {
+                //Change page khi doi value
+                var page = Pages.Where(x => x.Name == tabName).FirstOrDefault();
+                if(page != null)
+                {
+                    ActivePage = page;
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
+    //Add cac tabpage list
+    internal void AddPage(W1TabPage tabPage)
+    {
+        Pages.Add(tabPage);
+
+        if (Pages.Count == 1)
+        {
+            ActivePage = tabPage;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// đổi pages khi đổi disdable
+    /// </summary>
+    /// <param name="tabPage"></param>
+    internal void ChangePage(W1TabPage tabPage)
+    {
+        StateHasChanged();
+    }
+
+
+
+    //thay doi css khi active
+    string GetButtonClass(W1TabPage page)
+    {
+        if (page.Disabled)
+            return  "w1BtnNonActive";//haile 20220824
+
+        return page == ActivePage ? "w1BtnActive" : "w1BtnNonActive";
+    }
+
+  
+
+    //set noi dung khi active tabpage
+    async void ActivatePage(W1TabPage page)
+    {
+        if(IsSpinner)
+         await showSpinner(); // bổ sung hàm xoay
+        if (!page.Disabled) 
+        {
+           ActivePage = page;
+
+            if(page != null)
+            {
+                Value = page.Name;
+            } 
+        }
+         if(IsSpinner)
+            await showSpinner(false);
+    }
+
+    protected override void OnAfterRender( bool firstRender)
+    {
+        if (firstRender)
+        {
+            //Set lai tab neu Value khac rong
+            if(Value + "" != "" && Pages != null && Pages.Count > 0)
+            {
+                var page = Pages.Where(x => x.Name == Value).FirstOrDefault();
+                if(page != null)
+                {
+                    ActivePage = page;
+                    StateHasChanged();
+                }
+            }
+        }
+    }
+}

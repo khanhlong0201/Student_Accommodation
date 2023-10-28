@@ -1,17 +1,17 @@
 ﻿using BHSystem.API.Infrastructure;
-using BHSytem.Models;
+using BHSytem.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BHSystem.API.Repositories
 {
-    public interface IUserRepository : IGenericRepository<UserModel>
+    public interface IUserRepository : IGenericRepository<Users>
     {
-        Task<UserModel?> LoginAsync(UserModel request);
+        Task<Users?> LoginAsync(Users request);
     }
-    public class UserRepository : GenericRepository<UserModel>, IUserRepository
+    public class UserRepository : GenericRepository<Users>, IUserRepository
     {
         public UserRepository(ApplicationDbContext context) : base(context){ }
 
-        public async Task<UserModel?> LoginAsync(UserModel request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == m.Password);
+        public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == m.Password);
     }
 }

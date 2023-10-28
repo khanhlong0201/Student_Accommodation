@@ -1,0 +1,36 @@
+<!-- HTML !-->
+@if(IsShowButton)
+{
+    <button class="W1Button @CssClass" id="@Id" role="button"
+        onclick="@OnClick" disabled="@Disable" title="@ToolTip">
+        <i class="@CssIcon"></i>
+        @Text
+    </button>
+}
+
+
+
+@code{
+    [Parameter]
+    public bool IsShowButton { get; set; } = true;
+    [Parameter]
+    public string Text { get; set; } = "";
+
+    [Parameter]
+    public string CssClass { get; set; }="";
+
+    [Parameter]
+    public string CssIcon { get; set; } = "";
+
+    [Parameter]
+    public string ToolTip { get; set; } = "";
+
+    [Parameter]
+    public string Id { get; set; } ="";
+
+    [Parameter]
+    public bool Disable { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

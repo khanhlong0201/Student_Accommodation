@@ -1,7 +1,7 @@
 ﻿using BHSystem.API.Common;
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
-using BHSytem.Models;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;

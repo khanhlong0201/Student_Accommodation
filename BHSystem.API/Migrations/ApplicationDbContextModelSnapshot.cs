@@ -22,7 +22,58 @@ namespace BHSystem.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BHSytem.Models.UserModel", b =>
+            modelBuilder.Entity("BHSytem.Models.Entities.Menus", b =>
+                {
+                    b.Property<int>("MenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuId"), 1L, 1);
+
+                    b.Property<DateTime?>("Date_Create")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Date_Update")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Parent")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("User_Create")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("User_Update")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuId");
+
+                    b.ToTable("Menus");
+                });
+
+            modelBuilder.Entity("BHSytem.Models.Entities.Users", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
