@@ -18,7 +18,7 @@ namespace BHSytem.Models.Entities
         public string? FullName { get; set; }
         [StringLength(250)]
         public string? Address { get; set; }
-        [StringLength(50)]
+        [StringLength(12)]
         public string? Phone { get; set; }
         [StringLength(250)]
         public string? Email { get; set; }
@@ -26,6 +26,14 @@ namespace BHSytem.Models.Entities
         public string? UserName { get; set; }
         [StringLength(100)]
         public string? Password { get; set; }
+        [StringLength(100)]
         public string? PasswordReset { get; set; }
+        public int Ward_Id { get; set; }
+        public Wards Wards { get; set; } // Đây là dùng để tham chiếu đến bảng Wards.
+        public virtual ICollection<Comments> Comments { get; set; }
+        public virtual ICollection<BoardingHouses> BoardingHouses { get; set; }
+        public virtual ICollection<Bookings> Bookings { get; set; }
+        public virtual ICollection<UserRoles> UserRoles { get; set; }
+
     }
 }
