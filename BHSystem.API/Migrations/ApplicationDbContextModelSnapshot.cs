@@ -558,6 +558,8 @@ namespace BHSystem.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+
                     b.Property<string>("Address")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -605,6 +607,8 @@ namespace BHSystem.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Ward_Id");
 
                     b.ToTable("Users");
                 });
@@ -753,7 +757,7 @@ namespace BHSystem.API.Migrations
                     b.HasOne("BHSytem.Models.Entities.Roles", "Roles")
                         .WithMany("RoleMenus")
                         .HasForeignKey("Role_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Menus");
@@ -814,7 +818,7 @@ namespace BHSystem.API.Migrations
                 {
                     b.HasOne("BHSytem.Models.Entities.Wards", "Wards")
                         .WithMany("Users")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Ward_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
