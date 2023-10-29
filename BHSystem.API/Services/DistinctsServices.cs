@@ -8,12 +8,14 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json.Serialization;
+using BHSytem.Models.Models;
 
 namespace BHSystem.API.Services
 {
     public interface IDistinctsService
     {
-        Task<IEnumerable<Distincts>> GetDataAsync();
+        Task<IEnumerable<DistinctModel>> GetDataAsync();
+        Task<DistinctModel> GetIdAsync(int Id);
     }
     public class DistinctsService : IDistinctsService
     {
@@ -25,6 +27,16 @@ namespace BHSystem.API.Services
             _unitOfWork = unitOfWork;
         }
         
-        public async Task<IEnumerable<Distincts>> GetDataAsync() => await _distinctsRepository.GetAll();
+        public async Task<DistinctModel> GetIdAsync(int Id)
+        {
+            var result = await _distinctsRepository.GetById(Id);
+            return null;
+        }
+        public async Task<IEnumerable<DistinctModel>> GetDataAsync()
+        {
+            var result = await _distinctsRepository.GetAllAsync();
+            //var mappedResult = _mapper.Map<IEnumerable<DistinctModel>>(result);
+            return result;
+        }
     }
 }
