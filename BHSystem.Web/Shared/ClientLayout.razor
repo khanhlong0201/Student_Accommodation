@@ -1,5 +1,50 @@
 ﻿@inherits LayoutComponentBase
+<style>
+   
 
+* {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+}
+
+i::before {
+  font-family: "Font Awesome 6 Free";
+}
+
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-padding-top: 9rem;
+}
+
+html::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(36, 34, 34, 0.7);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #719ca3;
+  border-radius: 5rem;
+}
+
+body {
+  font-size: 1.3rem;
+  color: #0d0c22;
+  font-weight: normal;
+  overflow-x: hidden;
+}
+
+</style>
 <TelerikRootComponent>
     <!-- Header -->
     <div id="header">

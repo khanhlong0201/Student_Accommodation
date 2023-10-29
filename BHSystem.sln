@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHSystem.API", "BHSystem.API\BHSystem.API.csproj", "{1C1D4276-5FCA-4DD3-AD42-DB110A3012F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BHSystem.API", "BHSystem.API\BHSystem.API.csproj", "{1C1D4276-5FCA-4DD3-AD42-DB110A3012F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHSytem.Models", "BHSytem.Models\BHSytem.Models.csproj", "{D4C7B508-0746-4264-97A9-629E0068EED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BHSytem.Models", "BHSytem.Models\BHSytem.Models.csproj", "{D4C7B508-0746-4264-97A9-629E0068EED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHSystem.Web", "BHSystem.Web\BHSystem.Web.csproj", "{B9F91A03-A72B-4E3C-8F84-7E2F4BBCB0EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BHSystem.Web", "BHSystem.Web\BHSystem.Web.csproj", "{B9F91A03-A72B-4E3C-8F84-7E2F4BBCB0EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

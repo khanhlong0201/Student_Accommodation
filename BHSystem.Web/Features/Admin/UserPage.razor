@@ -1,0 +1,96 @@
+﻿@page "/admin/user"
+
+<div class="bh-content-filter">
+    <div class="row">
+        <div class="col-lg-5 col-md-7 col-sm-12">
+            <div class="d-flex ">
+                <BHLabel Value="Họ & tên:" IsRequired="true" Style="width: 110px" />
+                <div style="width: calc(100% - 110px)">
+                    <TelerikTextBox />
+                </div>
+            </div>
+            <div class="d-flex mt-1">
+                <BHLabel Value="Họ & tên:" IsRequired="true" Style="width: 110px" />
+                <div style="width: calc(100% - 110px)">
+                    <TelerikTextBox />
+                </div>
+            </div>
+            <div class="d-flex mt-1">
+                <BHLabel Value="Họ & tên:" IsRequired="true" Style="width: 110px" />
+                <div style="width: calc(100% - 110px)">
+                    <TelerikTextBox />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark">Xóa dòng</ToolBarButton>
+</TelerikToolBar>
+<div class="bh-table-content" style=" height: calc(100vh - 250px);">
+    <TelerikLoaderContainer OverlayThemeColor="light"
+                            Visible="@(!IsInitialDataLoadComplete)"
+                            Text="@null" Class="grid-initial-data-loader">
+        <Template>
+            <TelerikLoader Type="@LoaderType.InfiniteSpinner"
+                           Size="@(ThemeConstants.Loader.Size.Medium)">
+            </TelerikLoader>
+        </Template>
+    </TelerikLoaderContainer>
+    <TelerikGrid Data="@ListUser"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 @bind-SelectedItems="@SelectedUsers">
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(UserModel.UserId) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(UserModel.UserId) Width="130px" MaxResizableWidth="150" Title="Mã user">
+                <Template>
+                    @{
+                        var model = (context as UserModel);
+                        <span class="h-link">@model!.UserId</span>
+                    }
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.FullName) Width="140px" Title="Tên"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    Title="Thêm mới người dùng">
+    <EditForm EditContext="@_EditContext" >
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Mã tài khoản:" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.FullName" Class="bh-link" Enabled="false" />
+        </div>
+    </EditForm>
+    
+</BHDialog>
