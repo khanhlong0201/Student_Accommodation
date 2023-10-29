@@ -211,7 +211,7 @@ namespace BHSystem.API.Migrations
                     table.PrimaryKey("PK_Users", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_Users_Wards_UserId",
-                        column: x => x.UserId,
+                        column: x => x.Ward_Id,
                         principalTable: "Wards",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);

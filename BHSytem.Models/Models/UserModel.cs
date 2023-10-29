@@ -22,5 +22,6 @@ namespace BHSytem.Models.Models
         [Required(ErrorMessage = "Vui lòng điền Mật khẩu")]
         public string? Password { get; set; }
         public string? PasswordReset { get; set; }
+        public int Ward_Id { get; set; }
     }
 }

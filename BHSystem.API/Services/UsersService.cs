@@ -47,7 +47,8 @@ namespace BHSystem.API.Services
             switch (entity.Type)
             {
                 case "Add":
-                    await _usersRepository.Add(user);
+                    user.Password = EncryptHelper.Encrypt(user.Password+"");
+                    await _usersRepository.AddUser(user);
                     await _unitOfWork.CompleteAsync();
                     isUpdate = true;
                     break;

@@ -5,6 +5,7 @@ using BHSytem.Models.Models;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Newtonsoft.Json;
 
 namespace BHSystem.Web.Features.Admin
 {
@@ -49,8 +50,8 @@ namespace BHSystem.Web.Features.Admin
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 _spinner!.Show();
-                //RequestModel request = new RequestModel();
-                //await _userService!.UpdateAsync(user);
+                UserUpdate.Ward_Id = 5;
+                await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction);
             }
             catch (Exception ex)
             {
