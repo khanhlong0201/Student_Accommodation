@@ -55,7 +55,7 @@ namespace BHSystem.Web.Core
                 string queryPrams = "";
                 if (pParams != null && pParams.Any()) queryPrams = "?" + string.Join("&", pParams.Select(m => $"{m.Key}={m.Value}"));
                 var stringContext = new StringContent(json, UnicodeEncoding.UTF8, "application/json"); ;
-                string uri = $"/api/vi/{link}";
+                string uri = $"/api/{link}";
                 string strResponse = await _httpClient.GetAsync(
                     String.Format(uri + $"{queryPrams}")
                     ).Result.Content.ReadAsStringAsync();
@@ -117,7 +117,7 @@ namespace BHSystem.Web.Core
             try
             {
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-                string uri = "api/vi/" + link;
+                string uri = "api/" + link;
                 HttpResponseMessage httpResponse = await _httpClient.PostAsync(uri, stringContent);
                 Debug.Print(_httpClient.BaseAddress + uri);
                 Debug.Print(json);
@@ -161,7 +161,7 @@ namespace BHSystem.Web.Core
                     queryPrams = "?" + queryPrams.TrimEnd('&');
                 }
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-                string uri = "/api/vi/" + link;
+                string uri = "/api/" + link;
                 string strResponse = await _httpClient.DeleteAsync(
                     String.Format(uri + $"{queryPrams}")
                     ).Result.Content.ReadAsStringAsync();
@@ -204,7 +204,7 @@ namespace BHSystem.Web.Core
                         name: "\"files\"",
                         fileName: file.Name);
                 }
-                string URL = $"/api/vi/{link}?strSubFolder={strSubFolder}&strSubFolderProdLine={strSubFolderProdLine}";
+                string URL = $"/api/{link}?strSubFolder={strSubFolder}&strSubFolderProdLine={strSubFolderProdLine}";
                 var objResponse = await _httpClient.PostAsync(URL, content);
                 if (objResponse.IsSuccessStatusCode)
                 {
