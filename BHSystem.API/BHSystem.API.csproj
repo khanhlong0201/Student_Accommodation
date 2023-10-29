@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BHSytem.Models\BHSytem.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

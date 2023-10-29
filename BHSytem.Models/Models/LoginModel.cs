@@ -106,7 +106,6 @@ namespace BHSytem.Models.Models
         public string expire { get; set; }
         public string branch { get; set; }
         public string superuser { get; set; }//SUPERUSER
-        public string slpCode { get; set; }//chaudao 20220323 thêm mã nhân viên kinh doanh theo user
         public string otp { get; set; }
         public string userName { get; set; }
         public string email { get; set; }
@@ -126,8 +125,6 @@ namespace BHSytem.Models.Models
         public string parent { get; set; } //longtran 2030616 ( để group by thoe nhóm menu trên phân quyền)
 
         public bool isShowCheck { get; set; }
-        public string nameSAP { get; set; }//haile 20230728
-        public string objtype { get; set; }//haile 20230728
     }
 
 
