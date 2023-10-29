@@ -3,6 +3,7 @@ using BHSystem.API.Infrastructure;
 using BHSystem.API.Repositories;
 using BHSytem.Models.Entities;
 using BHSytem.Models.Models;
+using Newtonsoft.Json;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,7 +15,7 @@ namespace BHSystem.API.Services
 {
     public interface IUsersService
     {
-        Task<Users?> LoginAsync(Users request);
+        Task<Users?> LoginAsync(UserModel request);
         Task<IEnumerable<Users>> GetDataAsync();
         Task<bool> UpdateUserAsync(RequestModel entity);
     }
@@ -27,10 +28,13 @@ namespace BHSystem.API.Services
             _usersRepository = usersRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<Users?> LoginAsync(Users request)
+        public async Task<Users?> LoginAsync(UserModel request)
         {
             //request.Password = EncryptHelper.Decrypt(request.Password + ""); // giải mã pass
-            return await _usersRepository.LoginAsync(request);
+            Users user = new Users();
+            user.UserName = request.UserName;
+            user.Password = EncryptHelper.Decrypt(request.Password + "");
+            return await _usersRepository.LoginAsync(user);
         }
 
         public async Task<IEnumerable<Users>> GetDataAsync() => await _usersRepository.GetAll();
@@ -38,7 +42,8 @@ namespace BHSystem.API.Services
         public async Task<bool> UpdateUserAsync(RequestModel entity)
         {
             bool isUpdate = false;
-            Users user = new Users();
+            Users user = JsonConvert.DeserializeObject<Users>(entity.Json+"")!;
+            
             switch (entity.Type)
             {
                 case "Add":

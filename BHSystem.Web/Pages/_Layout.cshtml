@@ -14,22 +14,15 @@
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="_content/Blazored.Toast/blazored-toast.min.css" />
-    @* <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" /> *@
+    @*<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />*@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
-    <link href="~/css/site.css" rel="stylesheet" />
-    <!-- daterange picker -->
-    <link rel="stylesheet" href="~/plugins/daterangepicker/daterangepicker.css">
-    <!-- overlay scrollbars -->
-    <link type="text/css" href="~/plugins/overlayScrollbars/css/OverlayScrollbars.min.css" rel="stylesheet" />
     <!-- Telerik Kendo UI Scripts -->
     <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor/css/kendo-theme-default/all.css" />
-    <!--Devexpress-->
-    <link href="_content/DevExpress.Blazor/dx-blazor.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="css/mysite.css" rel="stylesheet" />
 
@@ -41,7 +34,7 @@
     @* <link href="DMS.WEB.styles.css" rel="stylesheet" /> *@
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
-<body class="hold-transition sidebar-mini sidebar-collapse text-sm">
+<body class="hold-transition layout-fixed text-sm">
     <div class="wrapper">
         <app>
             @RenderBody()
@@ -117,12 +110,16 @@
         </div>
     </div>
 
+    <script src="_framework/blazor.server.js" defer></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="_framework/blazor.server.js" defer></script>
+    <script src="_content/Blazorized.AdminLte/js/interop.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>  
+
     <!-- 4 gio -->
     <script>
         Blazor.start({
@@ -132,17 +129,8 @@
             }
         });
     </script>
-
-    <!-- AdminLTE App -->
-
-    <script src="_content/Blazorized.AdminLte/js/interop.js"></script>
-    <script src="~/dist/js/adminlte.min.js"></script>
-    <script src="~/plugins/moment/moment-with-locales.js"></script>
-    <script src="~/plugins/daterangepicker/daterangepicker.js"></script>
     <!-- Telerik Kendo UI Scripts -->
     <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js" defer></script>
-    <!-- overlay scrollbars -->
-    <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 
     <!-- my scripts -->
     <script src="../scripts/myscript.js"></script>

@@ -25,7 +25,6 @@ builder.Services.AddServerSideBlazor(options =>
 });
 builder.Services.AddAdminLte();// sử dụng templete của admin blazor
 builder.Services.AddBlazoredToast();// sử dụng toast thông báo
-builder.Services.AddDevExpressBlazor();//sử dụng devexpress blazor
 builder.Services.AddTelerikBlazor(); // sử dụng telerik 
 
 //đăng kí service
