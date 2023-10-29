@@ -7,7 +7,6 @@ namespace BHSytem.Models.Entities
     public class Distincts : Auditable
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // tự tăng
         public int Id { get; set; }
 
         [Required]

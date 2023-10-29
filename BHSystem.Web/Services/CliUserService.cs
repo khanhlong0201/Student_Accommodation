@@ -43,10 +43,7 @@ namespace BHSystem.Web.Services
                 //var savedToken = await _localStorage.GetItemAsync<string>("authToken");
                 //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
                 var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request);
-                if (!string.IsNullOrEmpty(resString))
-                {
-
-                }    
+                if (!string.IsNullOrEmpty(resString)) return true;
             }
             catch (Exception ex)
             {

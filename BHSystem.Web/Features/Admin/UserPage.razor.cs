@@ -46,12 +46,17 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
+                string message = string.Empty;
                 string sAction = nameof(EnumType.Add);
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 _spinner!.Show();
-                UserUpdate.Ward_Id = 5;
-                await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction);
+                UserUpdate.Ward_Id = 1;
+                bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction);
+                if(isUpdate)
+                {
+                    _toastService.ShowSuccess("Đã thông cập nhật thành công");
+                }    
             }
             catch (Exception ex)
             {
