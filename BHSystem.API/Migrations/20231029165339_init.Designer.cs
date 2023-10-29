@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231028081825_init")]
+    [Migration("20231029165339_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,10 +134,7 @@ namespace BHSystem.API.Migrations
             modelBuilder.Entity("BHSytem.Models.Entities.Citys", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Date_Create")
                         .HasColumnType("datetime2");
@@ -215,10 +212,7 @@ namespace BHSystem.API.Migrations
             modelBuilder.Entity("BHSytem.Models.Entities.Distincts", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("City_Id")
                         .HasColumnType("int");
@@ -560,6 +554,8 @@ namespace BHSystem.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+
                     b.Property<string>("Address")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -608,16 +604,15 @@ namespace BHSystem.API.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("Ward_Id");
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Wards", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Date_Create")
                         .HasColumnType("datetime2");
@@ -755,7 +750,7 @@ namespace BHSystem.API.Migrations
                     b.HasOne("BHSytem.Models.Entities.Roles", "Roles")
                         .WithMany("RoleMenus")
                         .HasForeignKey("Role_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Menus");
@@ -816,7 +811,7 @@ namespace BHSystem.API.Migrations
                 {
                     b.HasOne("BHSytem.Models.Entities.Wards", "Wards")
                         .WithMany("Users")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Ward_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

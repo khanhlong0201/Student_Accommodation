@@ -132,10 +132,7 @@ namespace BHSystem.API.Migrations
             modelBuilder.Entity("BHSytem.Models.Entities.Citys", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Date_Create")
                         .HasColumnType("datetime2");
@@ -213,10 +210,7 @@ namespace BHSystem.API.Migrations
             modelBuilder.Entity("BHSytem.Models.Entities.Distincts", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("City_Id")
                         .HasColumnType("int");
@@ -616,10 +610,7 @@ namespace BHSystem.API.Migrations
             modelBuilder.Entity("BHSytem.Models.Entities.Wards", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Date_Create")
                         .HasColumnType("datetime2");
