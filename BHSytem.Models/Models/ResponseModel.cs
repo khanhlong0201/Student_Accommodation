@@ -14,16 +14,16 @@ namespace BHSytem.Models.Models
     }
     public class ResponseModel
     {
-        public int Status { get; set; }
+        public int StatusCode { get; set; }
         public string? Message { get; set; }
         public ResponseModel()
         {
-            Status = -1;
+            StatusCode = -1;
             Message = string.Empty;
         }
         public ResponseModel(int status, string? message)
         {
-            Status = status;
+            StatusCode = status;
             Message = message;
         }
     }

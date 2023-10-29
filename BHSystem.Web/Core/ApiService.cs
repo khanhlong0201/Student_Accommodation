@@ -1,53 +1,44 @@
+using BHSytem.Models.Models;
+using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components.Forms;
+using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
-using System.Web;
-using BHSytem.Models.Models;
-using Microsoft.JSInterop;
 
 namespace BHSystem.Web.Core
 {
     public interface IApiService //gọi api
     {
         Task<string> GetData(string link, Dictionary<string, object>? pParams = null);
-        Task<string> GetDataFromBody(string link, object? objData = null);
-        Task<string> AddOrUpdateData(string link, object? objData = null);
-        Task<string> DeleteData(string link, params object[] objRequestModel);
 
+        Task<string> GetDataFromBody(string link, object? objData = null);
+
+        Task<string> AddOrUpdateData(string link, object? objData = null);
+
+        Task<string> DeleteData(string link, params object[] objRequestModel);
     }
+
     public class ApiService : IApiService
     {
         #region "Properties"
-        IHttpClientFactory factory;
-        HttpClient request;
-        IConfiguration m_config;
-        ILogger<ApiService> logger;
+
+        private readonly IHttpClientFactory _factory;
+        public readonly ILogger<ApiService> _logger;
+        public readonly HttpClient _httpClient;
+        public readonly IToastService _toastService;
         long maxFileSize = 134217728;
-        private readonly string API_KEY_NAME = "ApiKey";
-        private readonly string API_KEY_VALUE = "123"; // lấy từ settings
         #endregion "Properties"
 
-        public ApiService(IHttpClientFactory factory, IConfiguration config, ILogger<ApiService> logger)
+        public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService)
         {
-            this.factory = factory;
-            this.request = factory.CreateClient("api");
-            this.request.DefaultRequestHeaders.Add(API_KEY_NAME, API_KEY_VALUE);
+            this._logger = logger;
+            this._factory = factory;
+            this._httpClient = factory.CreateClient("api");
+            _toastService = toastService;
             //this.logger = logger;
-            m_config = config;
-            this.logger = logger;
         }
 
         /// <summary>
@@ -65,19 +56,18 @@ namespace BHSystem.Web.Core
                 if (pParams != null && pParams.Any()) queryPrams = "?" + string.Join("&", pParams.Select(m => $"{m.Key}={m.Value}"));
                 var stringContext = new StringContent(json, UnicodeEncoding.UTF8, "application/json"); ;
                 string uri = $"/api/vi/{link}";
-                string strResponse = await request.GetAsync(
+                string strResponse = await _httpClient.GetAsync(
                     String.Format(uri + $"{queryPrams}")
                     ).Result.Content.ReadAsStringAsync();
-                Debug.Print(request.BaseAddress + String.Format(uri + $"{queryPrams}"));
+                Debug.Print(_httpClient.BaseAddress + String.Format(uri + $"{queryPrams}"));
 
                 return strResponse;
             }
             catch (Exception objEx)
             {
-                this.logger.LogError(objEx, json);
+                _logger.LogError(objEx, json);
                 return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
             }
-
         }
 
         /// <summary>
@@ -92,16 +82,26 @@ namespace BHSystem.Web.Core
             try
             {
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-                string uri = "/api/vi/" + link;
-                string strResponse = await request.PostAsync(uri, stringContent).Result.Content.ReadAsStringAsync();
-                Debug.Print(request.BaseAddress + uri);
+                string uri = "api/" + link;
+                HttpResponseMessage httpResponse = await _httpClient.PostAsync(uri, stringContent);
+                Debug.Print(_httpClient.BaseAddress + uri);
                 Debug.Print(json);
-                return strResponse;
+                var content = await httpResponse.Content.ReadAsStringAsync();
+                if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) // hết token
+                {
+                    _toastService.ShowInfo("Hết phiên đăng nhập!");
+                    return "";
+                }
+                var oMessage = JsonConvert.DeserializeObject<ResponseModel>(content); // mã lỗi dưới API
+                _toastService.ShowError($"{oMessage?.Message}");
+                return "";
             }
-            catch (Exception objEx)
+            catch (Exception ex)
             {
-                this.logger.LogError(objEx, json);
-                return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
+                _logger.LogError(ex, json);
+                _toastService.ShowError(ex.Message);
+                return "";
             }
         }
 
@@ -117,16 +117,26 @@ namespace BHSystem.Web.Core
             try
             {
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-                string uri = "/api/vi/" + link;
-                string strResponse = await request.PostAsync(uri, stringContent).Result.Content.ReadAsStringAsync();
-                Debug.Print(request.BaseAddress + uri);
+                string uri = "api/vi/" + link;
+                HttpResponseMessage httpResponse = await _httpClient.PostAsync(uri, stringContent);
+                Debug.Print(_httpClient.BaseAddress + uri);
                 Debug.Print(json);
-                return strResponse;
+                var content = await httpResponse.Content.ReadAsStringAsync();
+                if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    _toastService.ShowInfo("Hết phiên đăng nhập!");
+                    return "";
+                }
+                var oMessage = JsonConvert.DeserializeObject<ResponseModel>(content); // mã lỗi dưới API
+                _toastService.ShowError($"{oMessage?.Message}");
+                return "";
             }
-            catch (Exception objEx)
+            catch (Exception ex)
             {
-                this.logger.LogError(objEx, json);
-                return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
+                _logger.LogError(ex, json);
+                _toastService.ShowError(ex.Message);
+                return "";
             }
         }
 
@@ -152,16 +162,16 @@ namespace BHSystem.Web.Core
                 }
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
                 string uri = "/api/vi/" + link;
-                string strResponse = await request.DeleteAsync(
+                string strResponse = await _httpClient.DeleteAsync(
                     String.Format(uri + $"{queryPrams}")
                     ).Result.Content.ReadAsStringAsync();
-                Debug.Print(request.BaseAddress + String.Format(uri + $"{queryPrams}"));
+                Debug.Print(_httpClient.BaseAddress + String.Format(uri + $"{queryPrams}"));
 
                 return strResponse;
             }
             catch (Exception objEx)
             {
-                this.logger.LogError(objEx, json);
+                _logger.LogError(objEx, json);
                 return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
             }
         }
@@ -181,8 +191,8 @@ namespace BHSystem.Web.Core
             string strResponse = "";
             try
             {
-                request.DefaultRequestHeaders.Accept.Clear();
-                request.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                _httpClient.DefaultRequestHeaders.Accept.Clear();
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 using var content = new MultipartFormDataContent();
                 content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
                 foreach (var file in lstIBrowserFiles)
@@ -195,7 +205,7 @@ namespace BHSystem.Web.Core
                         fileName: file.Name);
                 }
                 string URL = $"/api/vi/{link}?strSubFolder={strSubFolder}&strSubFolderProdLine={strSubFolderProdLine}";
-                var objResponse = await request.PostAsync(URL, content);
+                var objResponse = await _httpClient.PostAsync(URL, content);
                 if (objResponse.IsSuccessStatusCode)
                 {
                     // cho phép properties name trùng, phân biệt hoa thường
@@ -206,14 +216,13 @@ namespace BHSystem.Web.Core
                     strResponse = await objResponse.Content.ReadAsStringAsync();
                 }
 
-
-                Debug.Print(request.BaseAddress + URL);
+                Debug.Print(_httpClient.BaseAddress + URL);
                 Debug.Print(json);
                 return strResponse;
             }
             catch (Exception objEx)
             {
-                this.logger.LogError(objEx, json);
+                _logger.LogError(objEx, json);
                 return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
             }
         }

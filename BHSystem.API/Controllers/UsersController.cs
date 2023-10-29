@@ -65,7 +65,7 @@ namespace BHSystem.API.Controllers
                 var response = await _userService.LoginAsync(loginRequest);
                 if(response == null) return BadRequest(new
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    StatusCode = StatusCodes.Status400BadRequest,
                     Message = "Thông tin đăng nhập không hợp lệ"
                 });
                 var claims = new[]
@@ -88,7 +88,7 @@ namespace BHSystem.API.Controllers
                 );
                 return Ok(new
                 {
-                    Status = StatusCodes.Status200OK,
+                    StatusCode = StatusCodes.Status200OK,
                     Message = "Success",
                     response.UserId,
                     response.FullName, // để hiện thị lên người dùng khỏi phải parse từ clainm
@@ -102,7 +102,7 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new
                     {
-                        Status = StatusCodes.Status200OK,
+                        StatusCode = StatusCodes.Status200OK,
                         ex.Message
                     });
             }

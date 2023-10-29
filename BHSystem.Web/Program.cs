@@ -1,4 +1,5 @@
 ﻿using BHSystem.Web.Core;
+using BHSystem.Web.Extensions;
 using Blazor.AdminLte;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components;
@@ -30,13 +31,9 @@ builder.Services.AddTelerikBlazor(); // sử dụng telerik
 //đăng kí service
 builder.Services.AddScoped<ILoadingCore, LoadingCore>(); //mỗi yêu cầu 1 HTTP được tạo, thì 1 phiên bản mới của dịch vụ được tạo
 builder.Services.AddScoped<IWebStateCore, WebStateCore>(); //mỗi yêu cầu 1 HTTP được tạo, thì 1 phiên bản mới của dịch vụ được tạo
-
-builder.Services.AddTransient<IApiService, ApiService>(); //khi được (Controller, Service) yêu cầu thì sẽ được tạo 1 phiên bản mới
 builder.Services.AddSingleton<LoggerCore>(); //dịch vụ được đăng ký sẽ tồn tại suốt vòng đời của ứng dụng
-
-
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddClientScopeService();
 string apiuri = builder.Configuration.GetSection("appSettings:ApiUrl").Value;// được từ chuỗi appsetting.json
 builder.Services.AddHttpClient("api", c =>
 {
@@ -44,8 +41,6 @@ builder.Services.AddHttpClient("api", c =>
     c.Timeout = TimeSpan.FromMinutes(60);
 
 });
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

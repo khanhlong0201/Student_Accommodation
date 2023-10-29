@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BHSystem.Web.Module
+namespace BHSystem.Web.Extensions
 {
     public static class LinqExtensions
     {
@@ -19,7 +19,7 @@ namespace BHSystem.Web.Module
 
             Type type = typeof(T);
             if (type == typeof(string) ||
-                type == typeof(String))
+                type == typeof(string))
             {
                 if (string.IsNullOrWhiteSpace(item as string))
                 {

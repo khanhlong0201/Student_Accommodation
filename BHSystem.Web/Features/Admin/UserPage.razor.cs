@@ -1,4 +1,5 @@
 ﻿using BHSystem.Web.Core;
+using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
 using Blazored.Toast.Services;
@@ -11,7 +12,8 @@ namespace BHSystem.Web.Features.Admin
     {
         [Inject] private ILogger<UserPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
-        [Inject] public IToastService? _toastService { get; set; }
+        [Inject] private IToastService? _toastService { get; set; }
+        [Inject] private ICliUserService? _userService{ get; set; }
         public List<UserModel>? ListUser { get; set; }
         public IEnumerable<UserModel>? SelectedUsers { get; set; } = new List<UserModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
@@ -47,7 +49,8 @@ namespace BHSystem.Web.Features.Admin
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 _spinner!.Show();
-                await Task.Delay(1000);
+                RequestModel request = new RequestModel();
+                await _userService!.Login(user);
             }
             catch (Exception ex)
             {
@@ -56,7 +59,6 @@ namespace BHSystem.Web.Features.Admin
             finally
             {
                 _spinner!.Hide();
-                _toastService!.ShowWarning("fshgjfjfgdjfgjds");
             }
         }
 

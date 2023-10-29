@@ -2,6 +2,7 @@
 using BHSystem.API.Extensions;
 using BHSystem.API.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -39,6 +40,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BHouseConnection")));
 builder.Services.AddScopeRepository();
 builder.Services.AddClientScopeService(); // đăng kí các service
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

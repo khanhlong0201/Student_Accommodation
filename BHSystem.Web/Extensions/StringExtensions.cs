@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace BHSystem.Web.Module
+namespace BHSystem.Web.Extensions
 {
     public static class StringExtensions
     {
