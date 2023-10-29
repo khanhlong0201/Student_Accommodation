@@ -44,7 +44,12 @@ namespace BHSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "UserController", "Get");
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        ex.Message
+                    });
             }
 
         }

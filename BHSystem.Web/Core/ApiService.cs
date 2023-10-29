@@ -59,14 +59,23 @@ namespace BHSystem.Web.Core
                 string strResponse = await _httpClient.GetAsync(
                     String.Format(uri + $"{queryPrams}")
                     ).Result.Content.ReadAsStringAsync();
-                Debug.Print(_httpClient.BaseAddress + String.Format(uri + $"{queryPrams}"));
-
-                return strResponse;
+                HttpResponseMessage httpResponse = await _httpClient.GetAsync(string.Format(uri + $"{queryPrams}"));
+                var content = await httpResponse.Content.ReadAsStringAsync();
+                if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) // hết token
+                {
+                    _toastService.ShowInfo("Hết phiên đăng nhập!");
+                    return "";
+                }
+                var oMessage = JsonConvert.DeserializeObject<ResponseModel>(content); // mã lỗi dưới API
+                _toastService.ShowError($"{oMessage?.Message}");
+                return "";
             }
-            catch (Exception objEx)
+            catch (Exception ex)
             {
-                _logger.LogError(objEx, json);
-                return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
+                _logger.LogError(ex, json);
+                _toastService.ShowError(ex.Message);
+                return "";
             }
         }
 

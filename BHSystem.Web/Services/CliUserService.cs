@@ -15,10 +15,11 @@ namespace BHSystem.Web.Services
     {
         Task<UserModel?> LoginAsync(UserModel request);
         Task<bool> UpdateAsync(string pJson, string pAction);
+        Task<List<UserModel>?> GetDataAsync();
     }
     public class CliUserService : ApiService, ICliUserService
     {
-        public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService) : base(factory, logger, toastService){ }
+        public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService) : base(factory, logger, toastService) { }
 
         public async Task<UserModel?> LoginAsync(UserModel request)
         {
@@ -51,6 +52,25 @@ namespace BHSystem.Web.Services
                 _toastService.ShowError(ex.Message);
             }
             return false;
+        }
+
+        public async Task<List<UserModel>?> GetDataAsync()
+        {
+            try
+            {
+                var resString = await GetData(EndpointConstants.URL_USER_GETALL);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    var data = JsonConvert.DeserializeObject<List<UserModel>>(resString);
+                    return data;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UpdateAsync");
+                _toastService.ShowError(ex.Message);
+            }
+            return default;
         }
 
 
