@@ -157,7 +157,7 @@ namespace BHSystem.API.Migrations
                         column: x => x.Role_Id,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,7 +188,8 @@ namespace BHSystem.API.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
@@ -207,7 +208,7 @@ namespace BHSystem.API.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Users_Wards_UserId",
+                        name: "FK_Users_Wards_Ward_Id",
                         column: x => x.Ward_Id,
                         principalTable: "Wards",
                         principalColumn: "Id",
@@ -492,6 +493,11 @@ namespace BHSystem.API.Migrations
                 name: "IX_UserRoles_Role_Id",
                 table: "UserRoles",
                 column: "Role_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Ward_Id",
+                table: "Users",
+                column: "Ward_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wards_Distincts_Id",

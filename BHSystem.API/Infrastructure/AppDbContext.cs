@@ -27,6 +27,10 @@ namespace BHSystem.API.Infrastructure
         //map khóa ngoại và khóa chính
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Citys>() .Property(e => e.Id).ValueGeneratedNever(); // Tắt tính năng tự tăng
+            modelBuilder.Entity<Distincts>().Property(e => e.Id).ValueGeneratedNever(); // Tắt tính năng tự tăng
+            modelBuilder.Entity<Wards>().Property(e => e.Id).ValueGeneratedNever(); // Tắt tính năng tự tăng
+
             modelBuilder.Entity<Distincts>().HasOne(i => i.Citys).WithMany(c => c.Distincts).HasForeignKey(i => i.City_Id);
             modelBuilder.Entity<Wards>().HasOne(i => i.Distincts).WithMany(c => c.Wards).HasForeignKey(i => i.Distincts_Id);
             modelBuilder.Entity<Users>().HasOne(i => i.Wards).WithMany(c => c.Users).HasForeignKey(i => i.Ward_Id);
