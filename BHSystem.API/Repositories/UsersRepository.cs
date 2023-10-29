@@ -17,9 +17,9 @@ namespace BHSystem.API.Repositories
 
         public async Task<bool> AddUser(Users entity)
         {
-            int userId = 1;
+            int userId = 0;
             if(await _dbSet.AnyAsync()) userId = await _dbSet.MaxAsync(m => m.UserId);
-            entity.UserId = userId;
+            entity.UserId = userId + 1;
             await _dbSet.AddAsync(entity);
             return true;
         }    

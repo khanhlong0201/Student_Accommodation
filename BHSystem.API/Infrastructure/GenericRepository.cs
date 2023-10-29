@@ -10,6 +10,7 @@ namespace BHSystem.API.Infrastructure
         Task<bool> Add(T entity);
         Task<bool> Delete();
         Task<bool> Update();
+        Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate);
 
     }    
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -41,5 +42,7 @@ namespace BHSystem.API.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate) => await _dbSet.CountAsync<T>(predicate) > 0;
     }
 }

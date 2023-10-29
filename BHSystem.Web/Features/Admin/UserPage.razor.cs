@@ -23,18 +23,6 @@ namespace BHSystem.Web.Features.Admin
         public bool IsShowDialog { get; set; }
         public EditContext? _EditContext { get; set; }
 
-        protected override Task OnInitializedAsync()
-        {
-            ListUser = new List<UserModel>();
-            ListUser.Add(new UserModel() { UserId = 1, FullName = "Nguyễn Tấn Hải" });
-            ListUser.Add(new UserModel() { UserId = 2, FullName = "Nguyễn Tấn Hải" });
-            ListUser.Add(new UserModel() { UserId = 3, FullName = "Nguyễn Tấn Hải" });
-            ListUser.Add(new UserModel() { UserId = 4, FullName = "Nguyễn Tấn Hải" });
-            ListUser.Add(new UserModel() { UserId = 5, FullName = "Nguyễn Tấn Hải" });
-            ListUser.Add(new UserModel() { UserId = 6, FullName = "Nguyễn Tấn Hải" });
-            return base.OnInitializedAsync();
-        }
-
         #region "Private Functions"
         private async Task getDataUser(bool isLoading = false)
         {
