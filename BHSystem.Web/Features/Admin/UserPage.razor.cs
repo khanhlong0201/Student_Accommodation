@@ -49,8 +49,8 @@ namespace BHSystem.Web.Features.Admin
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 _spinner!.Show();
-                RequestModel request = new RequestModel();
-                await _userService!.Login(user);
+                //RequestModel request = new RequestModel();
+                //await _userService!.UpdateAsync(user);
             }
             catch (Exception ex)
             {
