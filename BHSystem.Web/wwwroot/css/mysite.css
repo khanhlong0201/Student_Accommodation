@@ -359,3 +359,19 @@
     }
 }
 
+
+.bh-validate-input .bh-error {
+    color: #fff;
+    background-color: red;
+    display: block;
+    font-size: 13px;
+}
+
+.bh-validate-input .k-tooltip {
+    background-color: red;
+}
+
+    .bh-validate-input .k-tooltip .k-callout {
+        border-top-color: red;
+    }
+

@@ -9,8 +9,18 @@ using BHSytem.Models.Entities;
 
 namespace BHSytem.Models.Models
 {
-    public class UserModel : Users
+    public class UserModel
     {
-
+        public int UserId { get; set; }
+        [Required(ErrorMessage = "Vui lòng điền Tên người dùng")]
+        public string? FullName { get; set; }
+        public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        [Required(ErrorMessage = "Vui lòng điền Tên tài khoản")]
+        public string? UserName { get; set; }
+        [Required(ErrorMessage = "Vui lòng điền Mật khẩu")]
+        public string? Password { get; set; }
+        public string? PasswordReset { get; set; }
     }
 }

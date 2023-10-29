@@ -1,4 +1,5 @@
-﻿using BHSytem.Models.Models;
+﻿using BHSystem.Web.ViewModels;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace BHSystem.Web.Features.Admin
@@ -29,6 +30,14 @@ namespace BHSystem.Web.Features.Admin
         {
             IsShowDialog = true;
             _EditContext = new EditContext(UserUpdate);
+        }
+
+
+        protected async void SaveDataHandler(EnumType pEnum = EnumType.SaveAndClose)
+        {
+            string sAction = nameof(EnumType.Add);
+            var checkData = _EditContext!.Validate();
+            if (!checkData) return;
         }
 
     }
