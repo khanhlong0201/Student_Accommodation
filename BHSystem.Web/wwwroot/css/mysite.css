@@ -6,7 +6,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1090;
+  z-index: 100090;
   display: block;
   overflow: hidden;
   background-color: rgb(255, 255, 255);
@@ -374,4 +374,8 @@
     .bh-validate-input .k-tooltip .k-callout {
         border-top-color: red;
     }
+
+.blazored-toast-container {
+    z-index: 20999;
+}
 

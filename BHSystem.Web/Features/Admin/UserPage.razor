@@ -30,15 +30,6 @@
     <ToolBarButton IconClass="fa-solid fa-xmark">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 <div class="bh-table-content" style=" height: calc(100vh - 250px);">
-    <TelerikLoaderContainer OverlayThemeColor="light"
-                            Visible="@(!IsInitialDataLoadComplete)"
-                            Text="@null" Class="grid-initial-data-loader">
-        <Template>
-            <TelerikLoader Type="@LoaderType.InfiniteSpinner"
-                           Size="@(ThemeConstants.Loader.Size.Medium)">
-            </TelerikLoader>
-        </Template>
-    </TelerikLoaderContainer>
     <TelerikGrid Data="@ListUser"
                  Height="100%"
                  Width="100%"
@@ -85,9 +76,27 @@
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
         <div>
-            <BHLabel Value="Mã tài khoản:" />
+            <BHLabel Value="Tên người dùng:" IsRequired="true" />
             <TelerikTextBox @bind-Value="@UserUpdate!.FullName" Class="bh-link" Id="txtFullName" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtFullName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Id="txtUserName" />
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtUserName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Mật khẩu:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Đia chỉ:" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Email:" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Email" />
         </div>
     </EditForm>
     

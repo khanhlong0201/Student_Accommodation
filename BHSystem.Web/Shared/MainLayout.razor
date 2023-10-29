@@ -5,6 +5,22 @@
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 </style>
+<BHLoading />
+<Blazored.Toast.BlazoredToasts Position="ToastPosition.BottomRight"
+                               Timeout="5"
+                               IconType="IconType.FontAwesome"
+                               ErrorIcon="fas fa-times"
+                               InfoIcon="fas fa-info"
+                               SuccessIcon="fas fa-check"
+                               WarningIcon="fas fa-exclamation"
+                               ShowProgressBar="@true"
+                               ShowCloseButton="@true">
+    <CloseButtonContent>
+        <div>
+            <span>&times;</span>
+        </div>
+    </CloseButtonContent>
+</Blazored.Toast.BlazoredToasts>
 <NavBar>
     <NavBarLeft>
         <NavBarMenuItem Link="/">Home</NavBarMenuItem>

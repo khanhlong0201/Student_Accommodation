@@ -1,11 +1,17 @@
-﻿using BHSystem.Web.ViewModels;
+﻿using BHSystem.Web.Core;
+using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
+using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace BHSystem.Web.Features.Admin
 {
     public partial class UserPage
     {
+        [Inject] private ILogger<UserPage>? _logger { get; init; }
+        [Inject] private ILoadingCore? _spinner { get; set; }
+        [Inject] public IToastService? _toastService { get; set; }
         public List<UserModel>? ListUser { get; set; }
         public IEnumerable<UserModel>? SelectedUsers { get; set; } = new List<UserModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
@@ -35,9 +41,23 @@ namespace BHSystem.Web.Features.Admin
 
         protected async void SaveDataHandler(EnumType pEnum = EnumType.SaveAndClose)
         {
-            string sAction = nameof(EnumType.Add);
-            var checkData = _EditContext!.Validate();
-            if (!checkData) return;
+            try
+            {
+                string sAction = nameof(EnumType.Add);
+                var checkData = _EditContext!.Validate();
+                if (!checkData) return;
+                _spinner!.Show();
+                await Task.Delay(1000);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ReceiptController", "HandleSaveData");
+            }
+            finally
+            {
+                _spinner!.Hide();
+                _toastService!.ShowWarning("fshgjfjfgdjfgjds");
+            }
         }
 
     }
