@@ -34,16 +34,39 @@ namespace BHSystem.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
                 var data = await _distinctsService.GetDataAsync();
+               
                 return Ok(data);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "distinctsController", "Get");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// lấy danh sách quận huyện
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetId")]
+        public async Task<IActionResult> GetId(int Id)
+        {
+            try
+            {
+                var data = await _distinctsService.GetIdAsync(Id);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "distinctsController", "GetId");
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 

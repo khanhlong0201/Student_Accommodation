@@ -6,5 +6,6 @@ namespace BHSytem.Models.Models
 {
     public class DistinctModel : Distincts
     {
+        public string City_Name { get; set; }
     }
 }
