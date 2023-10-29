@@ -12,28 +12,28 @@ using System.Text.Json.Serialization;
 
 namespace BHSystem.API.Services
 {
-    public interface IUserService
+    public interface IUsersService
     {
         Task<Users?> LoginAsync(Users request);
         Task<IEnumerable<Users>> GetDataAsync();
         Task<bool> UpdateUserAsync(RequestModel entity);
     }
-    public class UserService : IUserService
+    public class UsersService : IUsersService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UsersService(IUsersRepository usersRepository, IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _usersRepository = usersRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<Users?> LoginAsync(Users request)
         {
             //request.Password = EncryptHelper.Decrypt(request.Password + ""); // giải mã pass
-            return await _userRepository.LoginAsync(request);
+            return await _usersRepository.LoginAsync(request);
         }
 
-        public async Task<IEnumerable<Users>> GetDataAsync() => await _userRepository.GetAll();
+        public async Task<IEnumerable<Users>> GetDataAsync() => await _usersRepository.GetAll();
 
         public async Task<bool> UpdateUserAsync(RequestModel entity)
         {
@@ -42,12 +42,12 @@ namespace BHSystem.API.Services
             switch (entity.Type)
             {
                 case "Add":
-                    await _userRepository.Add(user);
+                    await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
                     isUpdate = true;
                     break;
                 case "Update":
-                    await _userRepository.Add(user);
+                    await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
                     isUpdate = true;
                     break;

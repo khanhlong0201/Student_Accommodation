@@ -16,16 +16,16 @@ namespace BHSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenuController : ControllerBase
+    public class MenusController : ControllerBase
     {
-        private readonly ILogger<MenuController> _logger;
-        private readonly IMenuService _menuService;
+        private readonly ILogger<MenusController> _logger;
+        private readonly IMenusService _menusService;
         private readonly IConfiguration _configuration;
-        public MenuController(ILogger<MenuController> logger, IMenuService userService, IConfiguration configuration)
+        public MenusController(ILogger<MenusController> logger, IMenusService menusService, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
-            _menuService = userService;
+            _menusService = menusService;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace BHSystem.API.Controllers
         {
             try
             {
-                var data = await _menuService.GetDataAsync();
+                var data = await _menusService.GetDataAsync();
                 return Ok(data);
             }
             catch (Exception ex)

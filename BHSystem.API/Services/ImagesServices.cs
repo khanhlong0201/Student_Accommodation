@@ -11,20 +11,20 @@ using System.Text.Json.Serialization;
 
 namespace BHSystem.API.Services
 {
-    public interface IMenuService
+    public interface IImagesService
     {
-        Task<IEnumerable<Menus>> GetDataAsync();
+        Task<IEnumerable<Images>> GetDataAsync();
     }
-    public class MenuService : IMenuService
+    public class ImagesService : IImagesService
     {
-        private readonly IMenuRepository _menuRepository;
+        private readonly IImagesRepository _imagesRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public MenuService(IMenuRepository menuRepository, IUnitOfWork unitOfWork)
+        public ImagesService(IImagesRepository imagesRepository, IUnitOfWork unitOfWork)
         {
-            _menuRepository = menuRepository;
+            _imagesRepository = imagesRepository;
             _unitOfWork = unitOfWork;
         }
         
-        public async Task<IEnumerable<Menus>> GetDataAsync() => await _menuRepository.GetAll();
+        public async Task<IEnumerable<Images>> GetDataAsync() => await _imagesRepository.GetAll();
     }
 }

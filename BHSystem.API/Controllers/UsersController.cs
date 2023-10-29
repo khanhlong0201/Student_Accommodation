@@ -16,12 +16,12 @@ namespace BHSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
+        private readonly IUsersService _userService;
         private readonly IConfiguration _configuration;
-        public UserController(ILogger<UserController> logger, IUserService userService, IConfiguration configuration)
+        public UsersController(ILogger<UsersController> logger, IUsersService userService, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BHSystem.API.Repositories
 {
-    public interface IUserRepository : IGenericRepository<Users>
+    public interface IUsersRepository : IGenericRepository<Users>
     {
         Task<Users?> LoginAsync(Users request);
     }
-    public class UserRepository : GenericRepository<Users>, IUserRepository
+    public class UsersRepository : GenericRepository<Users>, IUsersRepository
     {
-        public UserRepository(ApplicationDbContext context) : base(context){ }
+        public UsersRepository(ApplicationDbContext context) : base(context){ }
 
         public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == m.Password);
     }
