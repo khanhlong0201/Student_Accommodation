@@ -1,0 +1,76 @@
+﻿@page "/admin/boardinghouse"
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark">Xóa dòng</ToolBarButton>
+</TelerikToolBar>
+<div class="bh-table-content" style=" height: calc(100vh - 250px);">
+    <TelerikGrid Data="@ListBoardingHouse"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 @bind-SelectedItems="@SelectedBoardingHouse">
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(BoardingHouseModel.Id) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(BoardingHouseModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã trọ">
+                <Template>
+                    @{
+                        var model = (context as BoardingHouseModel);
+                        <span class="h-link">@model!.Id</span>
+                    }
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(BoardingHouseModel.Name) Width="140px" Title="Tên trọ"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    Title="Thêm mới người dùng">
+    <EditForm EditContext="@_EditContext" >
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Tên trọ:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@BoardingHouseUpdate!.Name" Class="bh-link" Id="txtName" />
+            <BHValidationTooltip ValidationFor="@(()=> BoardingHouseUpdate.Name)" Id="txtName" />
+        </div>
+       @* <div class="mt-2">
+            <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Id="txtUserName" />
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtUserName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Mật khẩu:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Đia chỉ:" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Email:" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Email" />
+        </div>*@
+    </EditForm>
+    
+</BHDialog>
