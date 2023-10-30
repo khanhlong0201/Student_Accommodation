@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace BHSystem.API.Infrastructure
@@ -9,8 +10,9 @@ namespace BHSystem.API.Infrastructure
         Task<T?> GetById(int id);
         Task<bool> Add(T entity);
         Task<bool> Delete();
-        Task<bool> Update();
+        void Update(T entity);
         Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate);
+        Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression);
 
     }    
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -38,11 +40,14 @@ namespace BHSystem.API.Infrastructure
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update()
+        public void Update(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
         public async Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate) => await _dbSet.CountAsync<T>(predicate) > 0;
+
+        public async Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression) => await _dbSet.FirstOrDefaultAsync(expression);
     }
 }

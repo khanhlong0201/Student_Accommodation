@@ -23,5 +23,10 @@ namespace BHSytem.Models.Models
         public string? Password { get; set; }
         public string? PasswordReset { get; set; }
         public int Ward_Id { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime? Date_Create { get; set; }
+        public int? User_Create { get; set; }
+        public DateTime? Date_Update { get; set; }
+        public int? User_Update { get; set; }
     }
 }

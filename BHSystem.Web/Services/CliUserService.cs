@@ -16,6 +16,7 @@ namespace BHSystem.Web.Services
         Task<UserModel?> LoginAsync(UserModel request);
         Task<bool> UpdateAsync(string pJson, string pAction);
         Task<List<UserModel>?> GetDataAsync();
+        Task<bool> DeleteAsync(string pJson);
     }
     public class CliUserService : ApiService, ICliUserService
     {
@@ -71,6 +72,27 @@ namespace BHSystem.Web.Services
                 _toastService.ShowError(ex.Message);
             }
             return default;
+        }
+
+        public async Task<bool> DeleteAsync(string pJson)
+        {
+            try
+            {
+                RequestModel request = new RequestModel()
+                {
+                    Json = pJson
+                };
+                //var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+                //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+                var resString = await AddOrUpdateData(EndpointConstants.URL_USER_DELETE, request);
+                if (!string.IsNullOrEmpty(resString)) return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UpdateAsync");
+                _toastService.ShowError(ex.Message);
+            }
+            return false;
         }
 
 
