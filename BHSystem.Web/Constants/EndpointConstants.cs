@@ -8,5 +8,6 @@
 
         public const string URL_BOARDINGHOUSE_GETALL = "BoardingHouses/GetAll";
         public const string URL_BOARDINGHOUSE_UPDATE = "BoardingHouses/Update";
+        public const string URL_USER_DELETE = "Users/Delete";
     }
 }

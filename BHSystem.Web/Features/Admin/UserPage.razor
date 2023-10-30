@@ -1,6 +1,6 @@
 ﻿@page "/admin/user"
 
-<div class="bh-content-filter">
+@*<div class="bh-content-filter">
     <div class="row">
         <div class="col-lg-5 col-md-7 col-sm-12">
             <div class="d-flex ">
@@ -23,13 +23,13 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-repeat" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark">Xóa dòng</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
-<div class="bh-table-content" style=" height: calc(100vh - 250px);">
+<div class="bh-table-content" style=" height: calc(100vh - 150px);">
     <TelerikGrid Data="@ListUser"
                  Height="100%"
                  Width="100%"
@@ -41,6 +41,7 @@
                  FilterMode="@GridFilterMode.FilterMenu"
                  SelectionMode="@GridSelectionMode.Multiple"
                  ScrollMode="@GridScrollMode.Scrollable"
+                 OnRowDoubleClick="@OnRowDoubleClickHandler"
                  @bind-SelectedItems="@SelectedUsers">
         <GridSettings>
             <GridPagerSettings InputType="PagerInputType.Input" />
@@ -65,6 +66,17 @@
             <GridColumn Field=@nameof(UserModel.Address) Width="140px" Title="Địa chỉ"></GridColumn>
             <GridColumn Field=@nameof(UserModel.Phone) Width="140px" Title="Số điện thoại"></GridColumn>
             <GridColumn Field=@nameof(UserModel.Email) Width="140px" Title="Email"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.IsDeleted) Width="140px" Title="Đã xóa">
+                <Template>
+                    @{
+                        var model = (context as UserModel);
+                        <TelerikCheckBox @bind-Value="@model!.IsDeleted"Enabled="false" />
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(UserModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày cập nhật"></GridColumn>
         </GridColumns>
     </TelerikGrid>
 </div>
@@ -72,7 +84,8 @@
 
 <BHDialog @bind-IsVisible="@IsShowDialog"
     SaveAndClosed="@(()=> SaveDataHandler())"
-    Title="Thêm mới người dùng">
+    SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
+    Title="@(IsCreate ? "Thêm mới người dùng" : "Cập nhật người dùng")">
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
         <div>
@@ -87,7 +100,7 @@
         </div>
         <div class="mt-2">
             <BHLabel Value="Mật khẩu:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
+            <TelerikTextBox Password="true" @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
         </div>
         <div class="mt-2">
@@ -101,3 +114,6 @@
     </EditForm>
     
 </BHDialog>
+
+
+<BHConfirm @ref="@_rDialogs" />

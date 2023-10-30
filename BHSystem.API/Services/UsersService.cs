@@ -17,7 +17,8 @@ namespace BHSystem.API.Services
     {
         Task<Users?> LoginAsync(UserModel request);
         Task<IEnumerable<Users>> GetDataAsync();
-        Task<bool> UpdateUserAsync(RequestModel entity);
+        Task<ResponseModel> UpdateUserAsync(RequestModel entity);
+        Task<bool> DeleteMulti(RequestModel entity);
     }
     public class UsersService : IUsersService
     {
@@ -39,27 +40,70 @@ namespace BHSystem.API.Services
 
         public async Task<IEnumerable<Users>> GetDataAsync() => await _usersRepository.GetAll();
 
-        public async Task<bool> UpdateUserAsync(RequestModel entity)
+        public async Task<ResponseModel> UpdateUserAsync(RequestModel entity)
         {
-            bool isUpdate = false;
+            ResponseModel response = new ResponseModel();
             Users user = JsonConvert.DeserializeObject<Users>(entity.Json+"")!;
-            
             switch (entity.Type)
             {
                 case "Add":
+                    if(await _usersRepository.CheckContainsAsync(m=>m.UserName == user.UserName))
+                    {
+                        response.StatusCode = -1;
+                        response.Message = "Tên đăng nhập đã tồn tại";
+                        break;
+                    }    
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
                     await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
-                    isUpdate = true;
+                    response.StatusCode = 0;
+                    response.Message = "Success";
                     break;
                 case "Update":
-                    await _usersRepository.Add(user);
+                    var userEntity = await _usersRepository.GetSingleByCondition(m => m.UserId == user.UserId);
+                    if (userEntity == null)
+                    {
+                        response.StatusCode = -1;
+                        response.Message = "Không tìm thấy dữ liệu";
+                        break;
+                    }
+                    userEntity.Address = user.Address;
+                    userEntity.FullName = user.FullName;
+                    userEntity.Phone = user.Phone;
+                    userEntity.Email = user.Email;
+                    userEntity.Date_Update = DateTime.Now;
+                    userEntity.User_Update = entity.UserId;
+                    _usersRepository.Update(userEntity);
                     await _unitOfWork.CompleteAsync();
-                    isUpdate = true;
+                    response.StatusCode = 0;
+                    response.Message = "Success";
                     break;
                 default: break;
             }
-            return isUpdate;
+            return response;
+        }
+
+        /// <summary>
+        /// xóa dữ liệu thực chất cập nhật cột IsDelete
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteMulti(RequestModel entity)
+        {
+            List<UserModel> lstUsers = JsonConvert.DeserializeObject<List<UserModel>>(entity.Json+"")!;
+            foreach (UserModel user in lstUsers)
+            {
+                var userEntity = await _usersRepository.GetSingleByCondition(m => m.UserId == user.UserId);
+                if(userEntity != null)
+                {
+                    userEntity.IsDeleted = true;
+                    userEntity.Date_Update = DateTime.Now;
+                    userEntity.User_Update = entity.UserId;
+                    _usersRepository.Update(userEntity);
+                }
+            }
+            await _unitOfWork.CompleteAsync();
+            return true;
         }
     }
 }

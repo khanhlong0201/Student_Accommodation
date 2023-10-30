@@ -120,7 +120,8 @@ namespace BHSystem.API.Controllers
         {
             try
             {
-                await _userService.UpdateUserAsync(user);
+                ResponseModel response = await _userService.UpdateUserAsync(user);
+                if(response.StatusCode != 0) return BadRequest(response);
                 return Ok(new
                 {
                     StatusCode = 200,
@@ -130,6 +131,32 @@ namespace BHSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "UserController", "Update");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> DeleteUsers(RequestModel user)
+        {
+            try
+            {
+                await _userService.DeleteMulti(user);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Delete");
                 return StatusCode(StatusCodes.Status400BadRequest, new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
