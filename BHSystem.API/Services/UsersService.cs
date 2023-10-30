@@ -34,7 +34,7 @@ namespace BHSystem.API.Services
             //request.Password = EncryptHelper.Decrypt(request.Password + ""); // giải mã pass
             Users user = new Users();
             user.UserName = request.UserName;
-            user.Password = EncryptHelper.Decrypt(request.Password + "");
+            user.Password = request.Password;
             return await _usersRepository.LoginAsync(user);
         }
 

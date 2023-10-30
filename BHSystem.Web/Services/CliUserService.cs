@@ -1,10 +1,15 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Core;
 using BHSystem.Web.Providers;
+using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
+using Blazored.LocalStorage;
 using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace BHSystem.Web.Services
 {
@@ -13,24 +18,48 @@ namespace BHSystem.Web.Services
     /// </summary>
     public interface ICliUserService
     {
-        Task<UserModel?> LoginAsync(UserModel request);
+        Task<string> LoginAsync(LoginViewModel request);
         Task<bool> UpdateAsync(string pJson, string pAction);
         Task<List<UserModel>?> GetDataAsync();
         Task<bool> DeleteAsync(string pJson);
     }
     public class CliUserService : ApiService, ICliUserService
     {
-        public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService) : base(factory, logger, toastService) { }
-
-        public async Task<UserModel?> LoginAsync(UserModel request)
+        private readonly ILocalStorageService _localStorage;
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
+            , ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
+            : base(factory, logger, toastService)
         {
-            var loginRequest = new UserModel();
-            loginRequest.UserName = request.UserName;
-            loginRequest.Password = EncryptHelper.Encrypt(request.Password + "");
-            var resString = await GetDataFromBody(EndpointConstants.URL_USER_LOGIN, loginRequest);
-            if (string.IsNullOrEmpty(resString)) return default;
-            var oUser = JsonConvert.DeserializeObject<UserModel>(resString);
-            return oUser;
+            _localStorage = localStorage;
+            _authenticationStateProvider = authenticationStateProvider;
+        }
+
+        public async Task<string> LoginAsync(LoginViewModel request)
+        {
+            try
+            {
+                var loginRequest = new LoginViewModel();
+                loginRequest.UserName = request.UserName;
+                loginRequest.Password = EncryptHelper.Encrypt(request.Password + "");
+                string jsonBody = JsonConvert.SerializeObject(loginRequest);
+                HttpResponseMessage httpResponse = await _httpClient.PostAsync($"api/{EndpointConstants.URL_USER_LOGIN}", new StringContent(jsonBody, UnicodeEncoding.UTF8, "application/json"));
+                Debug.Print(jsonBody);
+                var content = await httpResponse.Content.ReadAsStringAsync();
+                LoginResponseViewModel response = JsonConvert.DeserializeObject<LoginResponseViewModel>(content)!;
+                if (!httpResponse.IsSuccessStatusCode) return response.Message + "";
+                // save token
+                await _localStorage.SetItemAsync("authToken", response.Token);
+                ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated($"{response!.FullName}");
+                _httpClient.DefaultRequestHeaders.Add("UserId", $"{response!.UserId}");
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", response!.Token);
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Login");
+                return ex.Message;
+            }
         }
 
         public async Task<bool> UpdateAsync(string pJson, string pAction)

@@ -1,27 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
-<W1Spinner></W1Spinner>
-<Blazored.Toast.BlazoredToasts Position="ToastPosition.TopRight"
-                               Timeout="5"
-                               IconType="IconType.FontAwesome"
-                               ErrorIcon="fa fa-times"
-                               InfoIcon="fa fa-info"
-                               SuccessIcon="fa fa-check"
-                               WarningIcon="fa fa-exclamation"
-                               MaxToastCount="1"
-                               ShowProgressBar="@true"
-                               ShowCloseButton="@true">
-    <CloseButtonContent>
-        <div>
-            <span>&times;</span>
-        </div>
-    </CloseButtonContent>
-</Blazored.Toast.BlazoredToasts>
 
-<center style="height: 100vh;">
-    <div class="col-12">
-        <br /><br />
+<div class="bh-auth" style="margin-top: 100px; margin-bottom: auto">
+    <TelerikRootComponent>
         @Body
-    </div>
-</center>
+    </TelerikRootComponent>
+</div>
 

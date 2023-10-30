@@ -21,153 +21,160 @@
         </div>
     </CloseButtonContent>
 </Blazored.Toast.BlazoredToasts>
-<NavBar>
-    <NavBarLeft>
-        <NavBarMenuItem Link="/">Home</NavBarMenuItem>
-        <li class="d-none d-sm-inline-block nav-item ">
-            <a class="nav-link">@breadcumb</a>
-        </li>
-    </NavBarLeft>
-    <NavBarRight>
-        <NavBarDropDown>
-            <NavBarBadge Color="Color.Danger" Icon="far fa-comments">4</NavBarBadge>
-            <NavBarDropDownMenu>
-                <NavBarDropDownMenuItem>
-                    <UserMessage DateTime="dt.AddMinutes(-2)" ProfilePicture="../dist/img/user7-128x128.jpg" Icon="fas fa-star">
-                        <UserName>Patricia Maundrell</UserName>
-                        <Message>Follow up</Message>
-                    </UserMessage>
-                </NavBarDropDownMenuItem>
-                <DropdownDivider />
-                <NavBarDropDownMenuItem>
-                    <UserMessage DateTime="dt.AddHours(-4)" ProfilePicture="../dist/img/user1-128x128.jpg" Icon="fas fa-star" IconColor="Color.Warning">
-                        <UserName>Brad Diesel</UserName>
-                        <Message>Call me whenever you can...</Message>
-                    </UserMessage>
-                </NavBarDropDownMenuItem>
-                <DropdownDivider />
-                <NavBarDropDownMenuItem>
-                    <UserMessage DateTime="dt.AddDays(-8)" ProfilePicture="../dist/img/user8-128x128.jpg" Icon="fas fa-star" IconColor="Color.Danger">
-                        <UserName>John Pierce</UserName>
-                        <Message>I got your message bro</Message>
-                    </UserMessage>
-                </NavBarDropDownMenuItem>
-                <DropdownDivider />
-                <NavBarDropDownMenuItem>
-                    <UserMessage DateTime="dt.AddDays(-31)" ProfilePicture="../dist/img/user3-128x128.jpg" Icon="fas fa-star">
-                        <UserName>Nora Silvester</UserName>
-                        <Message>The subject goes here</Message>
-                    </UserMessage>
-                </NavBarDropDownMenuItem>
-                <DropdownDivider />
-                @*<DropdownFooter OnClick="SeeAllMessages">See All Messages</DropdownFooter>*@
-            </NavBarDropDownMenu>
-        </NavBarDropDown>
-        <NavBarDropDown>
-            <NavBarBadge Color="Color.Warning" Icon="far fa-bell">15</NavBarBadge>
-            <NavBarDropDownMenu>
-                <DropdownHeader>15 Notifications</DropdownHeader>
-                <DropdownDivider></DropdownDivider>
-                <NotificationMessage DateTime="dt.AddMinutes(-3)" Icon="fas fa-envelope mr-2">
-                    <Message>4 new messages</Message>
-                </NotificationMessage>
-                <DropdownDivider></DropdownDivider>
-                <NotificationMessage DateTime="dt.AddHours(-12)" Icon="fas fa-users mr-2">
-                    <Message>8 friend requests</Message>
-                </NotificationMessage>
-                <DropdownDivider></DropdownDivider>
-                <NotificationMessage DateTime="dt.AddDays(-2)" Icon="fas fa-file mr-2">
-                    <Message>3 new reports</Message>
-                </NotificationMessage>
-                <DropdownDivider></DropdownDivider>
-                @*<DropdownFooter OnClick="SeeAllNotifications">See All Notifications</DropdownFooter>*@
-            </NavBarDropDownMenu>
-        </NavBarDropDown>
-        <NavBarSideBarControl></NavBarSideBarControl>
-    </NavBarRight>
-</NavBar>
-<!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-light-lightblue elevation-4 w1FontName w1FontSizeMenu">
-    <BrandLogo Link="https://adminlte.io/" Logo="../dist/img/logo.png">VISSAI - DMS</BrandLogo>
-    <SideBar>
-        <!-- Sidebar user panel (optional) -->
-        <SideBarUserPanel ImageEffect="ImageEffect.Circle" Link="starter-pages/user-page" Elevation="Elevation.Three" UserImage="../dist/img/user2-160x160.jpg">Hải Nguyễn OST</SideBarUserPanel>
-        @*<SideBarSearch></SideBarSearch>*@
-        <SideBarMenu>
-            <SideBarMenuItem Link="/admin" Icon="fa fa-chart-bar">
-                Biểu đồ thống kê
-            </SideBarMenuItem>
-            <SideBarMenuItem Link="/admin/user" Icon="far fa-file-alt">
-                Quản lý người dùng
-            </SideBarMenuItem>
-            <SideBarMenuItem Link="/admin/bhouse" Icon="far fa-file-alt">
-                Quản lý phòng trọ
-            </SideBarMenuItem>
-            <SideBarTreeView Icon="far fa-file-alt">
-                <Title>Quản lý đơn hàng</Title>
-                <Items>
-                    <SideBarMenuItem Link="document">
-                        Lập đơn hàng
-                    </SideBarMenuItem>
-                    <SideBarMenuItem Link="listdocument">
-                        Danh sách đơn hàng
-                    </SideBarMenuItem>
-                    <SideBarMenuItem Link="layout/grid-system">
-                        Theo dõi tiến độ đơn hàng
-                    </SideBarMenuItem>
-                </Items>
-            </SideBarTreeView>
-            <SideBarTreeView Icon="far fa-check-circle">
-                <Title>Phuê duyệt</Title>
-                <Items>
-                    <SideBarMenuItem Link="document">
-                        Xác nhận đặt hàng
-                    </SideBarMenuItem>
-                </Items>
-            </SideBarTreeView>
-            <SideBarTreeView Icon="far fa-file-alt">
-                <Title>Tra cứu</Title>
-                <Items>
-                    <SideBarMenuItem Link="document">
-                        Bảng giá
-                    </SideBarMenuItem>
-                    <SideBarMenuItem Link="listdocument">
-                        Chương trình chiết khấu
-                    </SideBarMenuItem>
-                </Items>
-            </SideBarTreeView>
-            <SideBarTreeView Icon="far fa-folder-open">
-                <Title>Báo cáo</Title>
-                <Items>
-                    <SideBarMenuItem Link="document">
-                        Doanh số chi tiết
-                    </SideBarMenuItem>
-                    <SideBarMenuItem Link="listdocument">
-                        Doanh số tổng hợp 
-                    </SideBarMenuItem>
-                    <SideBarMenuItem Link="listdocument">
-                        Doanh số theo chứng từ
-                    </SideBarMenuItem>
-                </Items>
-            </SideBarTreeView>
-        </SideBarMenu>
-    </SideBar>
-</aside>
-<ContentWrapper>
-    <section class="content" style="padding: 0.5rem;">
-        <TelerikRootComponent>
-            @Body
-        </TelerikRootComponent>
-    </section>
-</ContentWrapper>
-@*<ControlSideBar>Hello World!</ControlSideBar>*@
+<AuthorizeView>
+  <Authorized>
 
-<MainFooter>
-    <Default>
-        Copyright &copy; All rights reserved.
-    </Default>
-</MainFooter>
+    <NavBar>
+        <NavBarLeft>
+            <NavBarMenuItem Link="/">Home</NavBarMenuItem>
+            <li class="d-none d-sm-inline-block nav-item ">
+                <a class="nav-link">@breadcumb</a>
+            </li>
+        </NavBarLeft>
+        <NavBarRight>
+            <NavBarDropDown>
+                <NavBarBadge Color="Color.Danger" Icon="far fa-comments">4</NavBarBadge>
+                <NavBarDropDownMenu>
+                    <NavBarDropDownMenuItem>
+                        <UserMessage DateTime="dt.AddMinutes(-2)" ProfilePicture="../dist/img/user7-128x128.jpg" Icon="fas fa-star">
+                            <UserName>Patricia Maundrell</UserName>
+                            <Message>Follow up</Message>
+                        </UserMessage>
+                    </NavBarDropDownMenuItem>
+                    <DropdownDivider />
+                    <NavBarDropDownMenuItem>
+                        <UserMessage DateTime="dt.AddHours(-4)" ProfilePicture="../dist/img/user1-128x128.jpg" Icon="fas fa-star" IconColor="Color.Warning">
+                            <UserName>Brad Diesel</UserName>
+                            <Message>Call me whenever you can...</Message>
+                        </UserMessage>
+                    </NavBarDropDownMenuItem>
+                    <DropdownDivider />
+                    <NavBarDropDownMenuItem>
+                        <UserMessage DateTime="dt.AddDays(-8)" ProfilePicture="../dist/img/user8-128x128.jpg" Icon="fas fa-star" IconColor="Color.Danger">
+                            <UserName>John Pierce</UserName>
+                            <Message>I got your message bro</Message>
+                        </UserMessage>
+                    </NavBarDropDownMenuItem>
+                    <DropdownDivider />
+                    <NavBarDropDownMenuItem>
+                        <UserMessage DateTime="dt.AddDays(-31)" ProfilePicture="../dist/img/user3-128x128.jpg" Icon="fas fa-star">
+                            <UserName>Nora Silvester</UserName>
+                            <Message>The subject goes here</Message>
+                        </UserMessage>
+                    </NavBarDropDownMenuItem>
+                    <DropdownDivider />
+                    @*<DropdownFooter OnClick="SeeAllMessages">See All Messages</DropdownFooter>*@
+                </NavBarDropDownMenu>
+            </NavBarDropDown>
+            <NavBarDropDown>
+                <NavBarBadge Color="Color.Warning" Icon="far fa-bell">15</NavBarBadge>
+                <NavBarDropDownMenu>
+                    <DropdownHeader>15 Notifications</DropdownHeader>
+                    <DropdownDivider></DropdownDivider>
+                    <NotificationMessage DateTime="dt.AddMinutes(-3)" Icon="fas fa-envelope mr-2">
+                        <Message>4 new messages</Message>
+                    </NotificationMessage>
+                    <DropdownDivider></DropdownDivider>
+                    <NotificationMessage DateTime="dt.AddHours(-12)" Icon="fas fa-users mr-2">
+                        <Message>8 friend requests</Message>
+                    </NotificationMessage>
+                    <DropdownDivider></DropdownDivider>
+                    <NotificationMessage DateTime="dt.AddDays(-2)" Icon="fas fa-file mr-2">
+                        <Message>3 new reports</Message>
+                    </NotificationMessage>
+                    <DropdownDivider></DropdownDivider>
+                    @*<DropdownFooter OnClick="SeeAllNotifications">See All Notifications</DropdownFooter>*@
+                </NavBarDropDownMenu>
+            </NavBarDropDown>
+            <NavBarSideBarControl></NavBarSideBarControl>
+        </NavBarRight>
+    </NavBar>
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-light-lightblue elevation-4 w1FontName w1FontSizeMenu">
+        <BrandLogo Link="https://adminlte.io/" Logo="./images/logo.png">BHouse Manager</BrandLogo>
+        <SideBar>
+            <!-- Sidebar user panel (optional) -->
+            <SideBarUserPanel ImageEffect="ImageEffect.Circle" Link="starter-pages/user-page" Elevation="Elevation.Three" UserImage="../dist/img/user2-160x160.jpg">Hải Nguyễn OST</SideBarUserPanel>
+            @*<SideBarSearch></SideBarSearch>*@
+            <SideBarMenu>
+                <SideBarMenuItem Link="/admin" Icon="fa fa-chart-bar">
+                    Biểu đồ thống kê
+                </SideBarMenuItem>
+                <SideBarMenuItem Link="/admin/user" Icon="far fa-file-alt">
+                    Quản lý người dùng
+                </SideBarMenuItem>
+                <SideBarMenuItem Link="/admin/bhouse" Icon="far fa-file-alt">
+                    Quản lý phòng trọ
+                </SideBarMenuItem>
+                <SideBarTreeView Icon="far fa-file-alt">
+                    <Title>Quản lý đơn hàng</Title>
+                    <Items>
+                        <SideBarMenuItem Link="document">
+                            Lập đơn hàng
+                        </SideBarMenuItem>
+                        <SideBarMenuItem Link="listdocument">
+                            Danh sách đơn hàng
+                        </SideBarMenuItem>
+                        <SideBarMenuItem Link="layout/grid-system">
+                            Theo dõi tiến độ đơn hàng
+                        </SideBarMenuItem>
+                    </Items>
+                </SideBarTreeView>
+                <SideBarTreeView Icon="far fa-check-circle">
+                    <Title>Phuê duyệt</Title>
+                    <Items>
+                        <SideBarMenuItem Link="document">
+                            Xác nhận đặt hàng
+                        </SideBarMenuItem>
+                    </Items>
+                </SideBarTreeView>
+                <SideBarTreeView Icon="far fa-file-alt">
+                    <Title>Tra cứu</Title>
+                    <Items>
+                        <SideBarMenuItem Link="document">
+                            Bảng giá
+                        </SideBarMenuItem>
+                        <SideBarMenuItem Link="listdocument">
+                            Chương trình chiết khấu
+                        </SideBarMenuItem>
+                    </Items>
+                </SideBarTreeView>
+                <SideBarTreeView Icon="far fa-folder-open">
+                    <Title>Báo cáo</Title>
+                    <Items>
+                        <SideBarMenuItem Link="document">
+                            Doanh số chi tiết
+                        </SideBarMenuItem>
+                        <SideBarMenuItem Link="listdocument">
+                            Doanh số tổng hợp 
+                        </SideBarMenuItem>
+                        <SideBarMenuItem Link="listdocument">
+                            Doanh số theo chứng từ
+                        </SideBarMenuItem>
+                    </Items>
+                </SideBarTreeView>
+            </SideBarMenu>
+        </SideBar>
+    </aside>
+    <ContentWrapper>
+        <section class="content" style="padding: 0.5rem;">
+            <TelerikRootComponent>
+                @Body
+            </TelerikRootComponent>
+        </section>
+    </ContentWrapper>
+    @*<ControlSideBar>Hello World!</ControlSideBar>*@
 
+    <MainFooter>
+        <Default>
+            Copyright &copy; All rights reserved.
+        </Default>
+    </MainFooter>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin/>
+     </NotAuthorized>
+</AuthorizeView>
 @code {
     string breadcumb = "";
 

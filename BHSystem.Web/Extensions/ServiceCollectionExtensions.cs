@@ -1,5 +1,7 @@
 ﻿using BHSystem.Web.Core;
+using BHSystem.Web.Providers;
 using BHSystem.Web.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BHSystem.Web.Extensions
 {
@@ -14,6 +16,18 @@ namespace BHSystem.Web.Extensions
         {
             services.AddScoped<IApiService, ApiService>();
             services.AddScoped<ICliUserService, CliUserService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Lưu trạng thái đăng nhập
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorizationCore();
+            services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             return services;
         }
     }

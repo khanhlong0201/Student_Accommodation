@@ -1,6 +1,7 @@
 ﻿using BHSystem.Web.Core;
 using BHSystem.Web.Extensions;
 using Blazor.AdminLte;
+using Blazored.LocalStorage;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,12 +28,14 @@ builder.Services.AddServerSideBlazor(options =>
 builder.Services.AddAdminLte();// sử dụng templete của admin blazor
 builder.Services.AddBlazoredToast();// sử dụng toast thông báo
 builder.Services.AddTelerikBlazor(); // sử dụng telerik 
+builder.Services.AddBlazoredLocalStorage(); // dùng local storage
 
 //đăng kí service
 builder.Services.AddScoped<ILoadingCore, LoadingCore>(); //mỗi yêu cầu 1 HTTP được tạo, thì 1 phiên bản mới của dịch vụ được tạo
 builder.Services.AddScoped<IWebStateCore, WebStateCore>(); //mỗi yêu cầu 1 HTTP được tạo, thì 1 phiên bản mới của dịch vụ được tạo
 builder.Services.AddSingleton<LoggerCore>(); //dịch vụ được đăng ký sẽ tồn tại suốt vòng đời của ứng dụng
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddClientAuthorization();
 builder.Services.AddClientScopeService();
 string apiuri = builder.Configuration.GetSection("appSettings:ApiUrl").Value;// được từ chuỗi appsetting.json
 builder.Services.AddHttpClient("api", c =>

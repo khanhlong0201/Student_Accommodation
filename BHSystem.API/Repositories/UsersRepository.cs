@@ -12,6 +12,6 @@ namespace BHSystem.API.Repositories
     {
         public UsersRepository(ApplicationDbContext context) : base(context){ }
 
-        public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == m.Password);
+        public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == request.Password);
     }
 }

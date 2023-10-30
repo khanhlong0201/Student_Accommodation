@@ -1,4 +1,8 @@
 ﻿
+.text-sm {
+    font-size: 14px !important;
+}
+
 /*  */
 .my-reconnect-modal > div {
   position: fixed;
@@ -244,7 +248,7 @@
 
 /*Label*/
 .bh-label {
-    font-size: .875rem !important;
+    font-size: 14px !important;
     margin-bottom: 2.5px;
     font-weight: 500 !important;
     color: #343a40;
@@ -280,7 +284,7 @@
 }
 
 .k-grid {
-    font-size: .875rem !important;
+    font-size: 14px !important;
 }
 
 .k-grid th,
@@ -378,4 +382,14 @@
 .blazored-toast-container {
     z-index: 20999;
 }
+
+.navbar-brand-image {
+    height: 2rem;
+    width: auto;
+}
+.bh-logo__title {
+    margin-left: 5px;
+    font-weight: 500;
+}
+
 
