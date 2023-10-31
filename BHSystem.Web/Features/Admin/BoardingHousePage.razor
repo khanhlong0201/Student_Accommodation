@@ -42,10 +42,9 @@
     </TelerikGrid>
 </div>
 
-
 <BHDialog @bind-IsVisible="@IsShowDialog"
     SaveAndClosed="@(()=> SaveDataHandler())"
-    Title="Thêm mới người dùng">
+    Title="Thêm mới trọ">
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
         <div>
@@ -53,24 +52,29 @@
             <TelerikTextBox @bind-Value="@BoardingHouseUpdate!.Name" Class="bh-link" Id="txtName" />
             <BHValidationTooltip ValidationFor="@(()=> BoardingHouseUpdate.Name)" Id="txtName" />
         </div>
-       @* <div class="mt-2">
-            <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Id="txtUserName" />
-            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtUserName" />
+        <div>
+            <BHLabel Value="Thành phố:" IsRequired="true" />
+             <TelerikComboBox Data="@ListCity" TextField="Name" ValueField="Id" @bind-Value="@SelectCity"
+                 Placeholder="Chọn thành phố..." ClearButton="true" Filterable="true">
+            </TelerikComboBox>
         </div>
-        <div class="mt-2">
-            <BHLabel Value="Mật khẩu:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
-            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
+        <div>
+            <BHLabel Value="Huyện quận:" IsRequired="true" />
+            <TelerikComboBox Data="@ListDistinct" TextField="Name" ValueField="Id" @bind-Value="SelectDistinct"
+                 Placeholder="Chọn huyện quận..." ClearButton="true" Filterable="true"  >
+            </TelerikComboBox>
         </div>
-        <div class="mt-2">
-            <BHLabel Value="Đia chỉ:" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
+        <div>
+            <BHLabel Value="Xã phường:" IsRequired="true" />
+            <TelerikComboBox Data="@ListWard" TextField="Name" ValueField="Id" @bind-Value="SelectWard"
+                 Placeholder="Chọn xã phường..." ClearButton="true" Filterable="true"  >
+            </TelerikComboBox>
         </div>
-        <div class="mt-2">
-            <BHLabel Value="Email:" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Email" />
-        </div>*@
+        <div>
+        <TelerikTextArea @bind-Value="@BoardingHouseUpdate.Adddress"
+                 AutoSize="true"  />
+        </div>
+       
     </EditForm>
     
 </BHDialog>

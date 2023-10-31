@@ -16,10 +16,37 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _service { get; set; }
         public List<BoardingHouseModel>? ListBoardingHouse { get; set; }
+        public List<CityModel> ListCity { get; set; } = new List<CityModel>();
+        public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
+        public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
         public IEnumerable<BoardingHouseModel>? SelectedBoardingHouse { get; set; } = new List<BoardingHouseModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
         public BoardingHouseModel BoardingHouseUpdate { get; set; } = new BoardingHouseModel();
+        
+        private int selectCity;
+        public int SelectCity 
+        {
+            get { return selectCity; }
+            set 
+            {
+                if (value != selectCity)
+                    selectCity = value;
+                _ = onLoadDistrictByCity(true);
+            }
+        }
+        private int selectDistinct;
+        public int SelectDistinct
+        {
+            get { return selectDistinct; }
+            set
+            {
+                if (value != selectDistinct)
+                    selectDistinct = value;
+                _ = onLoadWardByDistrict(true);
+            }
+        }
 
+        public int SelectWard { get; set; }
         public bool IsShowDialog { get; set; }
         public EditContext? _EditContext { get; set; }
 
@@ -31,15 +58,73 @@ namespace BHSystem.Web.Features.Admin
             var resString = await _service!.GetData(EndpointConstants.URL_BOARDINGHOUSE_GETALL);
             ListBoardingHouse = JsonConvert.DeserializeObject<List<BoardingHouseModel>>(resString);
         }
+
+        private async Task getCombo()
+        {
+            var resStringCity = await _service!.GetData(EndpointConstants.URL_CITY_GETALL);
+            ListCity = JsonConvert.DeserializeObject<List<CityModel>>(resStringCity);
+
+            var resStringDistinct = await _service!.GetData(EndpointConstants.URL_DISTINCT_GETALL);
+            ListDistinct = JsonConvert.DeserializeObject<List<DistinctModel>>(resStringDistinct);
+
+            var resStringWard = await _service!.GetData(EndpointConstants.URL_WARD_GETALL);
+            ListWard = JsonConvert.DeserializeObject<List<WardModel>>(resStringWard);
+        }
+
+        private async Task onLoadDistrictByCity(bool chooseFirstRow = false)
+        {
+            try
+            {
+                if (chooseFirstRow)
+                {
+                    _spinner!.Show();
+                    ListDistinct = ListDistinct.Where(d => d.City_Id == SelectCity).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "OnLoadDistrictByCity");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                _spinner!.Hide();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        private async Task onLoadWardByDistrict(bool chooseFirstRow = false)
+        {
+            try
+            {
+                if (chooseFirstRow)
+                {
+                    _spinner!.Show();
+                    ListWard = ListWard.Where(d => d.Distincts_Id == SelectDistinct).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "onLoadWardByDistrict");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                _spinner!.Hide();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
         #endregion "Private Functions"
 
         #region "Protected Functions"
+
+
 
         /// <summary>
         /// load dữ liệu
         /// </summary>
         /// <returns></returns>
-        protected async void ReLoadDataHandler()
+        protected async Task ReLoadDataHandler()
         {
             try
             {
@@ -54,7 +139,7 @@ namespace BHSystem.Web.Features.Admin
             finally
             {
                 _spinner!.Hide();
-                //await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -88,19 +173,17 @@ namespace BHSystem.Web.Features.Admin
                 if (!checkData) return;
                 _spinner!.Show();
 
-
-                var request = new
+                BoardingHouseUpdate.Adddress = "abc";
+                BoardingHouseUpdate.Ward_Id = SelectWard;
+                BoardingHouseUpdate.User_Id = 4;
+                BoardingHouseUpdate.Image_Id = 1;
+                RequestModel request = new RequestModel()
                 {
-                    Name = BoardingHouseUpdate.Name,
-                    User_Id = BoardingHouseUpdate.User_Id,
-                    Ward_Id = BoardingHouseUpdate.Ward_Id,
-                    Adddress = BoardingHouseUpdate.Adddress,
-                    Qty = BoardingHouseUpdate.Qty
-                    //Image_Id =  BoardingHouseUpdate.Image_Id
+                    Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
                 };
-                var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_UPDATE, request);
+                var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_CREATE, request);
                 var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);
-                if (response != null && response.StatusCode == 0)
+                if (response != null && response.StatusCode == 200)
                 {
                     _toastService!.ShowSuccess($"Đã {sMessage} thông tin trọ.");
                     await getDataBoardingHouse();
@@ -117,10 +200,28 @@ namespace BHSystem.Web.Features.Admin
             finally
             {
                 _spinner!.Hide();
-                //await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        #endregion "Protected Functions"
+        #region "Form Events"
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            try
+            {
+                if (firstRender)
+                {
+                    await ReLoadDataHandler();
+                    await getCombo();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "OnAfterRenderAsync");
             }
         }
 
-        #endregion "Protected Functions"
+        #endregion "Form Events"
+
     }
 }

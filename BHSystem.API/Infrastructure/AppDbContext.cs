@@ -55,6 +55,8 @@ namespace BHSystem.API.Infrastructure
 
             modelBuilder.Entity<BoardingHouses>().HasOne(i => i.Users).WithMany(c => c.BoardingHouses).HasForeignKey(i => i.User_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<BoardingHouses>().HasOne(i => i.Wards).WithMany(c => c.BoardingHouses).HasForeignKey(i => i.Ward_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<BoardingHouses>().HasOne(i => i.Images).WithMany(c => c.BoardingHouses).HasForeignKey(i => i.Image_Id).OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<ImagesDetails>().HasKey(i => new { i.Id, i.Image_Id });
             modelBuilder.Entity<ImagesDetails>().HasOne(i => i.Image).WithMany(c => c.ImagesDetails).HasForeignKey(i => i.Image_Id);
