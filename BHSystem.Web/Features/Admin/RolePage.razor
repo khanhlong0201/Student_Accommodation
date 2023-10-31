@@ -1,0 +1,76 @@
+﻿@page "/admin/role"
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
+</TelerikToolBar>
+<div class="bh-table-content" style=" height: calc(100vh - 150px);">
+    <TelerikGrid Data="@ListRoles"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 OnRowDoubleClick="@OnRowDoubleClickHandler"
+                 @bind-SelectedItems="@SelectedRoles">
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(RoleModel.Id) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(RoleModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã quyền">
+                <Template>
+                    @{
+                        var model = (context as RoleModel);
+                        <span class="h-link">@model!.Id</span>
+                    }
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(RoleModel.Name) Width="170px" Title="Tên quyền"></GridColumn>
+            <GridColumn Field=@nameof(RoleModel.IsDeleted) Width="140px" Title="Đã xóa?">
+                <Template>
+                    @{
+                        var model = (context as RoleModel);
+                        <TelerikCheckBox @bind-Value="@model!.IsDeleted" Enabled="false" />
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(RoleModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
+            <GridColumn Field=@nameof(RoleModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+            <GridColumn Field=@nameof(RoleModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày cập nhật"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
+    Title="@(IsCreate ? "Thêm mới quyền" : "Cập nhật quyền")">
+    <EditForm EditContext="@_EditContext" >
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Mã quyền:" />
+            <TelerikNumericTextBox @bind-Value="@RoleUpdate!.Id" Class="bh-link" Enabled="false"></TelerikNumericTextBox>
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@RoleUpdate!.Name" Id="txtRolerName" />
+            <BHValidationTooltip ValidationFor="@(()=> RoleUpdate.Name)" Id="txtRolerName" />
+        </div>
+    </EditForm>
+    
+</BHDialog>
+<BHConfirm @ref="@_rDialogs" />
