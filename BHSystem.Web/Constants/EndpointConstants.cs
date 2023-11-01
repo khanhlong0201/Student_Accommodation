@@ -11,8 +11,8 @@
         public const string URL_BOARDINGHOUSE_CREATE = "BoardingHouses/Create";
         public const string URL_USER_DELETE = "Users/Delete";
 
-        public const string URL_DISTINCT_GETALL = "Distincts/GetAll";
-        public const string URL_WARD_GETALL = "Wards/GetAll";
-        public const string URL_CITY_GETALL = "Citys/GetAll";
+        public const string URL_ROLE_DELETE = "Roles/Delete";
+        public const string URL_ROLE_UPDATE = "Roles/Update";
+        public const string URL_ROLE_GETALL = "Roles/GetAll";
     }
 }
