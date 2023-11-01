@@ -227,7 +227,6 @@ namespace BHSystem.API.Migrations
                     Adddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Qty = table.Column<int>(type: "int", nullable: false),
                     Image_Id = table.Column<int>(type: "int", nullable: false),
-                    ImagesId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Date_Create = table.Column<DateTime>(type: "datetime2", nullable: true),
                     User_Create = table.Column<int>(type: "int", nullable: true),
@@ -238,11 +237,11 @@ namespace BHSystem.API.Migrations
                 {
                     table.PrimaryKey("PK_BoardingHouses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BoardingHouses_Images_ImagesId",
-                        column: x => x.ImagesId,
+                        name: "FK_BoardingHouses_Images_Image_Id",
+                        column: x => x.Image_Id,
                         principalTable: "Images",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BoardingHouses_Users_User_Id",
                         column: x => x.User_Id,
@@ -420,9 +419,9 @@ namespace BHSystem.API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BoardingHouses_ImagesId",
+                name: "IX_BoardingHouses_Image_Id",
                 table: "BoardingHouses",
-                column: "ImagesId");
+                column: "Image_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BoardingHouses_User_Id",

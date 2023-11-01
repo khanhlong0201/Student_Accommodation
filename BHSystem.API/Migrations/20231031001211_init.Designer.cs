@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231029165339_init")]
+    [Migration("20231031001211_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,9 +46,6 @@ namespace BHSystem.API.Migrations
                     b.Property<int>("Image_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("ImagesId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -74,7 +71,7 @@ namespace BHSystem.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImagesId");
+                    b.HasIndex("Image_Id");
 
                     b.HasIndex("User_Id");
 
@@ -648,8 +645,8 @@ namespace BHSystem.API.Migrations
                 {
                     b.HasOne("BHSytem.Models.Entities.Images", "Images")
                         .WithMany("BoardingHouses")
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("Image_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BHSytem.Models.Entities.Users", "Users")

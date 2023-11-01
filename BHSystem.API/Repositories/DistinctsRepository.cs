@@ -10,7 +10,7 @@ namespace BHSystem.API.Repositories
     {
         //Task<IEnumerable<Distincts>> GetAll();
         //Task<Distincts> GetId(int id);
-        Task<IEnumerable<DistinctModel>> GetAllAsync();
+       // Task<IEnumerable<DistinctModel>> GetAllAsync();
     }
     public class DistinctsRepository : GenericRepository<Distincts>, IDistinctsRepository
     {
@@ -31,16 +31,16 @@ namespace BHSystem.API.Repositories
         //    return result;
         //}
 
-        public async Task<IEnumerable<DistinctModel>> GetAllAsync()
-        {
-            var result = await (from d in _context.Distincts
-                          join c in _context.Citys on d.City_Id equals c.Id
-                          select new DistinctModel()
-                          {
-                              City_Name = c.Name
-                          }).ToListAsync();
-            return result;
-        }
+        //public async Task<IEnumerable<DistinctModel>> GetAllAsync()
+        //{
+        //    var result = await (from d in _context.Distincts
+        //                  join c in _context.Citys on d.City_Id equals c.Id
+        //                  select new DistinctModel()
+        //                  {
+        //                      City_Name = c.Name
+        //                  }).ToListAsync();
+        //    return result;
+        //}
 
     }
 }
