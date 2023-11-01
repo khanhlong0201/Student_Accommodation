@@ -1,6 +1,7 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Controls;
 using BHSystem.Web.Core;
+using BHSystem.Web.Providers;
 using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
@@ -20,12 +21,15 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
+        [Inject] NavigationManager? _navigationManager { get; set; }
 
         public List<RoleModel>? ListRoles { get; set; }
         public IEnumerable<RoleModel>? SelectedRoles { get; set; } = new List<RoleModel>();
         public RoleModel RoleUpdate { get; set; } = new RoleModel();
         public bool IsCreate { get; set; } = true;
         public bool IsShowDialog { get; set; }
+        public bool IsShowDialogUserRole { get; set; }
+        public bool IsShowDialogRoleMenu { get; set; }
         public EditContext? _EditContext { get; set; }
         public BHConfirm? _rDialogs { get; set; }
 
@@ -201,6 +205,44 @@ namespace BHSystem.Web.Features.Admin
 
         protected void OnRowDoubleClickHandler(GridRowClickEventArgs args) => OnOpenDialogHandler(EnumType.Update, args.Item as RoleModel);
 
+        protected void AuthRoleHandler(EnumType pEnum = EnumType.RoleUser)
+        {
+            try
+            {
+                switch (pEnum)
+                {
+                    case EnumType.RoleUser:
+                        if(SelectedRoles == null || !SelectedRoles.Any())
+                        {
+                            _toastService!.ShowWarning("Vui lòng chọn quyền.");
+                            return;
+                        }
+                        if(SelectedRoles.Count() > 1)
+                        {
+                            _toastService!.ShowWarning("Chỉ được phép chọn một.");
+                            return;
+                        }
+                        Dictionary<string, string> pParams = new Dictionary<string, string>
+                        {
+                            { "RoleId", $"{SelectedRoles.First().Id}" },
+                            { "RoleName", $"{SelectedRoles.First().Name}" }
+                        };
+                        string key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key phân quyền
+                        _navigationManager!.NavigateTo($"/admin/role/role-user?key={key}");
+                        break;
+                    case EnumType.RoleMenu:
+                        break;
+                    default:
+                        _toastService!.ShowError("Không xác định Event. Vui lòng liên hệ IT để được hổ trợ");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "AuthRoleHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+        }
         #endregion
     }
 }

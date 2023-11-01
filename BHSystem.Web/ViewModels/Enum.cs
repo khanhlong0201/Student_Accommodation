@@ -11,6 +11,8 @@
         @Delete,
         @SaveAndClose,
         @SaveAndCreate,
-        @Report
+        @Report,
+        @RoleUser,
+        @RoleMenu
     }
 }

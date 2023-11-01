@@ -1,6 +1,7 @@
 ﻿using BHSystem.API.Common;
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
+using BHSytem.Models.Entities;
 using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -163,6 +165,55 @@ namespace BHSystem.API.Controllers
                     ex.Message
                 });
 
+            }
+        }
+
+        [HttpGet]
+        [Route("GetUserByRole")]
+        public async Task<IActionResult> GetUserByRole(int pRoleId)
+        {
+            try
+            {
+                var lstUserExistRole = await _userService.GetUserByRoleAsync(pRoleId);
+                var listUser = await _userService.GetDataAsync();
+                
+                if(listUser == null || !listUser.Any())
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, new
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                        Message = "Không tìm thấy dữ liệu"
+                    });
+                }
+                Dictionary<string, string> pResult = new Dictionary<string, string>();
+                IEnumerable<Users>? lstUserNotExistRole = new List<Users>();
+                string sJsonExist = "";
+                if (lstUserExistRole == null || !lstUserExistRole.Any())
+                {
+                    // nếu nhóm này chưa có user
+                    // lấy hết user
+                    lstUserNotExistRole = listUser;
+                    sJsonExist = "";
+                }    
+                else
+                {
+                    // lấy user nào chưa có trong nhóm
+                    sJsonExist = JsonConvert.SerializeObject(lstUserExistRole);
+                    lstUserNotExistRole = listUser.Where(m => lstUserExistRole.All(g => g.UserId != m.UserId));
+                }
+                pResult.Add("oUserExists", sJsonExist);
+                pResult.Add("oUserNotExists", JsonConvert.SerializeObject(lstUserNotExistRole));
+                return Ok(pResult);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "GetUserByRole");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                        ex.Message
+                    });
             }
         }
 

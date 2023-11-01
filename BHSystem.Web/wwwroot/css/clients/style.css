@@ -88,7 +88,7 @@ textarea.h-input:focus {
 /* responsive */
 @media (max-width: 991px) {
   html {
-    font-size: 55%;
+    /*font-size: 55%;*/
   }
 
   section {
@@ -98,7 +98,7 @@ textarea.h-input:focus {
 
 @media (max-width: 450px) {
   html {
-    font-size: 50%;
+    /*font-size: 50%;*/
   }
 
   .h-flex-col {
