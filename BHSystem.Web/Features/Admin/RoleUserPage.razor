@@ -1,15 +1,11 @@
 ﻿@page "/admin/role/role-user"
 
 <TelerikToolBar Class="border-bottom-0">
-    <ToolBarTemplateItem>
-        <span>Nhóm quyền: @($"{pRoleName}")</span>
-    </ToolBarTemplateItem>
-    <ToolBarSeparator />
-    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green">Làm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green">Chuyển</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red">Chuyển</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-angles-right" OnClick="@(()=> AddOrDeleteUserRoleHandler())">Thêm vào nhóm</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-angles-left" OnClick="@(()=> AddOrDeleteUserRoleHandler(EnumType.Delete))">Xóa khỏi nhóm</ToolBarButton>
 </TelerikToolBar>
-<div class="row">
+<div class="row gap-1">
     <div class="col-md-6 col-sm-12">
         <div class="bh-table-content" style=" height: calc(100vh - 150px);">
             <TelerikGrid Data="@ListUserEmpties"
@@ -23,16 +19,17 @@
                          FilterMode="@GridFilterMode.FilterMenu"
                          SelectionMode="@GridSelectionMode.Multiple"
                          ScrollMode="@GridScrollMode.Scrollable"
+                         Class="bh-toolbar-left"
                          @bind-SelectedItems="@SelectedUserEmpties">
                 <GridToolBar>
-                    <span class="Người dùng chưa có nhóm"></span>
+                    <span style="margin-left: 10px">Người dùng chưa vào nhóm quyền: <span class="bh-color-red">@($"{pRoleName}")</span></span>
                 </GridToolBar>
                 <GridSettings>
                     <GridPagerSettings InputType="PagerInputType.Input" />
                 </GridSettings>
                 <GridColumns>
                     <GridCheckboxColumn Width="30px" MaxResizableWidth="30" SelectAll="@true"></GridCheckboxColumn>
-                    <GridColumn Field=@nameof(UserModel.UserId) Width="110px" MaxResizableWidth="150" Title="Mã người dùng"></GridColumn>
+                    <GridColumn Field=@nameof(UserModel.UserId) Width="70px" MaxResizableWidth="90" Title="ID"></GridColumn>
                     <GridColumn Field=@nameof(UserModel.UserName) Width="110px" MaxResizableWidth="150" Title="Mã tài khoản"></GridColumn>
                     <GridColumn Field=@nameof(UserModel.FullName) Width="170px" Title="Tên người dùng"></GridColumn>
                 </GridColumns>
@@ -52,15 +49,17 @@
                          FilterMode="@GridFilterMode.FilterMenu"
                          SelectionMode="@GridSelectionMode.Multiple"
                          ScrollMode="@GridScrollMode.Scrollable"
+                         Class="bh-toolbar-left"
                          @bind-SelectedItems="@SelectedUserRoles">
                 <GridToolBar>
-                    <span class="Người dùng chưa có nhóm"></span>
+                    <span style="margin-left: 10px">Người dùng đã vào nhóm quyền: <span class="bh-color-red">@($"{pRoleName}")</span></span>
                 </GridToolBar>
                 <GridSettings>
                     <GridPagerSettings InputType="PagerInputType.Input" />
                 </GridSettings>
                 <GridColumns>
-                    <GridColumn Field=@nameof(UserModel.UserId) Width="110px" MaxResizableWidth="150" Title="Mã người dùng"></GridColumn>
+                    <GridCheckboxColumn Width="30px" MaxResizableWidth="30" SelectAll="@true"></GridCheckboxColumn>
+                    <GridColumn Field=@nameof(UserModel.UserId) Width="70px" MaxResizableWidth="90" Title="ID"></GridColumn>
                     <GridColumn Field=@nameof(UserModel.UserName) Width="110px" MaxResizableWidth="150" Title="Mã tài khoản"></GridColumn>
                     <GridColumn Field=@nameof(UserModel.FullName) Width="170px" Title="Tên người dùng"></GridColumn>
                 </GridColumns>
@@ -68,3 +67,5 @@
         </div>
     </div>
 </div>
+
+<BHConfirm @ref="@_rDialogs" />

@@ -4,12 +4,6 @@ using BHSystem.API.Repositories;
 using BHSytem.Models.Entities;
 using BHSytem.Models.Models;
 using Newtonsoft.Json;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Net;
-using System.Text.Json.Serialization;
 
 namespace BHSystem.API.Services
 {

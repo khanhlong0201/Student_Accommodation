@@ -13,6 +13,7 @@ namespace BHSystem.API.Infrastructure
         void Update(T entity);
         Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate);
         Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression);
+        Task<bool> DeleteMulti(IEnumerable<T> objects);
 
     }    
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -49,5 +50,12 @@ namespace BHSystem.API.Infrastructure
         public async Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate) => await _dbSet.CountAsync<T>(predicate) > 0;
 
         public async Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression) => await _dbSet.FirstOrDefaultAsync(expression);
+
+        public async Task<bool> DeleteMulti(IEnumerable<T> objects)
+        {
+            foreach (T oEntity in objects)
+                _dbSet.Remove(oEntity);
+            return true;
+        }
     }
 }

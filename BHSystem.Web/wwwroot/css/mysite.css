@@ -404,3 +404,13 @@
     color: #228BE6;
 }
 
+
+.bh-toolbar-left .k-toolbar{
+    justify-content: flex-start;
+}
+
+.bh-dflex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
