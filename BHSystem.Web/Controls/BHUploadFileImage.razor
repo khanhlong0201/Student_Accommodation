@@ -1,0 +1,156 @@
+﻿@using System.IO;
+@using Microsoft.AspNetCore.Hosting;
+@using Newtonsoft.Json
+<div style="height: @(HeightImg)px">
+            <img class="img-thumbnail" src="@ImageUrl" style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px" />
+</div>
+<div class="upload-container mt-2">
+    <div disabled="@Disable" style="display:flex;justify-content:space-between; align-items: center" class="@CssMargin">
+        @if (!Disable)
+        {
+            <InputFile OnChange="async(e) => await loadFile(e)" accept="@Accept"  />
+            <img src="../../images/upload.png" width="17" height="17" title = "@Text" alt="@Text" @onclick="async() => await uploadFile()" />
+        }
+    
+        @if (isProgress)
+        {
+            <img src="../Images/loading.gif" width="50" height="50" class="spinner-container" />
+        }
+    </div>
+</div>
+
+
+@code {
+    [Inject] IToastService toastService { get; set; }
+    [Inject] IWebHostEnvironment Environment { get; set; }
+
+    [Inject] public IApiService apiService { get; set; }
+
+
+    [Parameter]
+    public string Text { get; set; } = "Upload";
+
+    [Parameter]
+    public string DownloadText { get; set; } = "Download";
+
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public string CssMargin { get; set; }
+
+    [Parameter]
+    public string CssIcon { get; set; } = "";
+
+    [Parameter]
+    public bool Disable { get; set; } = false;
+
+    [Parameter]
+    public string SubFolder { get; set; } = "";
+
+    [Parameter]
+    public string Code_Prod_Line { get; set; } = "";
+
+    [Parameter]
+    public string LinkFileName { get; set; } = "";
+
+    // Cho phép chọn loại file
+    [Parameter]
+    public string Accept { get; set; } = "";
+
+    // chỉnh chiều cao cho images
+    [Parameter]
+    public int HeightImg { get; set; } = 100;
+
+    // Image Url when chose image binding to element img
+    [Parameter]
+    public string ImageUrl { get; set; } = $"../../images/default-image.png";
+
+    [Parameter]
+    public EventCallback<string> OnUploaded { get; set; }
+
+    bool isProgress = false;
+    IBrowserFile file;
+    string fileName = "";
+
+
+    long maxFileSize = 1024 * 1024 * 50;
+    private async ValueTask loadFile(InputFileChangeEventArgs e)
+    {
+        try
+        {
+
+            fileName = e.File.Name;
+            file =  e.File;
+            Stream imageStream = file.OpenReadStream(maxFileSize);
+            MemoryStream ms = new();
+            //copy imageStream to Memory stream
+            await imageStream.CopyToAsync(ms);
+
+            // convert stream to  base64
+            ImageUrl = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task uploadFile()
+    {
+        try
+        {
+            isProgress = true;
+
+            if (file == null)
+            {
+                toastService.ShowWarning("Please chose file!");
+                isProgress = false;
+                return;
+
+            }
+
+            await Task.Delay(200); //
+
+            var RootFolder = Path.Combine(Environment.WebRootPath, "Upload", SubFolder);
+            //tạo thư mục
+            if (!System.IO.Directory.Exists(RootFolder))
+            {
+                System.IO.Directory.CreateDirectory(RootFolder);
+            }
+
+            string strFileNameNewGuid = Guid.NewGuid() + "-" + fileName;
+            string FullFileName = Path.Combine(RootFolder, strFileNameNewGuid);
+            Stream stream = file.OpenReadStream(maxFileSize);
+
+
+            FileStream fs = File.Create(FullFileName);
+            await stream.CopyToAsync(fs);
+            fs.Close();
+
+            isProgress = false;
+            await Task.Delay(200); //
+
+            LinkFileName = Path.Combine("Upload", SubFolder, strFileNameNewGuid);
+            toastService.ShowSuccess("File uploaded!");
+
+            await OnUploaded.InvokeAsync(LinkFileName);
+
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+            throw;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+}

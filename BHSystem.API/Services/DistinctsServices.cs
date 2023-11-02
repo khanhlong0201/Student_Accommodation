@@ -16,6 +16,7 @@ namespace BHSystem.API.Services
     {
         Task<IEnumerable<Distincts>> GetDataAsync();
         Task<DistinctModel> GetIdAsync(int Id);
+        Task<IEnumerable<DistinctModel>> GetAllByCityAsync(int city_id);
     }
     public class DistinctsService : IDistinctsService
     {
@@ -36,6 +37,12 @@ namespace BHSystem.API.Services
         {
             var result = await _distinctsRepository.GetAll();
             //var mappedResult = _mapper.Map<IEnumerable<DistinctModel>>(result);
+            return result;
+        }
+
+        public async Task<IEnumerable<DistinctModel>> GetAllByCityAsync(int city_id)
+        {
+            var result = await _distinctsRepository.GetAllByCityAsync(city_id);
             return result;
         }
     }

@@ -48,5 +48,27 @@ namespace BHSystem.API.Controllers
             }
 
         }
+
+        /// <summary>
+        /// lấy danh sách xã phường theo quận huyện
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllByDistinct")]
+        public async Task<IActionResult> GetAllByDistinct(int distinct_id)
+        {
+            try
+            {
+                var data = await _wardsService.GetAllByDistinctAsync(distinct_id);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "distinctsController", "GetAllByDistinct");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BHSystem.Web.Constants;
+using BHSystem.Web.Controls;
 using BHSystem.Web.Core;
 using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
@@ -7,6 +8,8 @@ using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
+using Telerik.Blazor.Components;
+
 namespace BHSystem.Web.Features.Admin
 {
     public partial class BoardingHousePage
@@ -19,6 +22,7 @@ namespace BHSystem.Web.Features.Admin
         public List<CityModel> ListCity { get; set; } = new List<CityModel>();
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
         public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
+        public List<ImagesDetailModel>? ListImageDetail { get; set; }
         public IEnumerable<BoardingHouseModel>? SelectedBoardingHouse { get; set; } = new List<BoardingHouseModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
         public BoardingHouseModel BoardingHouseUpdate { get; set; } = new BoardingHouseModel();
@@ -48,7 +52,10 @@ namespace BHSystem.Web.Features.Admin
 
         public int SelectWard { get; set; }
         public bool IsShowDialog { get; set; }
+        public bool IsUpate { get; set; } = false;
         public EditContext? _EditContext { get; set; }
+
+        public BHConfirm? _rDialogs { get; set; }
 
         #region "Private Functions"
         private async Task getDataBoardingHouse(bool isLoading = false)
@@ -64,11 +71,6 @@ namespace BHSystem.Web.Features.Admin
             var resStringCity = await _service!.GetData(EndpointConstants.URL_CITY_GETALL);
             ListCity = JsonConvert.DeserializeObject<List<CityModel>>(resStringCity);
 
-            var resStringDistinct = await _service!.GetData(EndpointConstants.URL_DISTINCT_GETALL);
-            ListDistinct = JsonConvert.DeserializeObject<List<DistinctModel>>(resStringDistinct);
-
-            var resStringWard = await _service!.GetData(EndpointConstants.URL_WARD_GETALL);
-            ListWard = JsonConvert.DeserializeObject<List<WardModel>>(resStringWard);
         }
 
         private async Task onLoadDistrictByCity(bool chooseFirstRow = false)
@@ -77,8 +79,13 @@ namespace BHSystem.Web.Features.Admin
             {
                 if (chooseFirstRow)
                 {
-                    _spinner!.Show();
-                    ListDistinct = ListDistinct.Where(d => d.City_Id == SelectCity).ToList();
+                    await showLoading();
+                    var request = new Dictionary<string, object>
+                    {
+                        { "city_id", SelectCity }
+                    };
+                    var resStringDistinct = await _service!.GetData(EndpointConstants.URL_DISTINCT_GET_BY_CITY, request);
+                    ListDistinct = JsonConvert.DeserializeObject<List<DistinctModel>>(resStringDistinct);
                 }
             }
             catch (Exception ex)
@@ -88,7 +95,7 @@ namespace BHSystem.Web.Features.Admin
             }
             finally
             {
-                _spinner!.Hide();
+                await showLoading(false);
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -99,8 +106,13 @@ namespace BHSystem.Web.Features.Admin
             {
                 if (chooseFirstRow)
                 {
-                    _spinner!.Show();
-                    ListWard = ListWard.Where(d => d.Distincts_Id == SelectDistinct).ToList();
+                    await showLoading();
+                    var request = new Dictionary<string, object>
+                    {
+                        { "distinct_id", selectDistinct }
+                    };
+                    var resStringWard = await _service!.GetData(EndpointConstants.URL_WARD_GET_BY_DISTINCT, request);
+                    ListWard = JsonConvert.DeserializeObject<List<WardModel>>(resStringWard);
                 }
             }
             catch (Exception ex)
@@ -110,14 +122,58 @@ namespace BHSystem.Web.Features.Admin
             }
             finally
             {
-                _spinner!.Hide();
+                await showLoading(false);
                 await InvokeAsync(StateHasChanged);
             }
         }
+
+        private async Task showLoading(bool isShow = true)
+        {
+            if (isShow) { _spinner!.Show(); await Task.Yield(); }
+            else _spinner!.Hide();
+        }
+
         #endregion "Private Functions"
 
         #region "Protected Functions"
-
+        protected void OnRowDoubleClickHandler(GridRowClickEventArgs args) => OnOpenDialogHandler(EnumType.Update,args.Item as BoardingHouseModel);
+       
+        /// <summary>
+        /// mở popup
+        /// </summary>
+        protected void OnOpenDialogHandler(EnumType pAction = EnumType.Add,BoardingHouseModel ? pItemDetails = null)
+        {
+            IsShowDialog = true;
+            try
+            {
+                if (pAction == EnumType.Add)
+                {
+                    BoardingHouseUpdate = new BoardingHouseModel();
+                    IsUpate = false;
+                }
+                else
+                {
+                    SelectCity = pItemDetails.City_Id;
+                    SelectDistinct = pItemDetails.Distinct_Id;
+                    SelectWard = pItemDetails.Ward_Id;
+                    SelectCity = pItemDetails.City_Id;
+                    BoardingHouseUpdate.Id = pItemDetails!.Id;
+                    BoardingHouseUpdate.Name = pItemDetails!.Name;
+                    BoardingHouseUpdate.Qty = pItemDetails!.Qty;
+                    BoardingHouseUpdate.Ward_Id = pItemDetails!.Ward_Id;
+                    BoardingHouseUpdate.Adddress = pItemDetails!.Adddress;
+                    BoardingHouseUpdate.Image_Id = pItemDetails!.Image_Id;
+                    IsUpate = true;
+                }
+                IsShowDialog = true;
+                _EditContext = new EditContext(BoardingHouseUpdate);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ReceiptController", "OnOpenDialogHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+        }
 
 
         /// <summary>
@@ -128,7 +184,7 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
-                _spinner!.Show();
+                await showLoading();
                 await getDataBoardingHouse();
             }
             catch (Exception ex)
@@ -138,7 +194,7 @@ namespace BHSystem.Web.Features.Admin
             }
             finally
             {
-                _spinner!.Hide();
+                await showLoading(false);
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -147,7 +203,7 @@ namespace BHSystem.Web.Features.Admin
         /// <summary>
         /// mở popup
         /// </summary>
-        protected void OnOpenDialogHandler()
+        protected void OnOpenDialogHandler(EnumType update)
         {
             IsShowDialog = true;
             _EditContext = new EditContext(BoardingHouseUpdate);
@@ -171,38 +227,103 @@ namespace BHSystem.Web.Features.Admin
                 }
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
-                _spinner!.Show();
-
-                BoardingHouseUpdate.Adddress = "abc";
-                BoardingHouseUpdate.Ward_Id = SelectWard;
-                BoardingHouseUpdate.User_Id = 4;
-                BoardingHouseUpdate.Image_Id = 1;
-                RequestModel request = new RequestModel()
+                if (!IsUpate) // nếu là thêm
                 {
-                    Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
-                };
-                var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_CREATE, request);
-                var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);
-                if (response != null && response.StatusCode == 200)
-                {
-                    _toastService!.ShowSuccess($"Đã {sMessage} thông tin trọ.");
-                    await getDataBoardingHouse();
-                    IsShowDialog = false;
-                    return;
+                    await showLoading();
+                    BoardingHouseUpdate.Ward_Id = SelectWard;
+                    BoardingHouseUpdate.User_Id = 4;
+                    BoardingHouseUpdate.Image_Id = 1;
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
+                    };
+                    var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_CREATE, request);
+                    var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);
+                    if (response != null && response.StatusCode == 200)
+                    {
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin trọ.");
+                        await getDataBoardingHouse();
+                        IsShowDialog = false;
+                        return;
+                    }
+                    _toastService?.ShowError(response?.Message);
                 }
-                _toastService?.ShowError(response?.Message);
+                else{ // nếu là sửa
+                    await showLoading();
+                    BoardingHouseUpdate.Ward_Id = SelectWard;
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
+                    };
+                    var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_UPDATE, request);
+                    var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);
+                    if (response != null && response.StatusCode == 200)
+                    {
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin trọ.");
+                        await getDataBoardingHouse();
+                        IsShowDialog = false;
+                        return;
+                    }
+                    _toastService?.ShowError(response?.Message);
+                }
             }
             catch (Exception ex)
             {
                 _logger!.LogError(ex, "SaveDataHandler");
                 _toastService!.ShowError(ex.Message);
+                IsShowDialog = false;
+                await showLoading(false);
+                IsUpate = false;
             }
             finally
             {
-                _spinner!.Hide();
+                await showLoading(false);
                 await InvokeAsync(StateHasChanged);
             }
         }
+        /// <summary>
+        /// conrfirm xóa 
+        /// </summary>
+        /// <returns></returns>
+        protected async Task ConfirmDeleteHandler()
+        {
+            if (SelectedBoardingHouse == null || !SelectedBoardingHouse.Any())
+            {
+                _toastService!.ShowWarning("Vui lòng chọn dòng để xóa");
+                return;
+            }
+            var confirm = await _rDialogs!.ConfirmAsync(" Bạn có chắc muốn xóa các dòng được chọn? ");
+            if (confirm)
+            {
+                try
+                {
+                    await showLoading();
+                    var oDelete = SelectedBoardingHouse.Select(m => new { m.Id });
+                    string json = JsonConvert.SerializeObject(oDelete);
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = json
+                    };
+                    var resString = await _service.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_DELETE, request);
+                    if (!string.IsNullOrEmpty(resString))
+                    {
+                        _toastService!.ShowSuccess($"Đã xóa thông tin trọ.");
+                        await getDataBoardingHouse();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger!.LogError(ex, "ConfirmDeleteHandler");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+
         #endregion "Protected Functions"
         #region "Form Events"
         protected override async Task OnAfterRenderAsync(bool firstRender)

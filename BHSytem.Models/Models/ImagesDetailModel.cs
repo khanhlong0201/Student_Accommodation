@@ -6,5 +6,6 @@ namespace BHSytem.Models.Models
 {
     public class ImagesDetailModel : ImagesDetails
     {
+        public string ImageUrl { get; set; }
     }
 }

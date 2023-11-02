@@ -1,0 +1,149 @@
+﻿@*<BHLabel Value="Danh sách hình ảnh:"/>
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnAddLine())">Thêm dòng mới</ToolBarButton>
+</TelerikToolBar>
+<div class="bh-table-content" style=" height: calc(100vh - 250px);">
+<TelerikGrid Data="@listSelect" @ref="@gridSelect"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 >
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(ImagesDetailModel.File_Path) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(ImagesDetailModel.File_Path) Width="130px" MaxResizableWidth="150" Title="Đường dẫn file">
+                <Template>
+                    <div>
+                         <BHUploadFileImage ImageUrl="@((context as ImagesDetailModel).File_Path)" Accept="image/*" 
+                                    CssIcon="w1FileCss" SubFolder="Image" OnUploaded="@(e => setfileName((context as ImagesDetailModel),e))"></BHUploadFileImage>
+                    </div>
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+
+        </GridColumns>
+    </TelerikGrid>
+</div>*@
+
+<div>
+    <InputFile multiple OnChange="async(e) => await OnFileChanged(e)"  />
+</div>
+@if(listSelect != null && listSelect.Any())
+{
+    foreach (var item in listSelect)
+    {
+        <div style="height: 100px; display: flex;justify-content: center;">
+            <div>
+                <img class="img-thumbnail" src="@item.ImageUrl" style="width: 20%; height: 100%; object-fit: cover; border-radius: 3px" />
+            </div>
+        </div>
+    }
+
+}
+@code {
+
+    #region "Properties"
+    [Inject] private ILoadingCore? _spinner { get; set; }
+
+    List<ImagesDetailModel> listSelect = new List<ImagesDetailModel>();
+    TelerikGrid<ImagesDetailModel> gridSelect = new  TelerikGrid<ImagesDetailModel>();
+
+    [Parameter]
+    public List<ImagesDetailModel> ListSelectReturn { 
+        get => listSelect;
+        set
+        {
+            if (listSelect != value) listSelect = value;
+            ListSelectReturnChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback <List<ImagesDetailModel>> ListSelectReturnChanged { get; set; }
+
+    #endregion "Properties"
+
+
+    #region "Private Functions"
+
+    private async Task showLoading(bool isShow = true)
+    {
+        if (isShow) { _spinner!.Show(); await Task.Yield(); }
+        else _spinner!.Hide();
+    }
+
+    void setfileName(ImagesDetailModel item, string file)
+    {
+        item.File_Path = file;
+    }
+
+    async Task OnAddLine()
+    {
+        try
+        {
+            ImagesDetailModel imageDetail = new ImagesDetailModel { Id = 0, Image_Id = 0, File_Path = string.Empty };
+            // Thêm đối tượng imageDetail rỗng vào danh sách
+
+            
+            listSelect.Add(imageDetail);
+            gridSelect.Rebind();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+    long maxFileSize = 1024 * 1024 * 50;
+
+    protected async Task OnFileChanged(InputFileChangeEventArgs eventArgs)
+    {
+        try
+        {
+            listSelect = new List<ImagesDetailModel>();
+            foreach (var item in eventArgs.GetMultipleFiles())
+            {
+                using(MemoryStream ms = new())
+                {
+                    Stream imageStream = item.OpenReadStream(maxFileSize);
+                    ms.Position = 0;
+                    //copy imageStream to Memory stream
+                    await imageStream.CopyToAsync(ms);
+                    ImagesDetailModel oImage = new ImagesDetailModel();
+                    oImage.ImageUrl = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                    listSelect.Add(oImage);
+                    await ms.FlushAsync();
+                    await ms.DisposeAsync();
+
+                }
+                    
+                    
+                    
+                    
+                }
+                await InvokeAsync(StateHasChanged);
+            }
+            catch
+            {
+                
+            }
+            
+        }
+
+
+     #endregion "Private Functions"
+    
+}

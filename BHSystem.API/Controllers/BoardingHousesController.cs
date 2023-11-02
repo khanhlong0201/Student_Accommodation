@@ -75,5 +75,59 @@ namespace BHSystem.API.Controllers
 
             }
         }
+
+        [HttpPost]
+        [Route("Update")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> UpdateBoardingHouse(RequestModel model)
+        {
+            try
+            {
+                ResponseModel response = await _boardinghousesService.UpdateBoardingHousesAsync(model);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Thêm thông tin"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BoardingHouseController", "Update");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+
+        [HttpPost]
+        [Route("Delete")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> DeleteBoardingHouse(RequestModel boardingHouse)
+        {
+            try
+            {
+                await _boardinghousesService.DeleteMulti(boardingHouse);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BoardingHouseController", "DeleteBoardingHouse");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
     }
 }

@@ -15,8 +15,10 @@ namespace BHSystem.API.Services
 {
     public interface IBoardingHousesService
     {
-        Task<IEnumerable<BoardingHouses>> GetDataAsync();
+        Task<IEnumerable<BoardingHouseModel>> GetDataAsync();
         Task<ResponseModel> CreateBoardingHousesAsync(RequestModel entity);
+        Task<ResponseModel> UpdateBoardingHousesAsync(RequestModel entity);
+        Task<bool> DeleteMulti(RequestModel entity);
     }
     public class BoardingHousesService : IBoardingHousesService
     {
@@ -28,7 +30,7 @@ namespace BHSystem.API.Services
             _unitOfWork = unitOfWork;
         }
         
-        public async Task<IEnumerable<BoardingHouses>> GetDataAsync() => await _boardinghousesRepository.GetAll();
+        public async Task<IEnumerable<BoardingHouseModel>> GetDataAsync() => await _boardinghousesRepository.GetAllAsync();
         public async Task<ResponseModel> CreateBoardingHousesAsync(RequestModel model)
         {
             ResponseModel response = new ResponseModel();
@@ -36,7 +38,7 @@ namespace BHSystem.API.Services
             if (await _boardinghousesRepository.CheckContainsAsync(m => m.Name == boardingHouses.Name))
             {
                 response.StatusCode = -1;
-                response.Message = "Tên đăng nhập đã tồn tại";
+                response.Message = "Tên trọ đã tồn tại";
                 return response;
             }
             await _boardinghousesRepository.Add(boardingHouses);
@@ -45,5 +47,55 @@ namespace BHSystem.API.Services
             response.Message = "Success";
             return response;
         }
+
+        public async Task<ResponseModel> UpdateBoardingHousesAsync(RequestModel model)
+        {
+            ResponseModel response = new ResponseModel();
+            BoardingHouses boardingHouses = JsonConvert.DeserializeObject<BoardingHouses>(model.Json + "")!;
+            var boardingHousesEntity = await _boardinghousesRepository.GetSingleByCondition(m => m.Id == boardingHouses.Id);
+            if (boardingHousesEntity == null)
+            {
+                response.StatusCode = -1;
+                response.Message = "Không tìm thấy dữ liệu";
+                return response;
+            }
+            boardingHousesEntity.Qty = boardingHouses.Qty;
+            boardingHousesEntity.Adddress = boardingHouses.Adddress;
+            boardingHousesEntity.Name = boardingHouses.Name;
+            boardingHousesEntity.Ward_Id = boardingHouses.Ward_Id;
+            boardingHousesEntity.Image_Id = boardingHouses.Image_Id;
+            boardingHousesEntity.Date_Update = DateTime.Now;
+            //boardingHousesEntity.User_Update = model.UserId;
+            _boardinghousesRepository.Update(boardingHousesEntity);
+            await _unitOfWork.CompleteAsync();
+            response.StatusCode = 0;
+            response.Message = "Success";
+            return response;
+        }
+
+        /// <summary>
+        /// xóa dữ liệu thực chất cập nhật cột IsDelete
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteMulti(RequestModel entity)
+        {
+            List<BoardingHouseModel> lstBoardingHouse = JsonConvert.DeserializeObject<List<BoardingHouseModel>>(entity.Json + "")!;
+            foreach (BoardingHouseModel boardingHouse in lstBoardingHouse)
+            {
+                var boardinghousesEntity = await _boardinghousesRepository.GetSingleByCondition(m => m.Id == boardingHouse.Id);
+                if (boardinghousesEntity != null)
+                {
+                    boardinghousesEntity.IsDeleted = true;
+                    boardinghousesEntity.Date_Update = DateTime.Now;
+                    boardinghousesEntity.User_Update = entity.UserId;
+                    _boardinghousesRepository.Update(boardinghousesEntity);
+                }
+            }
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
+
     }
 }

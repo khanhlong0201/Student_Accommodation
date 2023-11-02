@@ -71,5 +71,27 @@ namespace BHSystem.API.Controllers
             }
 
         }
+
+        /// <summary>
+        /// lấy danh sách quận huyện theo thành phố
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllByCity")]
+        public async Task<IActionResult> GetAllByCity(int city_id)
+        {
+            try
+            {
+                var data = await _distinctsService.GetAllByCityAsync(city_id);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "distinctsController", "GetAllByCity");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
     }
 }
