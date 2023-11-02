@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Upload\Image\" />
+    <Folder Include="wwwroot\Upload\BHouse\" />
+    <Folder Include="wwwroot\Upload\Room\" />
   </ItemGroup>
 
 </Project>
