@@ -1,0 +1,70 @@
+﻿@page "/admin/role/role-user"
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarTemplateItem>
+        <span>Nhóm quyền: @($"{pRoleName}")</span>
+    </ToolBarTemplateItem>
+    <ToolBarSeparator />
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green">Chuyển</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red">Chuyển</ToolBarButton>
+</TelerikToolBar>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+            <TelerikGrid Data="@ListUserEmpties"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable"
+                         @bind-SelectedItems="@SelectedUserEmpties">
+                <GridToolBar>
+                    <span class="Người dùng chưa có nhóm"></span>
+                </GridToolBar>
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridColumns>
+                    <GridCheckboxColumn Width="30px" MaxResizableWidth="30" SelectAll="@true"></GridCheckboxColumn>
+                    <GridColumn Field=@nameof(UserModel.UserId) Width="110px" MaxResizableWidth="150" Title="Mã người dùng"></GridColumn>
+                    <GridColumn Field=@nameof(UserModel.UserName) Width="110px" MaxResizableWidth="150" Title="Mã tài khoản"></GridColumn>
+                    <GridColumn Field=@nameof(UserModel.FullName) Width="170px" Title="Tên người dùng"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+            <TelerikGrid Data="@ListUserRoles"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable"
+                         @bind-SelectedItems="@SelectedUserRoles">
+                <GridToolBar>
+                    <span class="Người dùng chưa có nhóm"></span>
+                </GridToolBar>
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(UserModel.UserId) Width="110px" MaxResizableWidth="150" Title="Mã người dùng"></GridColumn>
+                    <GridColumn Field=@nameof(UserModel.UserName) Width="110px" MaxResizableWidth="150" Title="Mã tài khoản"></GridColumn>
+                    <GridColumn Field=@nameof(UserModel.FullName) Width="170px" Title="Tên người dùng"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+</div>

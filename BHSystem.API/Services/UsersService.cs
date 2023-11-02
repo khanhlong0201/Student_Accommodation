@@ -19,6 +19,7 @@ namespace BHSystem.API.Services
         Task<IEnumerable<Users>> GetDataAsync();
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
+        Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId);
     }
     public class UsersService : IUsersService
     {
@@ -105,5 +106,7 @@ namespace BHSystem.API.Services
             await _unitOfWork.CompleteAsync();
             return true;
         }
+
+        public async Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId) => await _usersRepository.GetUserByRoleAsync(pRoleId);
     }
 }
