@@ -1,4 +1,7 @@
-﻿@*<BHLabel Value="Danh sách hình ảnh:"/>
+﻿@using System.IO;
+@using Microsoft.AspNetCore.Hosting;
+@using Newtonsoft.Json
+@*<BHLabel Value="Danh sách hình ảnh:"/>
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnAddLine())">Thêm dòng mới</ToolBarButton>
 </TelerikToolBar>
@@ -27,7 +30,7 @@
                 <Template>
                     <div>
                          <BHUploadFileImage ImageUrl="@((context as ImagesDetailModel).File_Path)" Accept="image/*" 
-                                    CssIcon="w1FileCss" SubFolder="Image" OnUploaded="@(e => setfileName((context as ImagesDetailModel),e))"></BHUploadFileImage>
+                                    CssIcon="w1FileCss" SubFolder="Image" OnUploaded="@(e => setfileN   ame((context as ImagesDetailModel),e))"></BHUploadFileImage>
                     </div>
                 </Template>
                 <FooterTemplate>
@@ -38,25 +41,31 @@
         </GridColumns>
     </TelerikGrid>
 </div>*@
-
-<div>
+<BHLabel Value="Danh sách hình ảnh:"/>
+<div style="display:flex;justify-content:space-between; align-items: center;">
     <InputFile multiple OnChange="async(e) => await OnFileChanged(e)"  />
+        <img src="../../images/upload.png" width="22" height="22" title = "@Text" alt="@Text"  style="cursor: pointer;"
+            @onclick="async() => await uploadFile()" />
 </div>
 @if(listSelect != null && listSelect.Any())
 {
-    foreach (var item in listSelect)
+<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+    @foreach (var item in listSelect)
     {
-        <div style="height: 100px; display: flex;justify-content: center;">
-            <div>
-                <img class="img-thumbnail" src="@item.ImageUrl" style="width: 20%; height: 100%; object-fit: cover; border-radius: 3px" />
-            </div>
-        </div>
+        if(isUploadFileCalled){
+         <img src="../../images/delete-red.png" width="11" height="11" alt="Xóa hình"
+                             title="xóa hình" class="btn_delete_grid" style="z-index: 1000;cursor: pointer;order: 1" @onclick="() => deleteImage(item)"/> 
+        }
+         <img class="img-thumbnail" src="@item.ImageUrl" style="width: 20%; height: 100%; object-fit: cover; border-radius: 3px;float: right" />
     }
+</div>
+
 
 }
 @code {
 
     #region "Properties"
+    [Inject] IWebHostEnvironment Environment { get; set; }
     [Inject] private ILoadingCore? _spinner { get; set; }
 
     List<ImagesDetailModel> listSelect = new List<ImagesDetailModel>();
@@ -74,6 +83,19 @@
     [Parameter]
     public EventCallback <List<ImagesDetailModel>> ListSelectReturnChanged { get; set; }
 
+    [Parameter]
+    public List<IBrowserFile> ListBrowserFiles { get; set; } = new();   // Danh sách file lưu tạm => Upload file
+
+    [Inject] IToastService toastService { get; set; }
+
+    [Parameter]
+    public string SubFolder { get; set; } = "";
+
+    [Parameter]
+    public string Text { get; set; } = "Upload";
+
+    public string linkFileName { get; set; } = "";
+    private bool isUploadFileCalled = false;
     #endregion "Properties"
 
 
@@ -90,6 +112,28 @@
         item.File_Path = file;
     }
 
+    //xóa trong thư mục
+    async Task deleteImage(ImagesDetailModel item)
+    {
+
+        await Task.Delay(200); //
+                               // Lấy đường dẫn thư mục gốc
+        string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+
+        string stringDelete = rootPath.Replace("\\bin\\Debug\\net6.0", "");
+        string fullPath = stringDelete + "wwwroot\\" + item.File_Path;
+
+        if (File.Exists(fullPath))
+        {
+            // Xóa tệp
+            File.Delete(fullPath);
+            listSelect.Remove(item);
+        }
+        await Task.Delay(200); 
+        StateHasChanged();
+
+    }
+
     async Task OnAddLine()
     {
         try
@@ -97,7 +141,7 @@
             ImagesDetailModel imageDetail = new ImagesDetailModel { Id = 0, Image_Id = 0, File_Path = string.Empty };
             // Thêm đối tượng imageDetail rỗng vào danh sách
 
-            
+
             listSelect.Add(imageDetail);
             gridSelect.Rebind();
             await InvokeAsync(StateHasChanged);
@@ -114,35 +158,82 @@
         try
         {
             listSelect = new List<ImagesDetailModel>();
-            foreach (var item in eventArgs.GetMultipleFiles())
+            ListBrowserFiles = new List<IBrowserFile>();
+            ListBrowserFiles.AddRange(eventArgs.GetMultipleFiles().ToList());
+            for (int i = 0; i < eventArgs.GetMultipleFiles().Count; i++)
             {
-                using(MemoryStream ms = new())
+                using (MemoryStream ms = new())
                 {
-                    Stream imageStream = item.OpenReadStream(maxFileSize);
+                    Stream imageStream = eventArgs.GetMultipleFiles()[i].OpenReadStream(maxFileSize);
                     ms.Position = 0;
                     //copy imageStream to Memory stream
                     await imageStream.CopyToAsync(ms);
+
                     ImagesDetailModel oImage = new ImagesDetailModel();
+                    oImage.File_Name = eventArgs.GetMultipleFiles()[i].Name;
                     oImage.ImageUrl = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                    //// Upload the image
+                    //await uploadFile(oImage, eventArgs.GetMultipleFiles()[i]);
+                    // oImage.File_Path = linkFileName;
+                    // Add the image to the list
                     listSelect.Add(oImage);
+
+                    // Flush and dispose of the MemoryStream
                     await ms.FlushAsync();
                     await ms.DisposeAsync();
-
                 }
-                    
-                    
-                    
-                    
-                }
-                await InvokeAsync(StateHasChanged);
             }
-            catch
-            {
-                
-            }
-            
+            isUploadFileCalled = false;
+            await InvokeAsync(StateHasChanged);
         }
+        catch (Exception ex)
+        {
+            ListBrowserFiles.Clear();
+            throw;
+        } 
+    }
 
+    private async Task uploadFile()
+    {
+        try
+        {
+            if (isUploadFileCalled)
+            {
+                // Hàm đã được gọi rồi, không cần gọi lại
+                toastService.ShowWarning("Danh sách hình đã tồn tại!");
+                return;
+            }
+            for (int i = 0; i < ListBrowserFiles.Count; i++)
+            {
+                await Task.Delay(200); //
+                var RootFolder = Path.Combine(Environment.WebRootPath, "Upload", SubFolder);
+                //tạo thư mục
+                if (!System.IO.Directory.Exists(RootFolder))
+                {
+                    System.IO.Directory.CreateDirectory(RootFolder);
+                }
+
+                string strFileNameNewGuid = Guid.NewGuid() + "-" + ListBrowserFiles[0].Name;
+                string FullFileName = Path.Combine(RootFolder, strFileNameNewGuid);
+                Stream stream = ListBrowserFiles[i].OpenReadStream(maxFileSize);
+                FileStream fs = File.Create(FullFileName);
+                await stream.CopyToAsync(fs);
+                fs.Close();
+
+                await Task.Delay(200); 
+                linkFileName = Path.Combine("Upload", SubFolder, strFileNameNewGuid);
+                listSelect[i].File_Path = linkFileName;
+            }
+            toastService.ShowSuccess("Đã upload hình");
+           isUploadFileCalled = true;
+
+        }
+        catch (Exception ex)
+        {
+            ListBrowserFiles.Clear();
+            throw;
+        }
+    }
 
      #endregion "Private Functions"
     
