@@ -209,28 +209,38 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
+                // local function
+                bool checkUser(out string key)
+                {
+                    if (SelectedRoles == null || !SelectedRoles.Any())
+                    {
+                        _toastService!.ShowWarning("Vui lòng chọn nhóm quyền.");
+                        key = "";
+                        return false;
+                    }
+                    if (SelectedRoles.Count() > 1)
+                    {
+                        _toastService!.ShowWarning("Chỉ được phép chọn một nhóm quyền.");
+                        key = "";
+                        return false;
+                    }
+                    var data = SelectedRoles.First();
+                    Dictionary<string, string> pParams = new Dictionary<string, string>
+                    {
+                        { "RoleId", $"{data.Id}" },
+                        { "RoleName", $"{data.Name}" }
+                    };
+                    key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key phân quyền
+                    return true;
+                }
+                string skeyData = "";
                 switch (pEnum)
                 {
                     case EnumType.RoleUser:
-                        if(SelectedRoles == null || !SelectedRoles.Any())
-                        {
-                            _toastService!.ShowWarning("Vui lòng chọn quyền.");
-                            return;
-                        }
-                        if(SelectedRoles.Count() > 1)
-                        {
-                            _toastService!.ShowWarning("Chỉ được phép chọn một.");
-                            return;
-                        }
-                        Dictionary<string, string> pParams = new Dictionary<string, string>
-                        {
-                            { "RoleId", $"{SelectedRoles.First().Id}" },
-                            { "RoleName", $"{SelectedRoles.First().Name}" }
-                        };
-                        string key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key phân quyền
-                        _navigationManager!.NavigateTo($"/admin/role/role-user?key={key}");
+                        if(checkUser(out skeyData)) _navigationManager!.NavigateTo($"/admin/role/role-user?key={skeyData}");
                         break;
                     case EnumType.RoleMenu:
+                        if (checkUser(out skeyData)) _navigationManager!.NavigateTo($"/admin/role/role-menu?key={skeyData}");
                         break;
                     default:
                         _toastService!.ShowError("Không xác định Event. Vui lòng liên hệ IT để được hổ trợ");
