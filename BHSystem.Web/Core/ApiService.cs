@@ -1,3 +1,4 @@
+using BHSystem.Web.Services;
 using BHSytem.Models.Models;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components.Forms;
@@ -29,16 +30,17 @@ namespace BHSystem.Web.Core
         public readonly ILogger<ApiService> _logger;
         public readonly HttpClient _httpClient;
         public readonly IToastService _toastService;
+        private BHDialogService _bhDialogService;
         long maxFileSize = 134217728;
         #endregion "Properties"
 
-        public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService)
+        public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService, BHDialogService bhDialogService)
         {
-            this._logger = logger;
-            this._factory = factory;
-            this._httpClient = factory.CreateClient("api");
+            _logger = logger;
+            _factory = factory;
+            _httpClient = factory.CreateClient("api");
             _toastService = toastService;
-            //this.logger = logger;
+            _bhDialogService = bhDialogService;
         }
 
         /// <summary>
@@ -134,6 +136,7 @@ namespace BHSystem.Web.Core
                 if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
                 if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
+                    _bhDialogService.ShowDialog();
                     _toastService.ShowInfo("Hết phiên đăng nhập!");
                     return "";
                 }

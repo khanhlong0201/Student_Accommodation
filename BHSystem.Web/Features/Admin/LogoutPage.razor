@@ -1,0 +1,20 @@
+﻿@page "/admin/logout"
+@inject Services.ICliUserService _userService;
+@inject NavigationManager _navigationManager
+
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _navigationManager.NavigateTo($"admin/login");
+                await _userService.LogoutAsync();
+            }
+            catch (Exception) { }
+
+        }
+    }
+}

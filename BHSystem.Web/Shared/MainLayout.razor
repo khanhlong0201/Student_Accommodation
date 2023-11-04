@@ -94,7 +94,7 @@
         <BrandLogo Link="https://adminlte.io/" Logo="./images/logo.png">BHouse Manager</BrandLogo>
         <SideBar>
             <!-- Sidebar user panel (optional) -->
-            <SideBarUserPanel ImageEffect="ImageEffect.Circle" Link="starter-pages/user-page" Elevation="Elevation.Three" UserImage="../dist/img/user2-160x160.jpg">Long Trần OST</SideBarUserPanel>
+                <SideBarUserPanel ImageEffect="ImageEffect.Circle" Link="starter-pages/user-page" Elevation="Elevation.Three" UserImage="../dist/img/user2-160x160.jpg">@FullName</SideBarUserPanel>
             @*<SideBarSearch></SideBarSearch>*@
             <SideBarMenu>
                 <SideBarMenuItem Link="/admin" Icon="fa fa-chart-bar">
@@ -160,6 +160,8 @@
         <section class="content" style="padding: 0.5rem;">
             <TelerikRootComponent>
                 @Body
+                
+                <BHConfirmPassword FullName="@FullName" UserName="@UserName" />
             </TelerikRootComponent>
         </section>
     </ContentWrapper>
@@ -175,9 +177,3 @@
         <RedirectToLogin/>
      </NotAuthorized>
 </AuthorizeView>
-@code {
-    string breadcumb = "";
-
-    private DateTime dt = DateTime.Now;
-    
-}

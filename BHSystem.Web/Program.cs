@@ -37,6 +37,7 @@ builder.Services.AddSingleton<LoggerCore>(); //dịch vụ được đăng ký s
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddClientAuthorization();
 builder.Services.AddClientScopeService();
+builder.Services.AddComponentService();
 string apiuri = builder.Configuration.GetSection("appSettings:ApiUrl").Value;// được từ chuỗi appsetting.json
 builder.Services.AddHttpClient("api", c =>
 {

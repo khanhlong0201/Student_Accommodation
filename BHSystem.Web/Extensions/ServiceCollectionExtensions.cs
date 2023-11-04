@@ -30,5 +30,16 @@ namespace BHSystem.Web.Extensions
             services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             return services;
         }
+
+        /// <summary>
+        /// các service Component 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddComponentService(this IServiceCollection services)
+        {
+            services.AddScoped<BHDialogService>();
+            return services;
+        }
     }
 }

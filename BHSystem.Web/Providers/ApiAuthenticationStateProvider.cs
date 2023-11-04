@@ -30,9 +30,9 @@ namespace BHSystem.Web.Providers
             }
         }
 
-        public void MarkUserAsAuthenticated(string userName)
+        public void MarkUserAsAuthenticated(string fullName)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userName) }, "apiauth"));
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, fullName) }, "apiauth"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }

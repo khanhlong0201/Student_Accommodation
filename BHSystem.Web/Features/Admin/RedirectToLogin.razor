@@ -1,11 +1,12 @@
 ﻿@inject NavigationManager _nav;
+@inject Services.ICliUserService _userService;
 @code {
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             var path = _nav.ToBaseRelativePath(_nav.Uri);
-            _nav.NavigateTo($"admin/login?returnUrl={path}");
+            _nav.NavigateTo($"/admin/login?returnUrl={path}");
         }
     }
 }

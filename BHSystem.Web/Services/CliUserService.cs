@@ -22,14 +22,16 @@ namespace BHSystem.Web.Services
         Task<bool> UpdateAsync(string pJson, string pAction);
         Task<List<UserModel>?> GetDataAsync();
         Task<bool> DeleteAsync(string pJson);
+        Task LogoutAsync();
     }
     public class CliUserService : ApiService, ICliUserService
     {
         private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
-            , ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
-            : base(factory, logger, toastService)
+            , ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider
+            , BHDialogService bhDialogService)
+            : base(factory, logger, toastService, bhDialogService)
         {
             _localStorage = localStorage;
             _authenticationStateProvider = authenticationStateProvider;
@@ -49,6 +51,7 @@ namespace BHSystem.Web.Services
                 LoginResponseViewModel response = JsonConvert.DeserializeObject<LoginResponseViewModel>(content)!;
                 if (!httpResponse.IsSuccessStatusCode) return response.Message + "";
                 // save token
+                if (await _localStorage.ContainKeyAsync("authToken")) await _localStorage.RemoveItemAsync("authToken");
                 await _localStorage.SetItemAsync("authToken", response.Token);
                 ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated($"{response!.FullName}");
                 _httpClient.DefaultRequestHeaders.Add("UserId", $"{response!.UserId}");
@@ -71,8 +74,9 @@ namespace BHSystem.Web.Services
                     Json = pJson,
                     Type = pAction
                 };
-                //var savedToken = await _localStorage.GetItemAsync<string>("authToken");
-                //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+                // lấy ra token -> add vào Header Authorization Bearer Token
+                var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
                 var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request);
                 if (!string.IsNullOrEmpty(resString)) return true;
             }
@@ -123,6 +127,12 @@ namespace BHSystem.Web.Services
             }
             return false;
         }
+
+        public async Task LogoutAsync()
+        {
+            await _localStorage.RemoveItemAsync("authToken");
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
+        }    
 
 
     }

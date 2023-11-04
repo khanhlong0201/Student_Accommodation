@@ -78,6 +78,7 @@ namespace BHSystem.API.Controllers
                 var claims = new[]
                 {
                     new Claim("UserId", response.UserId + ""),
+                    new Claim("UserName", response.UserName + ""),
                     new Claim("FullName", response.FullName + ""),
                     new Claim("Phone", response.Phone + ""),
                     new Claim("Email", response.Email + ""),
@@ -85,7 +86,8 @@ namespace BHSystem.API.Controllers
                 // JWT: json web token: Header - Payload - SIGNATURE (base64UrlEncode(header) + "." + base64UrlEncode(payload), your - 256 - bit - secret)
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:JwtSecurityKey").Value + "")); // key mã hóa
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); // loại mã hóa (Header)
-                var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token
+                //var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token
+                var expiry = DateTime.Now.AddSeconds(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token
                 var token = new JwtSecurityToken(
                     _configuration.GetSection("Jwt:JwtIssuer").Value,
                     _configuration.GetSection("Jwt:JwtAudience").Value,
@@ -117,7 +119,7 @@ namespace BHSystem.API.Controllers
 
         [HttpPost]
         [Route("Update")]
-        //[Authorize] khi nào gọi trên web tháo truỳen token
+        [Authorize] // khi nào gọi trên web tháo truyền token
         public async Task<IActionResult> CreateUser(RequestModel user)
         {
             try
@@ -144,7 +146,7 @@ namespace BHSystem.API.Controllers
 
         [HttpPost]
         [Route("Delete")]
-        //[Authorize] khi nào gọi trên web tháo truỳen token
+        [Authorize] // khi nào gọi trên web tháo truyền token
         public async Task<IActionResult> DeleteUsers(RequestModel user)
         {
             try
@@ -170,6 +172,7 @@ namespace BHSystem.API.Controllers
 
         [HttpGet]
         [Route("GetUserByRole")]
+        [Authorize] // khi nào gọi trên web tháo truyền token
         public async Task<IActionResult> GetUserByRole(int pRoleId)
         {
             try

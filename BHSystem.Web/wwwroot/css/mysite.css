@@ -414,3 +414,31 @@
     justify-content: space-between;
     align-items: center;
 }
+
+/*custome modal confirm pass -> refresh token*/
+.bh-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10010;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+.bh-modal-blur {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+.bh-modal-header {
+    padding: 8px 10px !important;
+    background-color: #ff6358 !important;
+    color: #fff;
+}
+.bh-modal-footer {
+    padding: 5px 8px !important;
+}
+.bh-modal-body{
+    padding: 10px !important;
+}
+/*end*/
