@@ -26,5 +26,7 @@
         public const string URL_WARD_GET_BY_DISTINCT = "Wards/GetAllByDistinct";
 
         public const string URL_USER_ROLE_UPDATE= "UserRoles/AddOrDelete";
+        public const string URL_ROLE_MENU_UPDATE= "RoleMenus/AddOrDelete";
+        public const string URL_MENU_GET_MENU_ROLE = "Menus/GetMenuByRole";
     }
 }

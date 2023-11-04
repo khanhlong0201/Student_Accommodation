@@ -14,6 +14,7 @@ namespace BHSystem.API.Services
     public interface IMenusService
     {
         Task<IEnumerable<Menus>> GetDataAsync();
+        Task<IEnumerable<Menus>> GetMenuByRoleAsync(int pRoleId);
     }
     public class MenusService : IMenusService
     {
@@ -26,5 +27,7 @@ namespace BHSystem.API.Services
         }
         
         public async Task<IEnumerable<Menus>> GetDataAsync() => await _menusRepository.GetAll();
+
+        public async Task<IEnumerable<Menus>> GetMenuByRoleAsync(int pRoleId) => await _menusRepository.GetMenuByRoleAsync(pRoleId);
     }
 }

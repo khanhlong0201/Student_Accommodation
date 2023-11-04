@@ -2,12 +2,14 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
+using BHSytem.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -47,6 +49,55 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
+        }
+
+        [HttpGet]
+        [Route("GetMenuByRole")]
+        public async Task<IActionResult> GetMenuByRole(int pRoleId)
+        {
+            try
+            {
+                var lstMenuExistRole = await _menusService.GetMenuByRoleAsync(pRoleId);
+                var listMenu = await _menusService.GetDataAsync();
+
+                if (listMenu == null || !listMenu.Any())
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, new
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                        Message = "Không tìm thấy dữ liệu"
+                    });
+                }
+                Dictionary<string, string> pResult = new Dictionary<string, string>();
+                IEnumerable<Menus>? lstMenuNotExistRole = new List<Menus>();
+                string sJsonExist = "";
+                if (lstMenuExistRole == null || !lstMenuExistRole.Any())
+                {
+                    // nếu nhóm này chưa có menu
+                    // lấy hết menu
+                    lstMenuNotExistRole = listMenu;
+                    sJsonExist = "";
+                }
+                else
+                {
+                    // lấy menu nào chưa có trong nhóm
+                    sJsonExist = JsonConvert.SerializeObject(lstMenuExistRole);
+                    lstMenuNotExistRole = listMenu.Where(m => lstMenuExistRole.All(g => g.MenuId != m.MenuId));
+                }
+                pResult.Add("oMenuExists", sJsonExist);
+                pResult.Add("oMenuNotExists", JsonConvert.SerializeObject(lstMenuNotExistRole));
+                return Ok(pResult);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "MenuController", "GetMenuByRole");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                        ex.Message
+                    });
+            }
         }
     }
 }

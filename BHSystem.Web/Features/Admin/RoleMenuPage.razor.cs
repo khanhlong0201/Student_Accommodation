@@ -11,18 +11,19 @@ using Newtonsoft.Json;
 
 namespace BHSystem.Web.Features.Admin
 {
-    public partial class RoleUserPage
+    public partial class RoleMenuPage
     {
         [Inject] private ILogger<RoleUserPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
-        public List<UserModel>? ListUserEmpties { get; set; } // ds user chưa được vào nhóm
-        public IEnumerable<UserModel>? SelectedUserEmpties { get; set; } = new List<UserModel>(); // ds chọn
 
-        public List<UserModel>? ListUserRoles { get; set; } // ds user được vào nhóm
-        public IEnumerable<UserModel>? SelectedUserRoles { get; set; } = new List<UserModel>(); // ds chọn
+        public List<MenuModel>? ListMenuEmpties { get; set; } // ds user chưa được vào nhóm
+        public IEnumerable<MenuModel>? SelectedMenuEmpties { get; set; } = new List<MenuModel>(); // ds chọn
+
+        public List<MenuModel>? ListMenuRoles { get; set; } // ds user được vào nhóm
+        public IEnumerable<MenuModel>? SelectedMenuRoles { get; set; } = new List<MenuModel>(); // ds chọn
 
         public string pRoleName { get; set; } = "";
         public int pRoleId { get; set; } = -1;
@@ -45,9 +46,9 @@ namespace BHSystem.Web.Features.Admin
                         {
                             if (pParams.ContainsKey("RoleId")) pRoleId = Convert.ToInt32(pParams["RoleId"]);
                             if (pParams.ContainsKey("RoleName")) pRoleName = pParams["RoleName"];
-                        }    
-                    }    
-                }    
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -58,12 +59,12 @@ namespace BHSystem.Web.Features.Admin
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender)
+            if (firstRender)
             {
                 try
                 {
                     await showLoading();
-                    if (pRoleId > 0)await getListUser();
+                    if (pRoleId > 0) await getListMenu();
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +76,7 @@ namespace BHSystem.Web.Features.Admin
                     await showLoading(false);
                     await InvokeAsync(StateHasChanged);
                 }
-            } 
+            }
         }
 
         #endregion
@@ -92,23 +93,23 @@ namespace BHSystem.Web.Features.Admin
         /// 1 cái tồn tại trong role Id -> cái không tồn tại
         /// </summary>
         /// <returns></returns>
-        private async Task getListUser()
+        private async Task getListMenu()
         {
-            ListUserEmpties = new List<UserModel>();
-            ListUserRoles = new List<UserModel>();
-            SelectedUserEmpties = new List<UserModel>();
-            SelectedUserRoles = new List<UserModel>();
+            ListMenuEmpties = new List<MenuModel>();
+            ListMenuRoles = new List<MenuModel>();
+            SelectedMenuEmpties = new List<MenuModel>();
+            SelectedMenuRoles = new List<MenuModel>();
             Dictionary<string, object> pParams = new Dictionary<string, object>()
             {
                 {"pRoleId", $"{pRoleId}"}
             };
-            string resString = await _apiService!.GetData(EndpointConstants.URL_USER_GET_USER_ROLE, pParams);
+            string resString = await _apiService!.GetData(EndpointConstants.URL_MENU_GET_MENU_ROLE, pParams);
             if (!string.IsNullOrEmpty(resString))
             {
                 Dictionary<string, string> response = JsonConvert.DeserializeObject<Dictionary<string, string>>(resString);
-                ListUserEmpties = JsonConvert.DeserializeObject<List<UserModel>>(response["oUserNotExists"]);
-                ListUserRoles = JsonConvert.DeserializeObject<List<UserModel>>(response["oUserExists"]);
-            }    
+                ListMenuEmpties = JsonConvert.DeserializeObject<List<MenuModel>>(response["oMenuNotExists"]);
+                ListMenuRoles = JsonConvert.DeserializeObject<List<MenuModel>>(response["oMenuExists"]);
+            }
         }
         #endregion
 
@@ -122,7 +123,7 @@ namespace BHSystem.Web.Features.Admin
             try
             {
                 await showLoading();
-                await getListUser();
+                await getListMenu();
             }
             catch (Exception ex)
             {
@@ -136,46 +137,46 @@ namespace BHSystem.Web.Features.Admin
             }
         }
 
-        protected async void AddOrDeleteUserRoleHandler(EnumType pType = EnumType.Add)
+        protected async void AddOrDeleteMenuRoleHandler(EnumType pType = EnumType.Add)
         {
             try
             {
-                if (pRoleId <= 0)
+                if(pRoleId <= 0)
                 {
                     _toastService!.ShowWarning("Không xác định được nhóm quyền. Liên hệ IT để được hổ trợ");
                     return;
-                }
+                }    
                 string sAction = nameof(EnumType.Add);
                 string sMessage = "Thêm";
-                IEnumerable<UserModel>? lstUsers = SelectedUserEmpties;
+                IEnumerable<MenuModel>? lstMenus = SelectedMenuEmpties;
                 if (pType == EnumType.Delete)
                 {
                     sAction = nameof(EnumType.Delete);
                     sMessage = "Xóa";
-                    lstUsers = SelectedUserRoles;
+                    lstMenus = SelectedMenuRoles;
                 }
-                if(lstUsers == null || !lstUsers.Any())
+                if (lstMenus == null || !lstMenus.Any())
                 {
                     _toastService!.ShowWarning($"Vui lòng chọn người dùng để {sMessage}");
                     return;
-                }    
+                }
                 var confirm = await _rDialogs!.ConfirmAsync($"Bạn có chắc muốn {sMessage} người dùng quyền [{pRoleName}]? ");
                 if (confirm)
                 {
                     await showLoading();
-                    var oDelete = lstUsers.Select(m => new { m.UserId, Role_Id = pRoleId });
+                    var oDelete = lstMenus.Select(m => new { Menu_Id = m.MenuId, Role_Id = pRoleId });
                     RequestModel request = new RequestModel()
                     {
                         Json = JsonConvert.SerializeObject(oDelete),
                         Type = sAction
                     };
-                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_USER_ROLE_UPDATE, request);
+                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROLE_MENU_UPDATE, request);
                     if (!string.IsNullOrEmpty(resString))
                     {
-                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin quyền.");
-                        await getListUser();
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin phân quyền.");
+                        await getListMenu();
                     }
-                }    
+                }
             }
             catch (Exception ex)
             {

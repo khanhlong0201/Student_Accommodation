@@ -1,0 +1,69 @@
+﻿@page "/admin/role/role-menu"
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-angles-right" OnClick="@(()=> AddOrDeleteMenuRoleHandler())">Thêm vào nhóm</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-angles-left" OnClick="@(()=> AddOrDeleteMenuRoleHandler(EnumType.Delete))">Xóa khỏi nhóm</ToolBarButton>
+</TelerikToolBar>
+
+<div class="row gap-1">
+    <div class="col-md-6 col-sm-12">
+        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+            <TelerikGrid Data="@ListMenuEmpties"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable"
+                         Class="bh-toolbar-left"
+                         @bind-SelectedItems="@SelectedMenuEmpties">
+                <GridToolBar>
+                    <span style="margin-left: 10px">Người dùng chưa vào nhóm quyền: <span class="bh-color-red">@($"{pRoleName}")</span></span>
+                </GridToolBar>
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridColumns>
+                    <GridCheckboxColumn Width="30px" MaxResizableWidth="30" SelectAll="@true"></GridCheckboxColumn>
+                    <GridColumn Field=@nameof(MenuModel.MenuId) Width="70px" MaxResizableWidth="90" Title="Mã menu"></GridColumn>
+                    <GridColumn Field=@nameof(MenuModel.Name) Width="110px" Title="Tên menu"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+            <TelerikGrid Data="@ListMenuRoles"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable"
+                         Class="bh-toolbar-left"
+                         @bind-SelectedItems="@SelectedMenuRoles">
+                <GridToolBar>
+                    <span style="margin-left: 10px">Người dùng đã vào nhóm quyền: <span class="bh-color-red">@($"{pRoleName}")</span></span>
+                </GridToolBar>
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridColumns>
+                    <GridCheckboxColumn Width="30px" MaxResizableWidth="30" SelectAll="@true"></GridCheckboxColumn>
+                    <GridColumn Field=@nameof(MenuModel.MenuId) Width="70px" MaxResizableWidth="90" Title="Mã menu"></GridColumn>
+                    <GridColumn Field=@nameof(MenuModel.Name) Width="110px" Title="Tên menu"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+</div>
+
+<BHConfirm @ref="@_rDialogs" />

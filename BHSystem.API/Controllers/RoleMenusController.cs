@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -43,10 +44,36 @@ namespace BHSystem.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "rolemenusController", "Get");
+                _logger.LogError(ex, "RoleMenusController", "Get");
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [Route("AddOrDelete")]
+        public async Task<IActionResult> AddOrDeleteMenuRole([FromBody] RequestModel request)
+        {
+            try
+            {
+                ResponseModel response = await _rolemenusService.AddOrDeleteRoleMenu(request);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoleMenusController", "Update");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    ex.Message
+                });
+
+            }
         }
     }
 }
