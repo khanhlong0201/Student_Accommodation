@@ -126,7 +126,9 @@
     <ContentWrapper>
         <section class="content" style="padding: 0.5rem;">
             <TelerikRootComponent>
-                @Body
+                <CascadingValue Value="@UserId">
+                    @Body
+                </CascadingValue>
                 
                 <BHConfirmPassword FullName="@FullName" UserName="@UserName" />
             </TelerikRootComponent>

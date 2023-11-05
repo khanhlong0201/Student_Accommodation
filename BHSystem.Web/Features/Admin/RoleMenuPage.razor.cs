@@ -28,7 +28,8 @@ namespace BHSystem.Web.Features.Admin
         public string pRoleName { get; set; } = "";
         public int pRoleId { get; set; } = -1;
         public BHConfirm? _rDialogs { get; set; }
-
+        [CascadingParameter]
+        private int pUserId { get; set; } // giá trị từ MainLayout
         #region "Override Functions"
         protected override Task OnInitializedAsync()
         {
@@ -169,7 +170,8 @@ namespace BHSystem.Web.Features.Admin
                     RequestModel request = new RequestModel()
                     {
                         Json = JsonConvert.SerializeObject(oDelete),
-                        Type = sAction
+                        Type = sAction,
+                        UserId = pUserId
                     };
                     string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROLE_MENU_UPDATE, request, isAuth: true);
                     if (!string.IsNullOrEmpty(resString))

@@ -33,6 +33,9 @@ namespace BHSystem.Web.Features.Admin
         public EditContext? _EditContext { get; set; }
         public BHConfirm? _rDialogs { get; set; }
 
+        [CascadingParameter]
+        private int pUserId { get; set; } // giá trị từ MainLayout
+
         #region "Private Functions"
         private async Task showLoading(bool isShow = true)
         {
@@ -132,7 +135,8 @@ namespace BHSystem.Web.Features.Admin
                 RequestModel request = new RequestModel()
                 {
                     Json = JsonConvert.SerializeObject(RoleUpdate),
-                    Type = sAction
+                    Type = sAction,
+                    UserId = pUserId
                 };
                 string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROLE_UPDATE, request);
                 if (!string.IsNullOrEmpty(resString))
@@ -180,7 +184,8 @@ namespace BHSystem.Web.Features.Admin
                     var oDelete = SelectedRoles.Select(m => new { m.Id });
                     RequestModel request = new RequestModel()
                     {
-                        Json = JsonConvert.SerializeObject(oDelete)
+                        Json = JsonConvert.SerializeObject(oDelete),
+                        UserId = pUserId
                     };
                     string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROLE_DELETE, request);
                     await getDataRole();

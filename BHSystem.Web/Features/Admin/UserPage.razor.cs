@@ -28,6 +28,9 @@ namespace BHSystem.Web.Features.Admin
         public EditContext? _EditContext { get; set; }
         public BHConfirm? _rDialogs { get; set; }
 
+        [CascadingParameter]
+        private int pUserId { get; set; } // giá trị từ MainLayout
+
         #region "Private Functions"
         private async Task showLoading(bool isShow = true)
         {
@@ -132,7 +135,7 @@ namespace BHSystem.Web.Features.Admin
                 if (!checkData) return;
                 await showLoading();
                 UserUpdate.Ward_Id = 1;
-                bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction);
+                bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction, pUserId);
                 if (isUpdate)
                 {
                     _toastService!.ShowSuccess($"Đã {sMessage} thông tin người dùng.");
@@ -178,7 +181,7 @@ namespace BHSystem.Web.Features.Admin
                 {
                     await showLoading();
                     var oDelete = SelectedUsers.Select(m => new { m.UserId});
-                    bool isSuccess = await _userService!.DeleteAsync(JsonConvert.SerializeObject(oDelete));
+                    bool isSuccess = await _userService!.DeleteAsync(JsonConvert.SerializeObject(oDelete), pUserId);
                     if (isSuccess)
                     {
                         _toastService!.ShowSuccess($"Đã xóa thông tin người dùng.");

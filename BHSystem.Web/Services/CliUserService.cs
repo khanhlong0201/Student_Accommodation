@@ -19,9 +19,9 @@ namespace BHSystem.Web.Services
     public interface ICliUserService
     {
         Task<string> LoginAsync(LoginViewModel request);
-        Task<bool> UpdateAsync(string pJson, string pAction);
+        Task<bool> UpdateAsync(string pJson, string pAction, int pUserId);
         Task<List<UserModel>?> GetDataAsync();
-        Task<bool> DeleteAsync(string pJson);
+        Task<bool> DeleteAsync(string pJson, int pUserId);
         Task LogoutAsync();
     }
     public class CliUserService : ApiService, ICliUserService
@@ -63,14 +63,15 @@ namespace BHSystem.Web.Services
             }
         }
 
-        public async Task<bool> UpdateAsync(string pJson, string pAction)
+        public async Task<bool> UpdateAsync(string pJson, string pAction, int pUserId)
         {
             try
             {
                 RequestModel request = new RequestModel()
                 {
                     Json = pJson,
-                    Type = pAction
+                    Type = pAction,
+                    UserId = pUserId
                 };
                 var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request, isAuth: true);
                 if (!string.IsNullOrEmpty(resString)) return true;
@@ -102,13 +103,14 @@ namespace BHSystem.Web.Services
             return default;
         }
 
-        public async Task<bool> DeleteAsync(string pJson)
+        public async Task<bool> DeleteAsync(string pJson, int pUserId)
         {
             try
             {
                 RequestModel request = new RequestModel()
                 {
-                    Json = pJson
+                    Json = pJson,
+                    UserId = pUserId
                 };
                 var resString = await AddOrUpdateData(EndpointConstants.URL_USER_DELETE, request, isAuth: true);
                 if (!string.IsNullOrEmpty(resString)) return true;
