@@ -13,7 +13,7 @@ namespace BHSystem.Web.Features.Admin
 {
     public partial class RoleMenuPage
     {
-        [Inject] private ILogger<RoleUserPage>? _logger { get; init; }
+        [Inject] private ILogger<RoleMenuPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
