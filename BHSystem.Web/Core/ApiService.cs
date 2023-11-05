@@ -1,5 +1,6 @@
 using BHSystem.Web.Services;
 using BHSytem.Models.Models;
+using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
@@ -13,11 +14,11 @@ namespace BHSystem.Web.Core
 {
     public interface IApiService //gọi api
     {
-        Task<string> GetData(string link, Dictionary<string, object>? pParams = null);
+        Task<string> GetData(string link, Dictionary<string, object>? pParams = null, bool isAuth = false);
 
-        Task<string> GetDataFromBody(string link, object? objData = null);
+        Task<string> GetDataFromBody(string link, object? objData = null, bool isAuth = false);
 
-        Task<string> AddOrUpdateData(string link, object? objData = null);
+        Task<string> AddOrUpdateData(string link, object? objData = null, bool isAuth = false);
 
         Task<string> DeleteData(string link, params object[] objRequestModel);
     }
@@ -30,17 +31,20 @@ namespace BHSystem.Web.Core
         public readonly ILogger<ApiService> _logger;
         public readonly HttpClient _httpClient;
         public readonly IToastService _toastService;
-        private BHDialogService _bhDialogService;
+        private readonly BHDialogService _bhDialogService;
+        public readonly ILocalStorageService _localStorage;
         long maxFileSize = 134217728;
         #endregion "Properties"
 
-        public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService, BHDialogService bhDialogService)
+        public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
+            , ILocalStorageService localStorage, BHDialogService bhDialogService)
         {
             _logger = logger;
             _factory = factory;
             _httpClient = factory.CreateClient("api");
             _toastService = toastService;
             _bhDialogService = bhDialogService;
+            _localStorage = localStorage;
         }
 
         /// <summary>
@@ -49,11 +53,12 @@ namespace BHSystem.Web.Core
         /// <param name="link">Enpoint API</param>
         /// <param name="objRequestModel">List query string</param>
         /// <returns></returns>
-        public async Task<string> GetData(string link, Dictionary<string, object>? pParams = null)
+        public async Task<string> GetData(string link, Dictionary<string, object>? pParams = null, bool isAuth = false)
         {
             string json = JsonConvert.SerializeObject(pParams);
             try
             {
+                if (isAuth) await setTokenBearer();
                 string queryPrams = "";
                 if (pParams != null && pParams.Any()) queryPrams = "?" + string.Join("&", pParams.Select(m => $"{m.Key}={m.Value}"));
                 var stringContext = new StringContent(json, UnicodeEncoding.UTF8, "application/json"); ;
@@ -66,6 +71,7 @@ namespace BHSystem.Web.Core
                 if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
                 if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) // hết token
                 {
+                    _bhDialogService.ShowDialog();
                     _toastService.ShowInfo("Hết phiên đăng nhập!");
                     return "";
                 }
@@ -87,11 +93,12 @@ namespace BHSystem.Web.Core
         /// <param name="link"></param>
         /// <param name="objData"></param>
         /// <returns></returns>
-        public async Task<string> GetDataFromBody(string link, object? objData = null)
+        public async Task<string> GetDataFromBody(string link, object? objData = null, bool isAuth = false)
         {
             string json = JsonConvert.SerializeObject(objData);
             try
             {
+                if (isAuth) await setTokenBearer();
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
                 string uri = "api/" + link;
                 HttpResponseMessage httpResponse = await _httpClient.PostAsync(uri, stringContent);
@@ -101,6 +108,7 @@ namespace BHSystem.Web.Core
                 if (httpResponse.IsSuccessStatusCode) return content; // nếu APi trả về OK 200
                 if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) // hết token
                 {
+                    _bhDialogService.ShowDialog();
                     _toastService.ShowInfo("Hết phiên đăng nhập!");
                     return "";
                 }
@@ -122,11 +130,13 @@ namespace BHSystem.Web.Core
         /// <param name="link"></param>
         /// <param name="objData"></param>
         /// <returns></returns>
-        public async Task<string> AddOrUpdateData(string link, object? objData = null)
+        public async Task<string> AddOrUpdateData(string link, object? objData = null, bool isAuth = false)
         {
             string json = JsonConvert.SerializeObject(objData);
             try
             {
+                if (isAuth) await setTokenBearer();
+
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
                 string uri = "api/" + link;
                 HttpResponseMessage httpResponse = await _httpClient.PostAsync(uri, stringContent);
@@ -237,6 +247,16 @@ namespace BHSystem.Web.Core
                 _logger.LogError(objEx, json);
                 return JsonConvert.SerializeObject(new ResponseModel<object> { StatusCode = -1, Message = objEx.Message });
             }
+        }
+
+        /// <summary>
+        /// set token cho cacs request
+        /// </summary>
+        private async Task setTokenBearer()
+        {
+            // lấy ra token -> add vào Header Authorization Bearer Token
+            var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
         }
     }
 }

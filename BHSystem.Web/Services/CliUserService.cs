@@ -26,14 +26,12 @@ namespace BHSystem.Web.Services
     }
     public class CliUserService : ApiService, ICliUserService
     {
-        private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
             , ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider
             , BHDialogService bhDialogService)
-            : base(factory, logger, toastService, bhDialogService)
+            : base(factory, logger, toastService, localStorage, bhDialogService)
         {
-            _localStorage = localStorage;
             _authenticationStateProvider = authenticationStateProvider;
         }
 
@@ -74,10 +72,7 @@ namespace BHSystem.Web.Services
                     Json = pJson,
                     Type = pAction
                 };
-                // lấy ra token -> add vào Header Authorization Bearer Token
-                var savedToken = await _localStorage.GetItemAsync<string>("authToken");
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
-                var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request);
+                var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request, isAuth: true);
                 if (!string.IsNullOrEmpty(resString)) return true;
             }
             catch (Exception ex)
@@ -115,9 +110,7 @@ namespace BHSystem.Web.Services
                 {
                     Json = pJson
                 };
-                //var savedToken = await _localStorage.GetItemAsync<string>("authToken");
-                //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
-                var resString = await AddOrUpdateData(EndpointConstants.URL_USER_DELETE, request);
+                var resString = await AddOrUpdateData(EndpointConstants.URL_USER_DELETE, request, isAuth: true);
                 if (!string.IsNullOrEmpty(resString)) return true;
             }
             catch (Exception ex)

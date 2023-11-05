@@ -38,9 +38,11 @@ namespace BHSystem.Web.Features.Admin
                 if (uri != null)
                 {
                     var queryStrings = QueryHelpers.ParseQuery(uri.Query);
-                    if (queryStrings.Count() > 0 && queryStrings.TryGetValue("key", out var key))
+                    if (queryStrings.Count() > 0)
                     {
-                        Dictionary<string, string> pParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(EncryptHelper.Decrypt(key + ""));
+                        string key = uri.Query.Substring(5); // để tránh parse lỗi;
+                        Dictionary<string, string> pParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(EncryptHelper.Decrypt(key));
+                        //Dictionary<string, string> pParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(EncryptHelper.Decrypt(key + ""));
                         if (pParams != null && pParams.Any())
                         {
                             if (pParams.ContainsKey("RoleId")) pRoleId = Convert.ToInt32(pParams["RoleId"]);
@@ -102,7 +104,7 @@ namespace BHSystem.Web.Features.Admin
             {
                 {"pRoleId", $"{pRoleId}"}
             };
-            string resString = await _apiService!.GetData(EndpointConstants.URL_USER_GET_USER_ROLE, pParams);
+            string resString = await _apiService!.GetData(EndpointConstants.URL_USER_GET_USER_ROLE, pParams, isAuth: true);
             if (!string.IsNullOrEmpty(resString))
             {
                 Dictionary<string, string> response = JsonConvert.DeserializeObject<Dictionary<string, string>>(resString);
@@ -169,7 +171,7 @@ namespace BHSystem.Web.Features.Admin
                         Json = JsonConvert.SerializeObject(oDelete),
                         Type = sAction
                     };
-                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_USER_ROLE_UPDATE, request);
+                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_USER_ROLE_UPDATE, request, isAuth: true);
                     if (!string.IsNullOrEmpty(resString))
                     {
                         _toastService!.ShowSuccess($"Đã {sMessage} thông tin quyền.");

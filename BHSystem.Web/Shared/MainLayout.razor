@@ -97,49 +97,16 @@
                 <SideBarUserPanel ImageEffect="ImageEffect.Circle" Link="starter-pages/user-page" Elevation="Elevation.Three" UserImage="../dist/img/user2-160x160.jpg">@FullName</SideBarUserPanel>
             @*<SideBarSearch></SideBarSearch>*@
             <SideBarMenu>
-                <SideBarMenuItem Link="/admin" Icon="fa fa-chart-bar">
-                    Biểu đồ thống kê
-                </SideBarMenuItem>
-                <SideBarMenuItem Link="/admin/user" Icon="far fa-file-alt">
-                    Quản lý người dùng
-                </SideBarMenuItem>
-                <SideBarMenuItem Link="/admin/bhouse" Icon="far fa-file-alt">
-                    Quản lý phòng trọ
-                </SideBarMenuItem>
-                <SideBarTreeView Icon="far fa-file-alt">
-                    <Title>Quản lý đơn hàng</Title>
-                    <Items>
-                        <SideBarMenuItem Link="document">
-                            Lập đơn hàng
+                @if (ListMenus != null && ListMenus.Any())
+                {
+                    foreach (var item in ListMenus)
+                    {
+                        <SideBarMenuItem Link="@item.Link" Icon="@item.Icon">
+                            @item.Name
                         </SideBarMenuItem>
-                        <SideBarMenuItem Link="listdocument">
-                            Danh sách đơn hàng
-                        </SideBarMenuItem>
-                        <SideBarMenuItem Link="layout/grid-system">
-                            Theo dõi tiến độ đơn hàng
-                        </SideBarMenuItem>
-                    </Items>
-                </SideBarTreeView>
-                <SideBarTreeView Icon="far fa-check-circle">
-                    <Title>Phuê duyệt</Title>
-                    <Items>
-                        <SideBarMenuItem Link="document">
-                            Xác nhận đặt hàng
-                        </SideBarMenuItem>
-                    </Items>
-                </SideBarTreeView>
-                <SideBarTreeView Icon="far fa-file-alt">
-                    <Title>Tra cứu</Title>
-                    <Items>
-                        <SideBarMenuItem Link="document">
-                            Bảng giá
-                        </SideBarMenuItem>
-                        <SideBarMenuItem Link="listdocument">
-                            Chương trình chiết khấu
-                        </SideBarMenuItem>
-                    </Items>
-                </SideBarTreeView>
-                <SideBarTreeView Icon="far fa-folder-open">
+                    }
+                }
+                @*<SideBarTreeView Icon="far fa-folder-open">
                     <Title>Báo cáo</Title>
                     <Items>
                         <SideBarMenuItem Link="document">
@@ -152,7 +119,7 @@
                             Doanh số theo chứng từ
                         </SideBarMenuItem>
                     </Items>
-                </SideBarTreeView>
+                </SideBarTreeView>*@
             </SideBarMenu>
         </SideBar>
     </aside>

@@ -99,5 +99,21 @@ namespace BHSystem.API.Controllers
                     });
             }
         }
+
+        [HttpGet]
+        [Route("GetMenuByUser")]
+        public async Task<IActionResult> GetMenuByUser(int pUserId)
+        {
+            try
+            {
+                var data = await _menusService.GetMenuByUserAsync(pUserId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "MenusController", "GetMenuByUser");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+        }
     }
 }

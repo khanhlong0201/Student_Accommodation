@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Repositories;
 using BHSytem.Models.Entities;
+using BHSytem.Models.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,6 +16,7 @@ namespace BHSystem.API.Services
     {
         Task<IEnumerable<Menus>> GetDataAsync();
         Task<IEnumerable<Menus>> GetMenuByRoleAsync(int pRoleId);
+        Task<IEnumerable<Menus>> GetMenuByUserAsync(int pUserId);
     }
     public class MenusService : IMenusService
     {
@@ -29,5 +31,10 @@ namespace BHSystem.API.Services
         public async Task<IEnumerable<Menus>> GetDataAsync() => await _menusRepository.GetAll();
 
         public async Task<IEnumerable<Menus>> GetMenuByRoleAsync(int pRoleId) => await _menusRepository.GetMenuByRoleAsync(pRoleId);
+
+        public async Task<IEnumerable<Menus>> GetMenuByUserAsync(int pUserId)
+        {
+            return await _menusRepository.GetMenuByUserAsync(pUserId);
+        }
     }
 }

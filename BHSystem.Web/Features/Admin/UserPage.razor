@@ -25,9 +25,9 @@
     </div>
 </div>*@
 <TelerikToolBar Class="border-bottom-0">
-    <ToolBarButton IconClass="fa-solid fa-repeat" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 <div class="bh-table-content" style=" height: calc(100vh - 150px);">
     <TelerikGrid Data="@ListUser"
