@@ -1,0 +1,53 @@
+﻿@page "/register"
+@layout BHSystem.Web.Shared.LoginLayout;
+
+<div class="row mx-0">
+    <div class="col-lg-4 col md-6 col-sm-10" style="margin: 0 auto;">
+        <div class="card" style="">
+            <div class="mt-2" style="margin: 0 auto;">
+                <div class="d-flex align-items-center text-decoration-none">
+                    <img src="../images/logoclient.jpg" width="110" height="32" alt="HSystem" class="navbar-brand-image" style="height: 80px">
+                    <span class="bh-logo__title">Đăng kí tài khoản</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <EditForm Model="RegisterRequest" OnValidSubmit="@(()=> LoginHandler())">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                    {
+                        <ul class="validation-errors">
+                            <li class="validation-message">
+                                @ErrorMessage
+                            </li>
+                        </ul>
+                    }
+                    <div style="text-align: center;">
+                        <TelerikLoader Visible="@IsLoading" Type="@LoaderType.Pulsing" Size="@(ThemeConstants.Loader.Size.Medium)"></TelerikLoader>
+                    </div>
+                    <div class="mt-2">
+                        <BHLabel Value="Họ & tên:" IsRequired="true" />
+                        <TelerikTextBox PlaceHolder="Họ & tên*:" @bind-Value="@RegisterRequest.FullName" Id="txtFullName" />
+                        <BHValidationTooltip ValidationFor="@(()=> RegisterRequest.FullName)" Id="txtFullName" />
+                    </div>
+                    <div class="mt-2">
+                        <BHLabel Value="Số điện thoại:" IsRequired="true" />
+                        <TelerikTextBox PlaceHolder="Tài khoản*:" @bind-Value="@RegisterRequest.Phone" Id="txtPhone" />
+                        <BHValidationTooltip ValidationFor="@(()=> RegisterRequest.Phone)" Id="txtPhone" />
+                    </div>
+                    <div class="mt-2">
+                        <BHLabel Value="Mật khẩu:" IsRequired="true" />
+                        <TelerikTextBox Id="txtPassword" PlaceHolder="Mật khẩu*:" @bind-Value="@RegisterRequest.Password" Password="true" />
+                        <BHValidationTooltip ValidationFor="@(()=> RegisterRequest.Password)" Id="txtPassword" />
+                    </div>
+                    <div class="mt-2">
+                        <TelerikButton Class="bh-btn-register" ButtonType="@Telerik.Blazor.ButtonType.Submit" IconClass="fa-solid fa-key"
+                                       ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">
+                            ĐĂNG KÍ
+                        </TelerikButton>
+                    </div>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>

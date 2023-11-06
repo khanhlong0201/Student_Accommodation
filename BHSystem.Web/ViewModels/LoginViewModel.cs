@@ -10,6 +10,18 @@ namespace BHSystem.Web.ViewModels
         public string? Password { get; set; }
     }
 
+    public class RegisterViewModel
+    {
+        [Required(ErrorMessage = "Vui lòng điền Họ & tên")]
+        public string? FullName { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng điền Số điện thoại")]
+        public string? Phone { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng điền Mật khẩu")]
+        public string? Password { get; set; }
+    }
+
     public class LoginResponseViewModel
     {
         public int StatusCode { get; set; }

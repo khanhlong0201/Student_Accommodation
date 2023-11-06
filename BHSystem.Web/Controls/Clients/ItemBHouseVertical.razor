@@ -1,0 +1,53 @@
+﻿<TelerikCard class="bh-item__hover mt-3" Width="100%">
+    <div class="row mb-1">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <CardImage Height="140px" Width="100%" Src="@($"https://file4.batdongsan.com.vn/resize/1275x717/2023/10/06/20231006104703-4300_wm.jpg")"></CardImage>
+            <div class="d-flex justify-content-between" style="width: 100%; margin-top: 2px;">
+                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104703-446c_wm.jpg")"></CardImage>
+                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104702-9de7_wm.jpg")"></CardImage>
+                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104702-9de7_wm.jpg")"></CardImage>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <CardBody>
+                <Telerik.Blazor.Components.CardTitle>@Title</Telerik.Blazor.Components.CardTitle>
+                <div class="">
+                    <Telerik.Blazor.Components.CardTitle Class="k-button-flat-primary">@Price triệu/tháng</Telerik.Blazor.Components.CardTitle>
+                    <CardSubTitle>Diện tích: @Acreage m²</CardSubTitle>
+                    <CardSubTitle><i class="fa-solid fa-location-dot" style="margin-right: 5px;"></i>@Address</CardSubTitle>
+                </div>
+                <CardSubTitle>
+                    @Description
+                </CardSubTitle>
+            </CardBody>
+        </div>
+    </div>
+    <CardSeparator></CardSeparator>
+    <div class="k-card-actions k-card-actions-horizontal justify-content-between">
+        <div class="bh-font-size-sm d-flex justify-content-end align-items-center">
+            <div>
+                <img src="https://cdn-icons-png.flaticon.com/128/12597/12597109.png" style="height: 24px; width: 24px; border-radius: 50%;" alt="">
+            </div>
+            <div style="margin-left: 5px;">
+                <p class="mb-0">@FullName</p>
+                <p class="mb-0">@CreateTime</p>
+            </div>
+        </div>
+        <div>
+            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Liên hệ: @Contact</TelerikButton>
+            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)"><i class="fa-regular fa-heart"></i></TelerikButton>
+        </div>
+    </div>
+</TelerikCard>
+
+@code {
+    [Parameter] public List<ImageViewModel>? ListImage { get; set; } // ds ảnh
+    [Parameter] public string FullName { get; set; } = "Nguyễn Văn A"; // Tên người đăng tin
+    [Parameter] public string CreateTime { get; set; } = "Đăng tin hôm qua"; // chuỗi đăng tin...
+    [Parameter] public string? Title { get; set; } // title
+    [Parameter] public string? Description { get; set; } // mô tả về phòng
+    [Parameter] public string? Address { get; set; } // Địa chỉ
+    [Parameter] public string? Price { get; set; } // số tiền
+    [Parameter] public string? Acreage { get; set; } // Diện tích
+    [Parameter] public string? Contact { get; set; } // liên hệ
+}

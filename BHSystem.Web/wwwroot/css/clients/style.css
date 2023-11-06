@@ -170,3 +170,76 @@ textarea.h-input:focus {
   font-size: 12px;
 }
 /* Vùng tìm kiếm */
+
+/**/
+.bh-btn-register{
+    width: 100%;
+}
+
+/*bh - detail*/
+.bh-carausel .k-scrollview{
+    border-radius: 5px;
+}
+.bh-detail-contact {
+    text-align: center
+}
+.bh-detail-contact__name {
+    margin-top: 15px;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: normal !important;
+}
+.bh-detail-contact__avt {
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+    margin: 0 auto
+}
+
+.bh-detail-contact__name.contact-fullname{
+    font-weight: 500 !important;
+    font-size: 15px;
+    color: black;
+    margin-top: 5px;
+}
+
+.bh-btn-fullsize button{
+    width: 100%;
+}
+.btn-contact{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.bh-img-icon img{
+    width: 18px;
+}
+
+.bh-detail-title {
+    font-size: 22px;
+    line-height: 32px !important;
+    font-weight: 500;
+    color: black;
+    margin-top: 7.5px;
+    margin-bottom: 0px;
+}
+
+.bh-detail-info {
+    padding: 20px 0px 10px 0px;
+    border-bottom: 1px;
+    border-top: 1px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: solid;
+    border-color: #e5e5e5;
+}
+.bh-detail-info__icon i{
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.bh-detail-desc{
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: black;
+}
+/*bh-detail*/
