@@ -124,7 +124,7 @@
                             <div class="mt-2 bh-btn-fullsize">
                                 <TelerikButton Class="bh-btn-search btn-contact mb-1"
                                     FillMode="@(ThemeConstants.Button.FillMode.Outline)"
-                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Đăng kí đặt phòng</TelerikButton>
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@OpenPopupBookingHandler">Đăng kí đặt phòng</TelerikButton>
 
                                 <TelerikButton Class="bh-btn-search btn-contact bh-img-icon mb-1 mt-3"
                                                FillMode="@(ThemeConstants.Button.FillMode.Outline)"
@@ -158,16 +158,23 @@
     </div>
 </div>
 
-@code {
-    private int PageIndex = 1;
-    public List<CarouselModel> CarouselData { get; set; } = new List<CarouselModel>()
-        {
-            new CarouselModel() { Url = @"https://lighthouse.chotot.com/_next/image?url=https%3A%2F%2Fcdn.chotot.com%2Fadmincentre%2FICGqIPhBAn559vSI4v7jaBAYFYegeRG7xSfUJ6tkugI%2Fpreset%3Araw%2Fplain%2F6ec3994f81e14d768dfc467847ce430c-2820195948173896828.jpg&w=1080&q=90"},
-            new CarouselModel() { Url = @"https://lighthouse.chotot.com/_next/image?url=https%3A%2F%2Fcdn.chotot.com%2Fadmincentre%2FICGqIPhBAn559vSI4v7jaBAYFYegeRG7xSfUJ6tkugI%2Fpreset%3Araw%2Fplain%2F6ec3994f81e14d768dfc467847ce430c-2820195948173896828.jpg&w=1080&q=90"},
-            new CarouselModel() { Url = @"https://lighthouse.chotot.com/_next/image?url=https%3A%2F%2Fcdn.chotot.com%2Fadmincentre%2FICGqIPhBAn559vSI4v7jaBAYFYegeRG7xSfUJ6tkugI%2Fpreset%3Araw%2Fplain%2F6ec3994f81e14d768dfc467847ce430c-2820195948173896828.jpg&w=1080&q=90"},
-            new CarouselModel() { Url = @"https://lighthouse.chotot.com/_next/image?url=https%3A%2F%2Fcdn.chotot.com%2Fadmincentre%2FICGqIPhBAn559vSI4v7jaBAYFYegeRG7xSfUJ6tkugI%2Fpreset%3Araw%2Fplain%2F6ec3994f81e14d768dfc467847ce430c-2820195948173896828.jpg&w=1080&q=90"},
-        };
 
-    public string binding { get; set; } = "";
-    public List<string> ListData = new List<string>() { "Quận 1", "Quận 2", "Quận 3", "Quận 4", "Quận 5" };
-}
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    Width="40%"
+    TitleBtnSaveAndClosed="Đăng kí"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    Title="Đặt phòng">
+    <EditForm EditContext="@_EditContext">
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Họ & Tên:" IsRequired="true" />
+            <TelerikTextBox Id="txtContactName" @bind-Value="@BookingUpdate!.FullName" Class="bh-link"></TelerikTextBox>
+            <BHValidationTooltip ValidationFor="@(()=> BookingUpdate.FullName)" Id="txtContactName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Số điện thoại:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@BookingUpdate!.Phone" Id="txtContactPhone" />
+            <BHValidationTooltip ValidationFor="@(()=> BookingUpdate.Phone)" Id="txtContactPhone" />
+        </div>
+    </EditForm>
+</BHDialog>

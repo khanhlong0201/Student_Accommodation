@@ -29,5 +29,7 @@
         public const string URL_ROLE_MENU_UPDATE= "RoleMenus/AddOrDelete";
         public const string URL_MENU_GET_MENU_ROLE = "Menus/GetMenuByRole";
         public const string URL_MENU_GET_BY_USER = "Menus/GetMenuByUser";
+
+        public const string URL_BOOKING_UPDATE = "Bookings/Update";
     }
 }

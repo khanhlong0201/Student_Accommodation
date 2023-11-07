@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,32 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> CreateTicket(RequestModel user)
+        {
+            try
+            {
+                ResponseModel response = await _bookingsService.UpdateUserAsync(user);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Thêm thông tin"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BookingsController", "CreateTicket");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
         }
     }
 }
