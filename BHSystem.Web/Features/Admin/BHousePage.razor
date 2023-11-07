@@ -1,0 +1,140 @@
+﻿@page "/admin/boarding-house"
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red">Xóa dòng</ToolBarButton>
+</TelerikToolBar>
+
+<div class="bh-table-content" style=" height: calc(100vh - 150px);">
+    <TelerikGrid Data="@ListBHouses"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 @bind-SelectedItems="@SelectedBHouses">
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(BHouseModel.Id) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(BHouseModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã phòng trọ">
+                <Template>
+                    @{
+                        var model = (context as BHouseModel);
+                        <span class="h-link">@model!.Id</span>
+                    }
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.UserName) Width="140px" Title="Người quản lý"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Name) Width="170px" Title="Tên phòng trọ"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Adddress) Width="140px" Title="Địa chỉ"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.WardName) Width="140px" Title="Quận huyện"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.IsDeleted) Width="140px" Title="Đã xóa">
+                <Template>
+                    @{
+                        var model = (context as BHouseModel);
+                        <TelerikCheckBox @bind-Value="@model!.IsDeleted" Enabled="false" />
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày cập nhật"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
+    Title="@(IsCreate ? "Thêm mới phòng trọ" : "Cập nhật phòng")">
+    <EditForm EditContext="@_EditContext" >
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Tên phòng trọ:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@BHouseUpdate!.Name" Class="bh-link" Id="txtBHName" />
+            <BHValidationTooltip ValidationFor="@(()=> BHouseUpdate.Name)" Id="txtBHName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Thành phố:" IsRequired="true" />
+            <TelerikComboBox Data="@ListCity"
+                Value="@BHouseUpdate.City_Id"
+                ValueExpression="@(() => BHouseUpdate.City_Id)"
+                ValueChanged="@((int value) => OnChangeCityHandler(value))"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtCityId" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> BHouseUpdate.City_Id)" Id="txtCityId" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Huyện quận:" IsRequired="true" />
+            <TelerikComboBox Data="@ListDistinct"
+                Value="@BHouseUpdate.Distinct_Id"
+                ValueExpression="@(() => BHouseUpdate.Distinct_Id)"
+                ValueChanged="@((int value) => OnChangeDistinctHandler(value))"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtDistinct_Id" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> BHouseUpdate.Distinct_Id)" Id="txtDistinct_Id" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Xã phường:" IsRequired="true" />
+            <TelerikComboBox Data="@ListWard"
+                Value="@BHouseUpdate.Ward_Id"
+                ValueExpression="@(() => BHouseUpdate.Ward_Id)"
+                ValueChanged="@((int value) => BHouseUpdate.Ward_Id = value)"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtWard_Id" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> BHouseUpdate.Ward_Id)" Id="txtWard_Id" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Địa chỉ cụ thể:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@BHouseUpdate!.Adddress" Class="bh-link" Id="txtAdddress" />
+            <BHValidationTooltip ValidationFor="@(()=> BHouseUpdate.Adddress)" Id="txtAdddress" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Chọn hình ảnh:" IsRequired="true" />
+            <InputFile id="ref-upload" multiple OnChange="@OnLoadFileHandler" accept="image/*" />
+        </div>
+
+        @if(ListImages != null && ListImages.Any())
+        {
+            <div class="mt-2">
+                @foreach (var item in ListImages)
+                {
+                    <img class="img-thumbnail" src="@item" style="width: 20%; height: 100%; object-fit: cover; border-radius: 3px;" />
+                }
+            </div>
+        }
+        
+    </EditForm>
+    
+</BHDialog>
+
+<BHConfirm @ref="@_rDialogs" />

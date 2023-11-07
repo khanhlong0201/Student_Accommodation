@@ -84,9 +84,6 @@ namespace BHSystem.Web.Features.Admin
         /// </summary>
         protected void OnOpenDialogHandler(EnumType pAction = EnumType.Add, UserModel? pItemDetails = null)
         {
-            IsShowDialog = true;
-            
-            
             try
             {
 
