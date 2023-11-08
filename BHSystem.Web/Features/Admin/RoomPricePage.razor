@@ -1,0 +1,63 @@
+﻿@page "/admin/roomprice"
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
+</TelerikToolBar>
+<div class="bh-table-content" style=" height: calc(100vh - 250px);">
+    <TelerikGrid Data="@ListRoomPrice"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 @bind-SelectedItems="@SelectedRoomPrice"
+                  OnRowDoubleClick="@OnRowDoubleClickHandler"
+                 >
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(RoomPriceModel.Id) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(RoomPriceModel.BoardingHouse_Name) Width="140px" Title="Tên trọ"></GridColumn>
+            <GridColumn Field=@nameof(RoomPriceModel.Room_Name) Width="140px" Title="Tên phòng"></GridColumn>
+            <GridColumn Field=@nameof(RoomPriceModel.Price) Width="140px" Title="Giá phòng"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    Title="@(IsUpate ? "Cập nhật giá phòng" : "Thêm giá mới cho phòng")">
+    <EditForm EditContext="@_EditContext" >
+        <DataAnnotationsValidator />
+          <div>
+            <BHLabel Value="Trọ:" IsRequired="true" />
+             <TelerikComboBox Data="@ListBoardingHouse" TextField="Name" ValueField="Id" @bind-Value="@RoomPriceUpdate.BoardingHouse_Id"
+                 Placeholder="Chọn trọ..." ClearButton="true" Filterable="true">
+            </TelerikComboBox>
+        </div>
+        <div>
+            <BHLabel Value="Phòng:" IsRequired="true" />
+            <TelerikComboBox Data="@ListRoom" TextField="Name" ValueField="Id" @bind-Value="RoomPriceUpdate.Room_Id"
+                 Placeholder="Chọn phòng..." ClearButton="true" Filterable="true"  >
+            </TelerikComboBox>
+        </div>
+        <div>
+            <BHLabel Value="Giá phòng:" IsRequired="true" />
+            <TelerikNumericTextBox @bind-Value="RoomPriceUpdate.Price" Format="n0"></TelerikNumericTextBox>
+        </div>
+     
+    </EditForm>
+    
+</BHDialog>
+<BHConfirm @ref="@_rDialogs" />

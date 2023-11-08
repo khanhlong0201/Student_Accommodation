@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,87 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> CreateRoomPrice(RequestModel model)
+        {
+            try
+            {
+                ResponseModel response = await _roompricesService.CreateRoomPricesAsync(model);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã thêm thông tin"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoomPricesController", "Create");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+        [HttpPost]
+        [Route("Update")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> UpdateRoomPrice(RequestModel model)
+        {
+            try
+            {
+                ResponseModel response = await _roompricesService.UpdateRoomPricesAsync(model);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Thêm thông tin"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoomPricesController", "Update");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+
+        [HttpPost]
+        [Route("Delete")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> DeleteRoomPrice(RequestModel model)
+        {
+            try
+            {
+                await _roompricesService.DeleteMulti(model);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoomPricesController", "DeleteRoomPrice");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
         }
     }
 }
