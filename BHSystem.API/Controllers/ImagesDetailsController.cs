@@ -46,7 +46,23 @@ namespace BHSystem.API.Controllers
                 _logger.LogError(ex, "imagesdetailsController", "Get");
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
+        }
 
+        [HttpGet]
+        [Route("GetImageDetailByImageIdAsync")]
+        //[Authorize] // khi nào gọi trên web tháo truyền token
+        public async Task<IActionResult> GetImageDetailByImageIdAsync(int imageId)
+        {
+            try
+            {
+                var data = await _imagesdetailsService.GetImageDetailByImageIdAsync(imageId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "imagesdetailsController", "GetImageDetailByImageIdAsync");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
         }
     }
 }

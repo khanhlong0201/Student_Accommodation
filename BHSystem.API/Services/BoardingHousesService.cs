@@ -23,10 +23,14 @@ namespace BHSystem.API.Services
     public class BoardingHousesService : IBoardingHousesService
     {
         private readonly IBoardingHousesRepository _boardinghousesRepository;
+        private readonly IImagesRepository _imageRepository;
+        private readonly IImagesDetailsRepository _imageDetailRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public BoardingHousesService(IBoardingHousesRepository boardinghousesRepository, IUnitOfWork unitOfWork)
+        public BoardingHousesService(IBoardingHousesRepository boardinghousesRepository, IImagesRepository imageRepository, IImagesDetailsRepository imageDetailRepository, IUnitOfWork unitOfWork)
         {
             _boardinghousesRepository = boardinghousesRepository;
+            _imageRepository = imageRepository;
+            _imageDetailRepository = imageDetailRepository;
             _unitOfWork = unitOfWork;
         }
         
@@ -34,6 +38,10 @@ namespace BHSystem.API.Services
         public async Task<ResponseModel> CreateBoardingHousesAsync(RequestModel model)
         {
             ResponseModel response = new ResponseModel();
+            Images images = new Images();
+            images.Type = "BHouse";
+            images.User_Create = model.UserId;
+            images.Date_Create = DateTime.Now;
             BoardingHouses boardingHouses = JsonConvert.DeserializeObject<BoardingHouses>(model.Json + "")!;
             if (await _boardinghousesRepository.CheckContainsAsync(m => m.Name == boardingHouses.Name))
             {
@@ -41,6 +49,27 @@ namespace BHSystem.API.Services
                 response.Message = "Tên trọ đã tồn tại";
                 return response;
             }
+
+            await _imageRepository.Add(images); // thêm hình ảnh
+            await _unitOfWork.CompleteAsync();
+            var imageMax = _imageRepository.GetMax(); // lấy giá trị lớn nhất trong bảng hình ảnh
+            int imageIdMax = imageMax.Result.Id;
+
+            var imageDetailMax = _imageDetailRepository.GetMax(); // lấy giá trị lớn nhất trong bảng hình ảnh
+            int imageDetailIdMax = imageDetailMax.Result.Id;
+
+            List<ImagesDetails> listImageDetail = JsonConvert.DeserializeObject<List<ImagesDetails>>(model.Json_Detail + "")!;
+            listImageDetail.ForEach(async (item) =>
+            {
+                item.Date_Create = DateTime.Now;
+                item.Image_Id = imageIdMax;
+                item.Id = ++imageDetailIdMax;
+                await _imageDetailRepository.Add(item);
+            });
+
+
+            
+            boardingHouses.Image_Id = imageIdMax;
             await _boardinghousesRepository.Add(boardingHouses);
             await _unitOfWork.CompleteAsync();
             response.StatusCode = 0;

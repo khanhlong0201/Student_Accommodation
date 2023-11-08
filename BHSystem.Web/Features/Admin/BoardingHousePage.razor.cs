@@ -22,7 +22,10 @@ namespace BHSystem.Web.Features.Admin
         public List<CityModel> ListCity { get; set; } = new List<CityModel>();
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
         public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
-        public List<ImagesDetailModel>? ListImageDetail { get; set; }
+
+        List<ImagesDetailModel> ListImageDetail = new List<ImagesDetailModel>();
+        
+
         public IEnumerable<BoardingHouseModel>? SelectedBoardingHouse { get; set; } = new List<BoardingHouseModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
         public BoardingHouseModel BoardingHouseUpdate { get; set; } = new BoardingHouseModel();
@@ -56,8 +59,21 @@ namespace BHSystem.Web.Features.Admin
         public EditContext? _EditContext { get; set; }
 
         public BHConfirm? _rDialogs { get; set; }
+        [CascadingParameter]
+        private int pUserId { get; set; } // giá trị từ MainLayout
 
         #region "Private Functions"
+        private async Task getImageDeteailByImageId(int imageId)
+        {
+            ListImageDetail = new List<ImagesDetailModel>();
+            Dictionary<string, object> pParams = new Dictionary<string, object>()
+            {
+                {"imageId", $"{imageId}"}
+            };
+            var resString = await _service!.GetData(EndpointConstants.URL_IMAGE_DETAIL_GET_BY_IMAGE_ID, pParams);
+            ListImageDetail = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resString);
+        }
+
         private async Task getDataBoardingHouse(bool isLoading = false)
         {
             ListBoardingHouse = new List<BoardingHouseModel>();
@@ -136,20 +152,47 @@ namespace BHSystem.Web.Features.Admin
         #endregion "Private Functions"
 
         #region "Protected Functions"
-        protected void OnRowDoubleClickHandler(GridRowClickEventArgs args) => OnOpenDialogHandler(EnumType.Update,args.Item as BoardingHouseModel);
-       
+        /// <summary>
+        ///longtran 20230301 EventCallback Chọn dòng trên lưới đối với thong so giam sat tinh trang
+        /// </summary>
+        /// <param name="item"></param>
+        public void ListImageDetailChanged(List<ImagesDetailModel> list)
+        {
+            try
+            {
+                if (list != null) ListImageDetail = list;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+        //protected async Task OnRowDoubleClickHandler(GridRowClickEventArgs args) => await OnOpenDialogHandler(EnumType.Update,args.Item as BoardingHouseModel);
+        protected async Task OnRowDoubleClickHandler(GridRowClickEventArgs args)
+        {
+            var boardingHouseModel = args.Item as BoardingHouseModel;
+            await OnOpenDialogHandler(EnumType.Update, boardingHouseModel);
+        }
+
         /// <summary>
         /// mở popup
         /// </summary>
-        protected void OnOpenDialogHandler(EnumType pAction = EnumType.Add,BoardingHouseModel ? pItemDetails = null)
+        protected async Task OnOpenDialogHandler(EnumType pAction = EnumType.Add,BoardingHouseModel ? pItemDetails = null)
         {
-            IsShowDialog = true;
             try
             {
                 if (pAction == EnumType.Add)
                 {
                     BoardingHouseUpdate = new BoardingHouseModel();
+                    _EditContext = new EditContext(BoardingHouseUpdate);
                     IsUpate = false;
+                    selectCity = -1;
+                    selectDistinct = -1;
+                    SelectWard = -1;
+                    ListImageDetail = new List<ImagesDetailModel>();
                 }
                 else
                 {
@@ -163,10 +206,15 @@ namespace BHSystem.Web.Features.Admin
                     BoardingHouseUpdate.Ward_Id = pItemDetails!.Ward_Id;
                     BoardingHouseUpdate.Adddress = pItemDetails!.Adddress;
                     BoardingHouseUpdate.Image_Id = pItemDetails!.Image_Id;
+                    _EditContext = new EditContext(BoardingHouseUpdate);
                     IsUpate = true;
+                    await  getImageDeteailByImageId(pItemDetails.Image_Id);
+                    
+
                 }
+                
                 IsShowDialog = true;
-                _EditContext = new EditContext(BoardingHouseUpdate);
+  
             }
             catch (Exception ex)
             {
@@ -231,11 +279,11 @@ namespace BHSystem.Web.Features.Admin
                 {
                     await showLoading();
                     BoardingHouseUpdate.Ward_Id = SelectWard;
-                    BoardingHouseUpdate.User_Id = 4;
-                    BoardingHouseUpdate.Image_Id = 1;
+                    BoardingHouseUpdate.User_Id = pUserId;
                     RequestModel request = new RequestModel()
                     {
-                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
+                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate),
+                        Json_Detail = JsonConvert.SerializeObject(ListImageDetail)
                     };
                     var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_CREATE, request);
                     var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);
@@ -253,7 +301,8 @@ namespace BHSystem.Web.Features.Admin
                     BoardingHouseUpdate.Ward_Id = SelectWard;
                     RequestModel request = new RequestModel()
                     {
-                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate)
+                        Json = JsonConvert.SerializeObject(BoardingHouseUpdate),
+                        Json_Detail = JsonConvert.SerializeObject(ListImageDetail)
                     };
                     var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_BOARDINGHOUSE_UPDATE, request);
                     var response = JsonConvert.DeserializeObject<ResponseModel<BoardingHouseModel>>(resString);

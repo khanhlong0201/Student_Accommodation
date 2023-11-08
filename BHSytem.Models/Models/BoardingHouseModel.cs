@@ -13,5 +13,8 @@ namespace BHSytem.Models.Models
         public string Distinct_Name { get; set; }
         public string City_Name { get; set; }
         public string Image_Name { get; set; }
+
+        public List<ImagesDetailModel> ImageDetail = new List<ImagesDetailModel>();
+        public string File_Path { get; set; }
     }
 }

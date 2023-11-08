@@ -61,7 +61,7 @@ namespace BHSystem.API.Controllers
                 return Ok(new
                 {
                     StatusCode = 200,
-                    Message = "Thêm thông tin"
+                    Message = "Đã thêm thông tin"
                 });
             }
             catch (Exception ex)

@@ -14,6 +14,7 @@ namespace BHSystem.API.Infrastructure
         Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate);
         Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression);
         Task<bool> DeleteMulti(IEnumerable<T> objects);
+        Task<T?> GetMax();
 
     }    
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -29,6 +30,12 @@ namespace BHSystem.API.Infrastructure
         public async Task<IEnumerable<T>> GetAll() => await _dbSet.ToListAsync();
 
         public async Task<T?> GetById(int id) => await _dbSet.FindAsync(id);
+
+        public async Task<T?> GetMax()
+        {
+            var max = await _dbSet.MaxAsync();
+            return max ?? null;
+        }
 
         public async Task<bool> Add(T entity)
         {

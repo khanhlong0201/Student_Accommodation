@@ -11,6 +11,7 @@ namespace BHSytem.Models.Models
         public int UserId { get; set; }
         public string? Json { get; set; }
         public string? Type { get; set; }
+        public string? Json_Detail { get; set; }
     }
     public class ResponseModel
     {

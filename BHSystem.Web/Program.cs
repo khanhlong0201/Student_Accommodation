@@ -18,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor(options =>
 {
-    options.DetailedErrors = false;
+    options.DetailedErrors = true;
     options.DisconnectedCircuitMaxRetained = 100;
     options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(240);
     options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(10);

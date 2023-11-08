@@ -1,9 +1,9 @@
 ﻿@page "/admin/boardinghouse"
 
 <TelerikToolBar Class="border-bottom-0">
-    <ToolBarButton IconClass="fa-solid fa-repeat" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-plus" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 <div class="bh-table-content" style=" height: calc(100vh - 250px);">
     <TelerikGrid Data="@ListBoardingHouse"
@@ -32,7 +32,7 @@
                 <Template>
                     @{
                         var model = (context as BoardingHouseModel);
-                        <span class="h-link">@model!.Id</span>
+                            <span class="h-link">@model!.Id</span>
                     }
                 </Template>
                 <FooterTemplate>
@@ -45,6 +45,13 @@
             <GridColumn Field=@nameof(BoardingHouseModel.Ward_Name) Width="140px" Title="Xã phường"></GridColumn>
             <GridColumn Field=@nameof(BoardingHouseModel.Distinct_Name) Width="140px" Title="Huyện quận"></GridColumn>
             <GridColumn Field=@nameof(BoardingHouseModel.City_Name) Width="140px" Title="Tỉnh thành"></GridColumn>
+            <GridColumn Field=@nameof(BoardingHouseModel.IsDeleted) Width="140px" Title="Đã xóa">
+                <Template>
+                    <BHUploadFileImage ImageUrl="@((context as BoardingHouseModel).File_Path)" Accept="image/*" 
+                            CssIcon="w1FileCss" ></BHUploadFileImage>
+                </Template>
+            </GridColumn>
+            BHUploadFileImage
            @* <GridColumn Field=@nameof(BoardingHouseModel.IsDeleted) Width="140px" Title="Đã xóa">
                 <Template>
                     @{
@@ -62,7 +69,7 @@
 
 <BHDialog @bind-IsVisible="@IsShowDialog"
     SaveAndClosed="@(()=> SaveDataHandler())"
-    Title="Thêm mới trọ">
+    Title="@(IsUpate ? "Cập nhật thông tin trọ" : "Thêm trọ mới")">
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
         <div>
@@ -98,7 +105,7 @@
                  AutoSize="true"  />
         </div>
         <div>
-         <BHListImage ListSelectReturn="@ListImageDetail" SubFolder="BHouse"/>
+         <BHListImage @bind-ListSelectReturn="@ListImageDetail" IsUploadFileCalled="@IsUpate"SubFolder="BHouse"/>
        </div>
     </EditForm>
     
