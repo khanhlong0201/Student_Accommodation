@@ -1,6 +1,7 @@
 ﻿@page "/admin/boarding-house"
 
 <TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> CreateRoomHandler())">Thêm Phòng</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>

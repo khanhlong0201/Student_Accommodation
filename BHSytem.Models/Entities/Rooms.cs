@@ -22,6 +22,8 @@ namespace BHSytem.Models.Entities
         public decimal Width { get; set; }
         public decimal Price { get; set; }
         public int Image_Id { get; set; }
+        [MaxLength(int.MaxValue)]
+        public string? Description { get; set; }
         public Images Images { get; set; }
         public BoardingHouses BoardingHouses { get; set; }
         public virtual ICollection<RoomPrices> RoomPrices { get; set; }

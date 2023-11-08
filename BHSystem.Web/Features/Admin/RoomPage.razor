@@ -1,0 +1,145 @@
+﻿@page "/admin/boarding-house/room"
+@using Telerik.Blazor.Components;
+@using Telerik.Blazor.Components.Editor;
+
+<TelerikToolBar Class="border-bottom-0">
+    <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    @*<ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>*@
+</TelerikToolBar>
+
+<div class="bh-table-content" style=" height: calc(100vh - 150px);">
+    <TelerikGrid Data="@ListRooms"
+                 Height="100%"
+                 Width="100%"
+                 RowHeight="25"
+                 Pageable="true"
+                 PageSize="50"
+                 Sortable="true"
+                 Resizable="true"
+                 FilterMode="@GridFilterMode.FilterMenu"
+                 SelectionMode="@GridSelectionMode.Multiple"
+                 ScrollMode="@GridScrollMode.Scrollable"
+                 @bind-SelectedItems="@SelectedRooms">
+        <GridSettings>
+            <GridPagerSettings InputType="PagerInputType.Input" />
+        </GridSettings>
+        <GridAggregates>
+            <GridAggregate Field=@nameof(RoomModel.Id) Aggregate="@GridAggregateType.Count" />
+        </GridAggregates>
+        <GridColumns>
+            <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
+            <GridColumn Field=@nameof(RoomModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã phòng">
+                <Template>
+                    @{
+                        var model = (context as RoomModel);
+                        <span class="h-link">@model!.Id</span>
+                    }
+                </Template>
+                <FooterTemplate>
+                    Số dòng: @context.Count
+                </FooterTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Name) Width="140px" Title="Tên phòng"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Length) DisplayFormat="@DefaultConstants.FORMAT_GRID_CURRENCY" Width="120px" Title="Chiều dài"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Width) DisplayFormat="@DefaultConstants.FORMAT_GRID_CURRENCY" Width="120px" Title="Chiều rộng"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Status) Width="140px" Title="Tình trạng"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.UserName) Width="140px" Title="Người quản lý"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.BHouseName) Width="170px" Title="Tên phòng trọ"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Phone) Width="140px" Title="Số điện thoại"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Address) Width="160px" Title="Địa chỉ (Chỉ dẫn)"></GridColumn>
+            
+            <GridColumn Field=@nameof(RoomModel.IsDeleted) Width="140px" Title="Đã xóa">
+                <Template>
+                    @{
+                        var model = (context as RoomModel);
+                        <TelerikCheckBox @bind-Value="@model!.IsDeleted" Enabled="false" />
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(RoomModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="130px" Title="Ngày cập nhật"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    Width="80%"
+    Title="@(IsCreate ? "Thêm mới phòng" : "Cập nhật phòng")">
+    <EditForm EditContext="@_EditContext">
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Tên phòng:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@RoomUpdate!.Name" Class="bh-link" Id="txtRoomName" />
+            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Name)" Id="txtRoomName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Địa chỉ (hướng dẫn):" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@RoomUpdate!.Address" Class="bh-link" Id="txtAdddress" />
+            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Address)" Id="txtAdddress" />
+        </div>
+        <div class="mt-2">
+            <div class="row">
+                <div class="col-lg-4 col-sm-12">
+                    <BHLabel Value="Đơn giá:" IsRequired="true" />
+                    <TelerikNumericTextBox 
+                        Format="@DefaultConstants.FORMAT_CURRENCY" 
+                        Min="0"
+                        @bind-Value="@RoomUpdate.Price" 
+                        Id="numPrice" />
+                    <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Price)" Id="numPrice" />
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <BHLabel Value="Chiều dài:" IsRequired="true" />
+                    <TelerikNumericTextBox 
+                        Format="@DefaultConstants.FORMAT_CURRENCY" 
+                        Min="1"
+                        @bind-Value="@RoomUpdate.Length"
+                                           Id="numLength" />
+                    <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Length)" Id="numLength" />
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <BHLabel Value="Chiều rộng:" IsRequired="true" />
+                    <TelerikNumericTextBox 
+                        Format="@DefaultConstants.FORMAT_CURRENCY" 
+                        Min="1"
+                        @bind-Value="@RoomUpdate.Width" 
+                        Id="numWidth" />
+                    <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Width)" Id="numWidth" />
+                </div>
+            </div>
+            
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Chọn hình ảnh:" IsRequired="true" />
+            <InputFile id="ref-upload" multiple OnChange="@OnLoadFileHandler" accept="image/*" />
+        </div>
+
+        @if (ListImages != null && ListImages.Any())
+        {
+            <div class="mt-2" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                @foreach (var item in ListImages)
+                {
+                    <div>
+                        <img class="img-thumbnail" src="@item.ImageUrl" style="width: 300px; height: 300px; object-fit: cover; border-radius: 3px;" />
+                    </div>
+                }
+            </div>
+        }
+        <div class="mt-2">
+            <BHLabel Value="Điền thông tin mô tả:" IsRequired="true" />
+            <TelerikEditor @bind-Value="@RoomUpdate.Description"
+                           Tools="@EditorToolSets.All"
+                           Id="txtDescription"
+                           Height="500px">
+            </TelerikEditor>
+            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Width)" Id="txtDescription" />
+        </div>
+
+    </EditForm>
+
+</BHDialog>
+
+<BHConfirm @ref="@_rDialogs" />

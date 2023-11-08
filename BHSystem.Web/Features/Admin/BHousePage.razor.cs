@@ -1,6 +1,7 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Controls;
 using BHSystem.Web.Core;
+using BHSystem.Web.Providers;
 using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
@@ -21,6 +22,7 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] private IConfiguration? _configuration { get; set; }
+        [Inject] NavigationManager? _navigationManager { get; set; }
         public List<BHouseModel>? ListBHouses { get; set; }
         public IEnumerable<BHouseModel>? SelectedBHouses { get; set; } = new List<BHouseModel>();
         public BHouseModel BHouseUpdate { get; set; } = new BHouseModel();
@@ -413,6 +415,39 @@ namespace BHSystem.Web.Features.Admin
                     await showLoading(false);
                     await InvokeAsync(StateHasChanged);
                 }
+            }
+        }
+
+        /// <summary>
+        /// mở trang tạo mới phòng theo trọ
+        /// </summary>
+        protected void CreateRoomHandler()
+        {
+            try
+            {
+                // local function
+                if (SelectedBHouses == null || !SelectedBHouses.Any())
+                {
+                    _toastService!.ShowWarning("Vui lòng chọn trọ cần thêm phòng.");
+                    return;
+                }
+                if (SelectedBHouses.Count() > 1)
+                {
+                    _toastService!.ShowWarning("Chỉ được phép chọn một phòng trọ.");
+                    return;
+                }
+                var data = SelectedBHouses.First();
+                Dictionary<string, string> pParams = new Dictionary<string, string>
+                {
+                    { "BHouseID", $"{data.Id}" },
+                };
+                string key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key
+                _navigationManager!.NavigateTo($"/admin/boarding-house/room?key={key}");
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "CreateRoomHandler");
+                _toastService!.ShowError(ex.Message);
             }
         }
         #endregion
