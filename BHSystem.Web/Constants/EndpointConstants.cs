@@ -34,5 +34,15 @@
 
         public const string URL_IMAGE_DETAIL_GET_BY_IMAGE_ID = "ImagesDetails/GetImageDetailByImageIdAsync";
         public const string URL_IMAGE_DETAIL_DELTETE = "ImagesDetails/Delete";
+
+        public const string URL_ROOMPRICE_CREATE = "RoomPrices/Create";
+        public const string URL_ROOMPRICE_GETALL = "RoomPrices/GetAll";
+        public const string URL_ROOMPRICE_UPDATE = "RoomPrices/Update";
+        public const string URL_ROOMPRICE_DELETE = "RoomPrices/Delete";
+
+        public const string URL_ROOM_CREATE = "Rooms/Create";
+        public const string URL_ROOM_GETALL = "Rooms/GetAll";
+        public const string URL_ROOM_UPDATE = "Rooms/Update";
+        public const string URL_ROOM_DELETE = "Rooms/Delete";
     }
 }
