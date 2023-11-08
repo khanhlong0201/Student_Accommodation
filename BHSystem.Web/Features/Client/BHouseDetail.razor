@@ -1,0 +1,180 @@
+﻿@layout ClientLayout
+@page "/chi-tiet"
+
+<!-- Search -->
+<div id="bh-search">
+    <section class="header-wrapper">
+        <div class="filter-box ">
+            <div class="banner__search-info">
+                <div class="row align-items-end">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Khu vực</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Class="bh-combo"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Mức giá</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Diện tích</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter" FillMode="@(ThemeConstants.Button.FillMode.Outline)" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Đặt lại</TelerikButton>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+<!-- Search -->
+<div id="h-service">
+    <div className="h-wrapper">
+        <section className="h-service">
+            <div class="row">
+                <div class="col-lg-9 col-md-8 col-sm-12">
+                    <div class="bh-carausel">
+                        <TelerikCarousel Arrows="@true"
+                                         Pageable="@true"
+                                         LoopPages="@true"
+                                         @bind-Page="@PageIndex"
+                                         AutomaticPageChange="@true"
+                                         Data="@CarouselData"
+                                         Width="100%" Height="384px">
+                            <Template>
+                                <img src="@(context.Url)" alt="Photograph" width="512" height="384" style="width: 100%" />
+                            </Template>
+                        </TelerikCarousel>
+                    </div>
+                    <div style="margin-top: 24px">
+                        <span>Cho thuê/Hồ Chí Minh/Quận 9/Nhà trọ, phòng trọ tại đường Lò Lu</span>
+                        <p class="bh-detail-title">Nhà trọ sạch sẽ - hệ thống phòng trọ gần khu công nghệ cao</p>
+                        <span class="bh-detail-address">Đường Lò Lu, Phường Trường Thạnh, Quận 9, Hồ Chí Minh</span>
+                    </div>
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between align-items-center bh-detail-info">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p>Mức giá</p>
+                                    <p>2 Triệu/tháng</p>
+                                </div>
+                                <div style="margin-left: 30px">
+                                    <p>Diện tích</p>
+                                    <p>36 m²</p>
+                                </div>
+                            </div>
+                            <div class="bh-detail-info__icon">
+                                <i class="fa-regular fa-heart" title="Tim"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bh-detail-desc">
+                        <p class="bh-detail-title bh-detail-desc__title">Thông tin mô tả</p>
+
+                        Nhà trọ sạch sẽ, luôn sạch sẽ, luôn gọn gàng.
+                        <br />
+                        <br />
+                        - Phòng có diện tích từ 17m² - 36m².
+                        <br />
+                        - Vị trí thuận tiện di chuyển khu công nghệ cao, trường Hutech, Nguyễn Tất Thành, Tài chính Marketing.
+                        <br />
+                        - Có nhà vệ sinh riêng.
+                        <br />
+                        - Có máy lọc nước uống miễn phí.
+                        <br />
+                        - Máy giặt chung giá siêu rẻ.
+                        <br />
+                        - Nhà xe rộng rãi, không gian thông thoáng.
+                        <br />
+
+                        <br />
+                        <br />
+                        Với lòng liên hệ qua Hotline: 1900 5049 hoặc Zalo: 0827 372 737 để xem phòng trực tiếp.
+
+                    </div>
+                    <div class="mt-4">
+                        <p class="bh-detail-title bh-detail-desc__title">Xem trên bản đồ</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-12">
+                    <TelerikCard Width="100%">
+                        <CardBody Class="bh-detail-contact">
+                            <div class="bh-detail-header">
+                                <img class="bh-detail-contact__avt" src="https://cdn-icons-png.flaticon.com/128/2102/2102633.png" alt="">
+                                <span class="bh-detail-contact__name">Được đăng bởi</span>
+                                <p class="bh-detail-contact__name contact-fullname">Nhà Trọ sạch sẽ</p>
+                            </div>
+                            <div class="mt-2 bh-btn-fullsize">
+                                <TelerikButton Class="bh-btn-search btn-contact mb-1"
+                                    FillMode="@(ThemeConstants.Button.FillMode.Outline)"
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@OpenPopupBookingHandler">Đăng kí đặt phòng</TelerikButton>
+
+                                <TelerikButton Class="bh-btn-search btn-contact bh-img-icon mb-1 mt-3"
+                                               FillMode="@(ThemeConstants.Button.FillMode.Outline)"
+                                               ImageUrl="./images/zalo.png"
+                                               
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Chat qua Zalo</TelerikButton>
+
+                                <TelerikButton Class="bh-btn-search btn-contact mb-1 mt-3"
+                                               FillMode="@(ThemeConstants.Button.FillMode.Outline)" IconClass="fa-brands fa-whatsapp"
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Liên hệ: 0357866848</TelerikButton>
+                            </div>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <div class="d-flex align-items-center">
+                                <img src="https://cdn-icons-png.flaticon.com/128/1041/1041891.png" style="width: 25px" />
+                                <h1 class="bh-h1" style="margin-left: 15px">Lưu ý</h1>
+                            </div>
+                            <span class="bh-font-size">Không nên đặt cọc, giao dịch trước khi xem nhà và xác minh thông tin của người cho thuê.</span>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Bài viết mới</h1>
+                        </CardBody>
+                    </TelerikCard>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+
+<BHDialog @bind-IsVisible="@IsShowDialog"
+    Width="40%"
+    TitleBtnSaveAndClosed="Đăng kí"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    Title="Đặt phòng">
+    <EditForm EditContext="@_EditContext">
+        <DataAnnotationsValidator />
+        <div>
+            <BHLabel Value="Họ & Tên:" IsRequired="true" />
+            <TelerikTextBox Id="txtContactName" @bind-Value="@BookingUpdate!.FullName" Class="bh-link"></TelerikTextBox>
+            <BHValidationTooltip ValidationFor="@(()=> BookingUpdate.FullName)" Id="txtContactName" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Số điện thoại:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@BookingUpdate!.Phone" Id="txtContactPhone" />
+            <BHValidationTooltip ValidationFor="@(()=> BookingUpdate.Phone)" Id="txtContactPhone" />
+        </div>
+    </EditForm>
+</BHDialog>

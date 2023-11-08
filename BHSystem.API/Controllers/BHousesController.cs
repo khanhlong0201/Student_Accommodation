@@ -1,36 +1,25 @@
-﻿using BHSystem.API.Common;
-using BHSystem.API.Infrastructure;
-using BHSystem.API.Services;
-using BHSytem.Models;
+﻿using BHSystem.API.Services;
 using BHSytem.Models.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace BHSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookingsController : ControllerBase
+    public class BHousesController : ControllerBase
     {
-        private readonly ILogger<BookingsController> _logger;
-        private readonly IBookingsService _bookingsService;
-        private readonly IConfiguration _configuration;
-        public BookingsController(ILogger<BookingsController> logger, IBookingsService bookingsService, IConfiguration configuration)
+        private readonly ILogger<BoardingHousesController> _logger;
+        private readonly IBoardingHousesService _boardinghousesService;
+        public BHousesController(ILogger<BoardingHousesController> logger, IBoardingHousesService boardinghousesService)
         {
             _logger = logger;
-            _configuration = configuration;
-            _bookingsService = bookingsService;
+            _boardinghousesService = boardinghousesService;
         }
 
         /// <summary>
-        /// lấy danh sách đặt phòng
+        /// lấy danh sách trọ
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -39,24 +28,23 @@ namespace BHSystem.API.Controllers
         {
             try
             {
-                var data = await _bookingsService.GetDataAsync();
+                var data = await _boardinghousesService.GetDataAsync();
                 return Ok(data);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "_bookingsController", "Get");
+                _logger.LogError(ex, "_boardinghousesController", "Get");
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
-
         }
 
         [HttpPost]
-        [Route("Update")]
-        public async Task<IActionResult> CreateTicket(RequestModel user)
+        [Route("Create")]
+        public async Task<IActionResult> CreateBoardingHouse(RequestModel model)
         {
             try
             {
-                ResponseModel response = await _bookingsService.UpdateUserAsync(user);
+                ResponseModel response = await _boardinghousesService.CreateBoardingHousesAsync(model);
                 if (response.StatusCode != 0) return BadRequest(response);
                 return Ok(new
                 {
@@ -66,7 +54,7 @@ namespace BHSystem.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "BookingsController", "CreateTicket");
+                _logger.LogError(ex, "BoardingHouseController", "Create");
                 return StatusCode(StatusCodes.Status400BadRequest, new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,

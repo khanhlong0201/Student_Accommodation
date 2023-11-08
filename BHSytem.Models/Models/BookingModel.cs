@@ -4,7 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using BHSytem.Models.Entities;
 namespace BHSytem.Models.Models
 {
-    public class BookingModel : Bookings
+    public class BookingModel
     {
+        [Required(ErrorMessage = "Vui lòng điền Họ & tên")]
+        public string? FullName { get; set; }
+        [Required(ErrorMessage = "Vui lòng điền Số điện thoại")]
+        public string? Phone { get; set; }
+        public int Room_Id { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -30,6 +30,8 @@
         public const string URL_MENU_GET_MENU_ROLE = "Menus/GetMenuByRole";
         public const string URL_MENU_GET_BY_USER = "Menus/GetMenuByUser";
 
+        public const string URL_BOOKING_UPDATE = "Bookings/Update";
+
         public const string URL_IMAGE_DETAIL_GET_BY_IMAGE_ID = "ImagesDetails/GetImageDetailByImageIdAsync";
     }
 }

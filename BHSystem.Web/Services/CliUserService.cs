@@ -29,8 +29,8 @@ namespace BHSystem.Web.Services
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         public CliUserService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
             , ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider
-            , BHDialogService bhDialogService)
-            : base(factory, logger, toastService, localStorage, bhDialogService)
+            , BHDialogService bhDialogService, IWebHostEnvironment webHostEnvironment)
+            : base(factory, logger, toastService, localStorage, bhDialogService, webHostEnvironment)
         {
             _authenticationStateProvider = authenticationStateProvider;
         }

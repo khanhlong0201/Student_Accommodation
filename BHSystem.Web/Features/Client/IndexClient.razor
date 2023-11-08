@@ -2,6 +2,224 @@
 @page "/"
 @page "/trang-chu"
 
-<div>
-    
+<!-- Search -->
+<div id="bh-search">
+    <section class="header-wrapper">
+        <div class="filter-box ">
+            <div class="banner__search-info">
+                <div class="row align-items-end">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Khu vực</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Class="bh-combo"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Mức giá</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <label for="mail" class="k-label k-form-label">Diện tích</label>
+                        <TelerikComboBox @bind-Value="@binding"
+                                         Data="@ListData"
+                                         Placeholder="Chọn khu vực"
+                                         Filterable="true"
+                                         Width="100%">
+                        </TelerikComboBox>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter" FillMode="@(ThemeConstants.Button.FillMode.Outline)" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Đặt lại</TelerikButton>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 </div>
+<!-- Search -->
+<!-- Boarding House -->
+<div id="h-service">
+    <div className="h-wrapper">
+        <section className="h-service">
+            <div class="row">
+                <div class="col-lg-9 col-md-8 col-sm-12">
+                    <ItemBHouseHorizontal Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                          Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                          Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                          Contact="0357866848" />
+                    <ItemBHouseHorizontal Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                          Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                          Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                          Contact="0357866848" />
+                    <ItemBHouseHorizontal Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                          Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                          Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                          Contact="0357866848" />
+
+                    <div>
+                        <ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                            Contact="0357866848" />
+                        <ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                            Contact="0357866848" />
+                        <ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
+                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
+                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
+                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
+                                            Contact="0357866848" />
+                    </div>
+
+                    <nav aria-label="Page navigation" class="bh-pagination" style="margin-top: 10px">
+                        <ul class="pagination d-flex justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-12">
+                    <TelerikCard Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Xem theo giá</h1>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Dưới 1 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Từ 1 - 2 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Từ 3 - 5 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Từ 5 - 7 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Từ 7 - 10 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Từ 10 - 15 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Tên 15 triệu</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                            </div>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Lọc theo diện tích</h1>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Dưới 20 m²</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">20 -30 m²</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">30 -40 m²</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">40 -50 m²</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                    <span class="bh-link-hover bh-font-size">Trên 50 m²</span>
+                                    <CardSeparator></CardSeparator>
+                                </div>
+                            </div>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Tin mới đăng</h1>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Bài viết mới</h1>
+                        </CardBody>
+                    </TelerikCard>
+                    <TelerikCard Class="mt-4" Width="100%">
+                        <CardBody>
+                            <h1 class="bh-h1">Có thể bạn quan tâm</h1>
+                            <div class="col-sm-12 mt-1">
+                                <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                <span class="bh-link-hover bh-font-size">Mẫu hợp đồng cho thuê phòng trọ</span>
+                                <CardSeparator></CardSeparator>
+                            </div>
+                            <div class="col-sm-12 mt-2">
+                                <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                <span class="bh-link-hover bh-font-size">Kinh nghiệm thuê phòng trọ sinh viên</span>
+                                <CardSeparator></CardSeparator>
+                            </div>
+                            <div class="col-sm-12 mt-2">
+                                <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                <span class="bh-link-hover bh-font-size">Kinh nghiệm thuê phòng trọ sinh viên</span>
+                                <CardSeparator></CardSeparator>
+                            </div>
+                            <div class="col-sm-12 mt-2">
+                                <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                <span class="bh-link-hover bh-font-size">Kinh nghiệm thuê phòng trọ sinh viên</span>
+                                <CardSeparator></CardSeparator>
+                            </div>
+                        </CardBody>
+                    </TelerikCard>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Boarding House -->

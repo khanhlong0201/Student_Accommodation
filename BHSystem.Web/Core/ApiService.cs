@@ -3,7 +3,11 @@ using BHSytem.Models.Models;
 using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -21,6 +25,7 @@ namespace BHSystem.Web.Core
         Task<string> AddOrUpdateData(string link, object? objData = null, bool isAuth = false);
 
         Task<string> DeleteData(string link, params object[] objRequestModel);
+        Task<string> UploadMultiFiles(string link, List<IBrowserFile> lstIBrowserFiles);
     }
 
     public class ApiService : IApiService
@@ -33,11 +38,12 @@ namespace BHSystem.Web.Core
         public readonly IToastService _toastService;
         private readonly BHDialogService _bhDialogService;
         public readonly ILocalStorageService _localStorage;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         long maxFileSize = 134217728;
         #endregion "Properties"
 
         public ApiService(IHttpClientFactory factory, ILogger<ApiService> logger, IToastService toastService
-            , ILocalStorageService localStorage, BHDialogService bhDialogService)
+            , ILocalStorageService localStorage, BHDialogService bhDialogService, IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
             _factory = factory;
@@ -45,6 +51,7 @@ namespace BHSystem.Web.Core
             _toastService = toastService;
             _bhDialogService = bhDialogService;
             _localStorage = localStorage;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -257,6 +264,65 @@ namespace BHSystem.Web.Core
             // lấy ra token -> add vào Header Authorization Bearer Token
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+        }
+
+        /// <summary>
+        /// upload multifile
+        /// </summary>
+        /// <param name="link"></param>
+        /// <param name="lstIBrowserFiles"></param>
+        /// <returns></returns>
+        public async Task<string> UploadMultiFiles(string link, List<IBrowserFile> lstIBrowserFiles)
+        {
+            List<string> listFilePath = new List<string>();
+            try
+            {
+                Console.WriteLine(System.Net.ServicePointManager.DefaultConnectionLimit);
+                _httpClient.DefaultRequestHeaders.Accept.Clear();
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                using var content = new MultipartFormDataContent();
+                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                var rootFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Upload", "TEMP");
+                //tạo thư mục
+                if (!Directory.Exists(rootFolder)) Directory.CreateDirectory(rootFolder);
+                string strFileFullName = string.Empty;
+                foreach (var file in lstIBrowserFiles)
+                {
+                    string fileNameNew = $"{Guid.NewGuid()}---{file.Name}";
+                    strFileFullName = Path.Combine(rootFolder, fileNameNew);
+                    await using FileStream fs = new(strFileFullName, FileMode.Create);
+                    await file.OpenReadStream(long.MaxValue).CopyToAsync(fs); // lưu vào www tạm để đọc file
+                    listFilePath.Add(strFileFullName); // khi lưu vào www ok -> lưu vào list tạm để finally -> remove ra
+                    await fs.FlushAsync();
+                    await fs.DisposeAsync();
+                    content.Add(new StreamContent(File.OpenRead(@$"{strFileFullName}")), name: "\"files\"", fileName: fileNameNew);
+                }
+
+                string sUrl = $"api/{link}";
+                HttpResponseMessage httpResponse = await _httpClient.PostAsync(sUrl, content);
+                var resContent = await httpResponse.Content.ReadAsStringAsync();
+                if (httpResponse.IsSuccessStatusCode) return resContent; // nếu APi trả về OK 200
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    _bhDialogService.ShowDialog();
+                    _toastService.ShowInfo("Hết phiên đăng nhập!");
+                    return "";
+                }
+                var oMessage = JsonConvert.DeserializeObject<ResponseModel>(resContent); // mã lỗi dưới API
+                _toastService.ShowError($"{oMessage?.Message}");
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UploadMultiFiles");
+                _toastService.ShowError(ex.Message);
+                return "";
+            }
+            finally
+            {
+                // xóa các ảnh được lưu vào folder tạm
+                listFilePath.ForEach(item => { if (File.Exists(@$"{item}")) File.Delete(item); });
+            }
         }
     }
 }
