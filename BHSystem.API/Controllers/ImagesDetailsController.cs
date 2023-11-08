@@ -64,5 +64,39 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
         }
+
+        [HttpDelete]
+        [Route("Delete")]
+        //[Authorize] khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            try
+            {
+                var check = await _imagesdetailsService.DeleteById(id);
+                if (!check)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        Message = "Không xóa được"
+                    });
+                }
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "imagesdetailsController", "DeleteBoardingHouse");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
     }
 }

@@ -53,10 +53,10 @@ namespace BHSystem.API.Services
             await _imageRepository.Add(images); // thêm hình ảnh
             await _unitOfWork.CompleteAsync();
             var imageMax = _imageRepository.GetMax(); // lấy giá trị lớn nhất trong bảng hình ảnh
-            int imageIdMax = imageMax.Result.Id;
+            int imageIdMax = (imageMax == null && imageMax.Result == null)? 1: imageMax.Result.Id;
 
             var imageDetailMax = _imageDetailRepository.GetMax(); // lấy giá trị lớn nhất trong bảng hình ảnh
-            int imageDetailIdMax = imageDetailMax.Result.Id;
+            int imageDetailIdMax = (imageDetailMax == null && imageDetailMax.Result ==null) ? 1:imageDetailMax.Result.Id;
 
             List<ImagesDetails> listImageDetail = JsonConvert.DeserializeObject<List<ImagesDetails>>(model.Json_Detail + "")!;
             listImageDetail.ForEach(async (item) =>
@@ -77,6 +77,9 @@ namespace BHSystem.API.Services
             return response;
         }
 
+
+
+
         public async Task<ResponseModel> UpdateBoardingHousesAsync(RequestModel model)
         {
             ResponseModel response = new ResponseModel();
@@ -88,6 +91,19 @@ namespace BHSystem.API.Services
                 response.Message = "Không tìm thấy dữ liệu";
                 return response;
             }
+            _imageDetailRepository.DeleteImageDetailByImageIdAsync(boardingHouses.Image_Id); // lấy giá trị lớn nhất trong bảng hình ảnh
+
+            var imageDetailMax = _imageDetailRepository.GetMax(); // lấy giá trị lớn nhất trong bảng hình ảnh
+            int imageDetailIdMax = imageDetailMax.Result.Id;
+
+            List<ImagesDetails> listImageDetail = JsonConvert.DeserializeObject<List<ImagesDetails>>(model.Json_Detail + "")!;
+            listImageDetail.ForEach(async (item) =>
+            {
+                item.Date_Create = DateTime.Now;
+                item.Image_Id = boardingHouses.Image_Id;
+                item.Id = ++imageDetailIdMax;
+                await _imageDetailRepository.Add(item);
+            });
             boardingHousesEntity.Qty = boardingHouses.Qty;
             boardingHousesEntity.Adddress = boardingHouses.Adddress;
             boardingHousesEntity.Name = boardingHouses.Name;

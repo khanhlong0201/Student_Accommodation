@@ -52,7 +52,7 @@
 <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
     @foreach (var item in listSelect)
     {
-        if(IsUploadFileCalled){
+        if(isUploadFileCalled || IsUpdate){
          <img src="../../images/delete-red.png" width="11" height="11" alt="Xóa hình"
                              title="xóa hình" class="btn_delete_grid" style="z-index: 1000;cursor: pointer;" @onclick="() => deleteImage(item)"/> 
         }
@@ -63,6 +63,7 @@
 
 
 }
+<BHConfirm @ref="@_rDialogs" />
 @code {
 
     #region "Properties"
@@ -79,7 +80,7 @@
         set
         {
             if (listSelect != value) listSelect = value;
-            
+
         }
     }
     [Parameter]
@@ -91,6 +92,8 @@
     public List<IBrowserFile> ListBrowserFiles { get; set; } = new();   // Danh sách file lưu tạm => Upload file
 
     [Inject] IToastService toastService { get; set; }
+    [Inject]  IApiService? _service { get; set; }
+    private BHConfirm? _rDialogs { get; set; }
 
     [Parameter]
     public string SubFolder { get; set; } = "";
@@ -99,9 +102,12 @@
     public string Text { get; set; } = "Upload";
 
     public string linkFileName { get; set; } = "";
-    
+
     [Parameter]
-    public bool IsUploadFileCalled  { get; set; } = false;
+    public bool IsUpdate  { get; set; } = false;
+
+    private bool isUploadFileCalled  { get; set; } = false;
+    private bool confirm  { get; set; } = false;
     #endregion "Properties"
 
 
@@ -118,9 +124,17 @@
         item.File_Path = file;
     }
 
+
     //xóa trong thư mục
     async Task deleteImage(ImagesDetailModel item)
     {
+
+        if (IsUpdate)
+        {
+            await ConfirmDeleteHandler(item);
+            if (!confirm)
+                return;
+        }
 
         await Task.Delay(200); //
                                // Lấy đường dẫn thư mục gốc
@@ -139,6 +153,41 @@
         await Task.Delay(200); 
         StateHasChanged();
 
+    }
+
+    /// <summary>
+    /// conrfirm xóa 
+    /// </summary>
+    /// <returns></returns>
+    protected async Task ConfirmDeleteHandler(ImagesDetailModel item)
+    {
+           
+         confirm = await _rDialogs!.ConfirmAsync(" Bạn có chắc muốn xóa hình đang chọn? ");
+        if (confirm)
+        {
+            try
+            {
+                await showLoading();
+                 var objKeywords = new object[]
+                   {
+                        "id", item.Id
+                   };
+                var resString = await _service.DeleteData(EndpointConstants.URL_IMAGE_DETAIL_DELTETE, objKeywords);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    toastService!.ShowSuccess($"Đã xóa hình ảnh.");
+                }
+            }
+            catch (Exception ex)
+            {
+                toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await InvokeAsync(StateHasChanged);
+                await showLoading(false);
+            }
+        }
     }
 
     async Task OnAddLine()
@@ -191,7 +240,7 @@
                 }
                 ListSelectReturnChanged.InvokeAsync(listSelect);
             }
-            IsUploadFileCalled = false;
+            isUploadFileCalled = false;
             await InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
@@ -205,7 +254,7 @@
     {
         try
         {
-            if (IsUploadFileCalled)
+            if (isUploadFileCalled)
             {
                 // Hàm đã được gọi rồi, không cần gọi lại
                 toastService.ShowWarning("Danh sách hình đã tồn tại!");
@@ -233,7 +282,7 @@
                 listSelect[i].File_Path = linkFileName;
             }
             toastService.ShowSuccess("Đã upload hình");
-            IsUploadFileCalled = true;
+            isUploadFileCalled = true;
 
         }
         catch (Exception ex)
