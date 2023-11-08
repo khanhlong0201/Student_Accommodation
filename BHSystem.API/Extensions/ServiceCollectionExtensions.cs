@@ -24,6 +24,7 @@ namespace BHSystem.API.Extensions
             services.AddScoped<ICitysRepository, CitysRepository>();
             services.AddScoped<IBookingsRepository, BookingsRepository>();
             services.AddScoped<IBoardingHousesRepository, BoardingHousesRepository>();
+            services.AddScoped<IBHousesRepository, BHousesRepository>();
             return services;
         }
         public static IServiceCollection AddClientScopeService(this IServiceCollection services)
@@ -44,6 +45,7 @@ namespace BHSystem.API.Extensions
             services.AddScoped<ICitysService, CitysService>();
             services.AddScoped<IBookingsService, BookingsService>();
             services.AddScoped<IBoardingHousesService, BoardingHousesService>();
+            services.AddScoped<IBHousesService, BHousesService>();
             return services;
         }
 

@@ -3,7 +3,7 @@
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red">Xóa dòng</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 
 <div class="bh-table-content" style=" height: calc(100vh - 150px);">
@@ -18,6 +18,7 @@
                  FilterMode="@GridFilterMode.FilterMenu"
                  SelectionMode="@GridSelectionMode.Multiple"
                  ScrollMode="@GridScrollMode.Scrollable"
+                 OnRowDoubleClick="@OnRowDoubleClickHandler"
                  @bind-SelectedItems="@SelectedBHouses">
         <GridSettings>
             <GridPagerSettings InputType="PagerInputType.Input" />
@@ -40,8 +41,12 @@
             </GridColumn>
             <GridColumn Field=@nameof(BHouseModel.UserName) Width="140px" Title="Người quản lý"></GridColumn>
             <GridColumn Field=@nameof(BHouseModel.Name) Width="170px" Title="Tên phòng trọ"></GridColumn>
-            <GridColumn Field=@nameof(BHouseModel.Adddress) Width="140px" Title="Địa chỉ"></GridColumn>
-            <GridColumn Field=@nameof(BHouseModel.WardName) Width="140px" Title="Quận huyện"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Qty) Width="140px" Title="Số lượng"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.UserName) Width="140px" Title="Số điện thoại"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Adddress) Width="160px" Title="Địa chỉ"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Ward_Name) Width="160px" Title="Quận huyện"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Distinct_Name) Width="160px" Title="Phường xã"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.City_Name) Width="160px" Title="Tỉnh thành"></GridColumn>
             <GridColumn Field=@nameof(BHouseModel.IsDeleted) Width="140px" Title="Đã xóa">
                 <Template>
                     @{
@@ -52,7 +57,7 @@
             </GridColumn>
             <GridColumn Field=@nameof(BHouseModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
             <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
-            <GridColumn Field=@nameof(BHouseModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày cập nhật"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="130px" Title="Ngày cập nhật"></GridColumn>
         </GridColumns>
     </TelerikGrid>
 </div>
@@ -60,6 +65,8 @@
 <BHDialog @bind-IsVisible="@IsShowDialog"
     SaveAndClosed="@(()=> SaveDataHandler())"
     SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
+    Width="80%"
+    Height="90%"
     Title="@(IsCreate ? "Thêm mới phòng trọ" : "Cập nhật phòng")">
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
@@ -125,10 +132,12 @@
 
         @if(ListImages != null && ListImages.Any())
         {
-            <div class="mt-2">
+            <div class="mt-2" style="display: flex; flex-direction: row; flex-wrap: wrap;">
                 @foreach (var item in ListImages)
                 {
-                    <img class="img-thumbnail" src="@item" style="width: 20%; height: 100%; object-fit: cover; border-radius: 3px;" />
+                    <div>
+                        <img class="img-thumbnail" src="@item.ImageUrl" style="width: 300px; height: 300px; object-fit: cover; border-radius: 3px;" />
+                    </div>
                 }
             </div>
         }

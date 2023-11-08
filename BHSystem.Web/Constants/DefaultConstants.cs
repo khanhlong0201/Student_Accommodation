@@ -11,5 +11,7 @@
         public const string FORMAT_GRID_DATE_TIME = "{0: HH:mm dd/MM/yyyy}";
         public const string FORMAT_DATE_TIME = "HH:mm dd/MM/yyyy";
         public const int PAGE_SIZE = 1000;
+
+        public const string FOLDER_BHOUSE = "ImagesBH";
     }
 }

@@ -10,9 +10,9 @@ namespace BHSystem.API.Controllers
     [ApiController]
     public class BHousesController : ControllerBase
     {
-        private readonly ILogger<BoardingHousesController> _logger;
-        private readonly IBoardingHousesService _boardinghousesService;
-        public BHousesController(ILogger<BoardingHousesController> logger, IBoardingHousesService boardinghousesService)
+        private readonly ILogger<BHousesController> _logger;
+        private readonly IBHousesService _boardinghousesService;
+        public BHousesController(ILogger<BHousesController> logger, IBHousesService boardinghousesService)
         {
             _logger = logger;
             _boardinghousesService = boardinghousesService;
@@ -39,12 +39,12 @@ namespace BHSystem.API.Controllers
         }
 
         [HttpPost]
-        [Route("Create")]
-        public async Task<IActionResult> CreateBoardingHouse(RequestModel model)
+        [Route("Update")]
+        public async Task<IActionResult> UpdateBoardingHouse(RequestModel model)
         {
             try
             {
-                ResponseModel response = await _boardinghousesService.CreateBoardingHousesAsync(model);
+                ResponseModel response = await _boardinghousesService.UpdateDataAsync(model);
                 if (response.StatusCode != 0) return BadRequest(response);
                 return Ok(new
                 {
@@ -61,6 +61,30 @@ namespace BHSystem.API.Controllers
                     ex.Message
                 });
 
+            }
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteBoardingHouse(RequestModel bhHouse)
+        {
+            try
+            {
+                await _boardinghousesService.DeleteMulti(bhHouse);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Delete");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
             }
         }
     }

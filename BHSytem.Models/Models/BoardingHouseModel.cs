@@ -16,6 +16,8 @@ namespace BHSytem.Models.Models
 
         public List<ImagesDetailModel> ImageDetail = new List<ImagesDetailModel>();
         public string File_Path { get; set; }
+        public string? UserName { get; set; }
+        public string? Phone { get; set; }
     }
 
     public class BHouseModel : Auditable
@@ -26,6 +28,7 @@ namespace BHSytem.Models.Models
         public string? Name { get; set; }
         public int User_Id { get; set; }
         public string? UserName { get; set; }
+        public string? Phone { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn Thành phố")]
         public int City_Id { get; set; }
@@ -35,7 +38,9 @@ namespace BHSytem.Models.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn Xã phường")]
         public int Ward_Id { get; set; }
-        public string? WardName { get; set; }
+        public string? Ward_Name { get; set; }
+        public string? Distinct_Name { get; set; }
+        public string? City_Name { get; set; }
 
         [Required(ErrorMessage = "Vui lòng điền Địa chỉ")]
         public string? Adddress { get; set; }

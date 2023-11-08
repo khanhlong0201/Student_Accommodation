@@ -18,6 +18,7 @@ namespace BHSystem.API.Repositories
                                 join c in _context.Wards on d.Ward_Id equals c.Id
                                 join b in _context.Distincts on c.Distincts_Id equals b.Id
                                 join a in _context.Citys on b.City_Id equals a.Id
+                                join u in _context.Users on d.User_Id equals u.UserId
                                 where d.IsDeleted == false
                                 select new BoardingHouseModel()
                                 {
@@ -31,7 +32,9 @@ namespace BHSystem.API.Repositories
                                     City_Name = a.Name,
                                     City_Id = a.Id,
                                     Distinct_Id = b.Id,
-                                    Qty = d.Qty
+                                    Qty = d.Qty,
+                                    UserName = u.FullName,
+                                    Phone = u.Phone
                                 }).ToListAsync();
             return result;
         }

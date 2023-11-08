@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Ocsp;
+using System.Diagnostics;
+using Telerik.Blazor.Components;
 
 namespace BHSystem.Web.Features.Admin
 {
@@ -18,6 +20,7 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
+        [Inject] private IConfiguration? _configuration { get; set; }
         public List<BHouseModel>? ListBHouses { get; set; }
         public IEnumerable<BHouseModel>? SelectedBHouses { get; set; } = new List<BHouseModel>();
         public BHouseModel BHouseUpdate { get; set; } = new BHouseModel();
@@ -33,7 +36,7 @@ namespace BHSystem.Web.Features.Admin
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
         public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
         public List<IBrowserFile> ListBrowserFiles { get; set; } = new();   // Danh sách file lưu tạm => Upload file
-        public List<string> ListImages = new List<string>();
+        public List<ImagesDetailModel> ListImages = new List<ImagesDetailModel>();
         #region
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -121,6 +124,39 @@ namespace BHSystem.Web.Features.Admin
                 await InvokeAsync(StateHasChanged);
             }
         }
+
+        /// <summary>
+        /// lấy danh sách phòng trọ
+        /// </summary>
+        /// <returns></returns>
+        private async Task getDataBHouse()
+        {
+            ListBHouses = new List<BHouseModel>();
+            SelectedBHouses = new List<BHouseModel>();
+            string resString = await _apiService!.GetData("BHouses/GetAll");
+            if (!string.IsNullOrEmpty(resString)) ListBHouses = JsonConvert.DeserializeObject<List<BHouseModel>>(resString);
+        }
+
+        /// <summary>
+        /// lấy danh sách ảnh
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        private async Task getImageDeteailByImageId(int imageId)
+        {
+            ListImages = new List<ImagesDetailModel>();
+            Dictionary<string, object> pParams = new Dictionary<string, object>()
+            {
+                {"imageId", $"{imageId}"}
+            };
+            var resString = await _apiService!.GetData(EndpointConstants.URL_IMAGE_DETAIL_GET_BY_IMAGE_ID, pParams);
+            if (!string.IsNullOrEmpty(resString))
+            {
+                string url = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
+                var lstData = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resString)!;
+                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id }).ToList();
+            }    
+        }
         #endregion
 
 
@@ -134,7 +170,7 @@ namespace BHSystem.Web.Features.Admin
             try
             {
                 await showLoading();
-                //await getDataUser();
+                await getDataBHouse();
             }
             catch (Exception ex)
             {
@@ -151,7 +187,7 @@ namespace BHSystem.Web.Features.Admin
         /// <summary>
         /// mở popup
         /// </summary>
-        protected void OnOpenDialogHandler(EnumType pAction = EnumType.Add, UserModel? pItemDetails = null)
+        protected async void OnOpenDialogHandler(EnumType pAction = EnumType.Add, BHouseModel? pItemDetails = null)
         {
             try
             {
@@ -159,32 +195,48 @@ namespace BHSystem.Web.Features.Admin
                 if (pAction == EnumType.Add)
                 {
                     BHouseUpdate = new BHouseModel();
-                    ListImages = new List<string>();
+                    ListImages = new List<ImagesDetailModel>();
                     ListBrowserFiles = new List<IBrowserFile>();
                     IsCreate = true;
+                    _EditContext = new EditContext(BHouseUpdate);
                 }
                 else
                 {
-                    //UserUpdate.UserId = pItemDetails!.UserId;
-                    //UserUpdate.FullName = pItemDetails!.FullName;
-                    //UserUpdate.UserName = pItemDetails!.UserName;
-                    //UserUpdate.Password = EncryptHelper.Decrypt(pItemDetails!.Password + "");
-                    //UserUpdate.Address = pItemDetails!.Address;
-                    //UserUpdate.Email = pItemDetails!.Email;
+
+                    BHouseUpdate.Id = pItemDetails!.Id;
+                    BHouseUpdate.Name = pItemDetails!.Name;
+                    BHouseUpdate.Qty = pItemDetails!.Qty;
+                    BHouseUpdate.Ward_Id = pItemDetails!.Ward_Id;
+                    BHouseUpdate.City_Id = pItemDetails!.City_Id;
+                    BHouseUpdate.Distinct_Id = pItemDetails!.Distinct_Id;
+                    BHouseUpdate.Adddress = pItemDetails!.Adddress;
+                    BHouseUpdate.Image_Id = pItemDetails!.Image_Id;
                     IsCreate = false;
+                    _EditContext = new EditContext(BHouseUpdate);
+                    await showLoading();
+                    Task task1 = getDistrictByCity(BHouseUpdate.City_Id);
+                    Task task2 = getWardByDistrict(BHouseUpdate.Distinct_Id);
+                    Task task3 = getImageDeteailByImageId(BHouseUpdate.Image_Id);
+                    await Task.WhenAll(task1, task2, task3);
                 }
                 IsShowDialog = true;
-                _EditContext = new EditContext(BHouseUpdate);
             }
             catch (Exception ex)
             {
                 _logger!.LogError(ex, "BHousePage", "OnOpenDialogHandler");
                 _toastService!.ShowError(ex.Message);
             }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
+        protected void OnRowDoubleClickHandler(GridRowClickEventArgs args) => OnOpenDialogHandler(EnumType.Update, args.Item as BHouseModel);
+
         /// <summary>
-        /// Thêm/Cập nhật thông tin người dùng
+        /// Thêm/Cập nhật thông tin phòng trọ
         /// </summary>
         /// <param name="pEnum"></param>
         /// <returns></returns>
@@ -192,28 +244,75 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
+                var checkData = _EditContext!.Validate();
+                if (!checkData) return;
                 await showLoading();
-                // lưu file -> nhả lên các 
-                string resStringFile = await _apiService!.UploadMultiFiles("Images/UploadImages", ListBrowserFiles);
-                if (!string.IsNullOrEmpty(resStringFile))
+                string sMessage = "Thêm";
+                string sAction = nameof(EnumType.Add);
+                if (BHouseUpdate.Id > 0)
                 {
-                    BHouseUpdate.ListFile = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile);
-                    //bool isUpdate = await _apiService!.UpdateAsync(JsonConvert.SerializeObject(BHouseUpdate), sAction, pUserId);
-                    //if (isUpdate)
-                    //{
-                    //    _toastService!.ShowSuccess($"Đã lưu thông tin phòng trọ.");
-                    //    //await getDataUser();
-                    //    if (pEnum == EnumType.SaveAndCreate)
-                    //    {
-                    //        BHouseUpdate = new BHouseModel();
-                    //        _EditContext = new EditContext(BHouseUpdate);
-                    //        ListImages = new List<string>();
-                    //        ListBrowserFiles = new List<IBrowserFile>();
-                    //        return;
-                    //    }
-                    //    IsShowDialog = false;
-                    //}
+                    sAction = nameof(EnumType.Update);
+                    sMessage = "Cập nhật";
+                } 
+                
+                async Task Action()
+                {
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(BHouseUpdate),
+                        Type = sAction,
+                        UserId = pUserId
+                    };
+                    string resString = await _apiService!.AddOrUpdateData("BHouses/Update", request);
+                    if (!string.IsNullOrEmpty(resString))
+                    {
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin phòng trọ.");
+                        await getDataBHouse();
+                        if (pEnum == EnumType.SaveAndCreate)
+                        {
+                            BHouseUpdate = new BHouseModel();
+                            ListImages = new List<ImagesDetailModel>();
+                            ListBrowserFiles = new List<IBrowserFile>();
+                            _EditContext = new EditContext(BHouseUpdate);
+                            return;
+                        }
+                        IsShowDialog = false;
+                    }
                 }
+
+                if(sAction == nameof(EnumType.Add))
+                {
+                    if (ListBrowserFiles == null || !ListBrowserFiles.Any())
+                    {
+                        // kiểm tra file
+                        _toastService!.ShowWarning("Vui lòng chọn hình ảnh đại diện cho phòng trọ");
+                        return;
+                    }
+                    // lưu file -> nhả lên các 
+                    string resStringFile = await _apiService!.UploadMultiFiles("Images/UploadImages", ListBrowserFiles);
+                    if (!string.IsNullOrEmpty(resStringFile))
+                    {
+                        BHouseUpdate.ListFile = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile);
+                        await Action();
+                    }    
+                }  
+                else
+                {
+                    // nếu có file đính kèm ->
+                    if(ListBrowserFiles != null && ListBrowserFiles.Any())
+                    {
+                        // lưu file -> nhả lên các 
+                        string resStringFile = await _apiService!.UploadMultiFiles("Images/UploadImages", ListBrowserFiles);
+                        if (!string.IsNullOrEmpty(resStringFile))
+                        {
+                            if (BHouseUpdate.ListFile == null) BHouseUpdate.ListFile = new List<ImagesDetailModel>();
+                            BHouseUpdate.ListFile.AddRange(JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile));
+                            await Action();
+                        }
+                        return;
+                    }    
+                    await Action();
+                }    
             }
             catch (Exception ex)
             {
@@ -239,13 +338,16 @@ namespace BHSystem.Web.Features.Admin
             await getWardByDistrict(iDistinctId);
         }
 
-        
+        /// <summary>
+        /// load image lên để view
+        /// </summary>
+        /// <param name="args"></param>
         protected async void OnLoadFileHandler(InputFileChangeEventArgs args)
         {
             try
             {
                 //await args.File.RequestImageFileAsync("image/*", 600, 600);
-                ListImages = new List<string>();
+                ListImages = new List<ImagesDetailModel>();
                 if (ListBrowserFiles == null) ListBrowserFiles = new List<IBrowserFile>();
                 ListBrowserFiles.AddRange(args.GetMultipleFiles());
                 foreach (var item in args.GetMultipleFiles())
@@ -255,7 +357,7 @@ namespace BHSystem.Web.Features.Admin
                     //copy imageStream to Memory stream
                     await imageStream.CopyToAsync(ms);
                     //convert stream to base64
-                    ListImages.Add($"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}");
+                    ListImages.Add(new ImagesDetailModel() { ImageUrl= $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}" });
                     await ms.FlushAsync();
                     await ms.DisposeAsync();
                 }    
@@ -268,6 +370,49 @@ namespace BHSystem.Web.Features.Admin
             finally
             {
                 await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        /// <summary>
+        /// Xóa 1 hoặc nhiều phòng trọ
+        /// </summary>
+        /// <returns></returns>
+        protected async Task ConfirmDeleteHandler()
+        {
+            if (SelectedBHouses == null || !SelectedBHouses.Any())
+            {
+                _toastService!.ShowWarning("Vui lòng chọn dòng để xóa");
+                return;
+            }
+            var confirm = await _rDialogs!.ConfirmAsync(" Bạn có chắc muốn xóa các dòng được chọn? ");
+            if (confirm)
+            {
+                try
+                {
+                    await showLoading();
+                    var oDelete = SelectedBHouses.Select(m => new { m.Id });
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(oDelete),
+                        UserId = pUserId
+                    };
+                    string resString = await _apiService!.AddOrUpdateData("BHouses/Delete", request);
+                    if (!string.IsNullOrEmpty(resString))
+                    {
+                        _toastService!.ShowSuccess($"Đã xóa thông tin phòng được chọn.");
+                        await getDataBHouse();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger!.LogError(ex, "ConfirmDeleteHandler");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
             }
         }
         #endregion
