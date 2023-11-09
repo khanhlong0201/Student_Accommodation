@@ -40,12 +40,27 @@
     Title="@(IsUpate ? "Cập nhật giá phòng" : "Thêm giá mới cho phòng")">
     <EditForm EditContext="@_EditContext" >
         <DataAnnotationsValidator />
-          <div>
+        <div class="mt-2">
+            <BHLabel Value="Trọ:" IsRequired="true" />
+            <TelerikComboBox Data="@ListBoardingHouse"
+                Value="@RoomPriceUpdate.BoardingHouse_Id"
+                ValueExpression="@(() => RoomPriceUpdate.BoardingHouse_Id)"
+                ValueChanged="@((int value) => OnChangeBHouseHandler(value))"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(BoardingHouseModel.Name)"
+                ValueField="@nameof(BoardingHouseModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtCityId" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> RoomPriceUpdate.BoardingHouse_Id)" Id="txtBoardingHouse_Id" />
+        </div>
+          @*<div>
             <BHLabel Value="Trọ:" IsRequired="true" />
              <TelerikComboBox Data="@ListBoardingHouse" TextField="Name" ValueField="Id" @bind-Value="@RoomPriceUpdate.BoardingHouse_Id"
                  Placeholder="Chọn trọ..." ClearButton="true" Filterable="true">
             </TelerikComboBox>
-        </div>
+        </div>*@
         <div>
             <BHLabel Value="Phòng:" IsRequired="true" />
             <TelerikComboBox Data="@ListRoom" TextField="Name" ValueField="Id" @bind-Value="RoomPriceUpdate.Room_Id"

@@ -51,8 +51,8 @@ namespace BHSystem.Web.Features.Admin
         //get dữ liệu phòng
         private async Task getCombo()
         {
-            var resStringRoom = await _service!.GetData(EndpointConstants.URL_ROOM_GETALL);
-            ListRoom = JsonConvert.DeserializeObject<List<RoomModel>>(resStringRoom);
+            //var resStringRoom = await _service!.GetData(EndpointConstants.URL_ROOM_GETALL);
+            //ListRoom = JsonConvert.DeserializeObject<List<RoomModel>>(resStringRoom);
 
             var resStringBHouse = await _service!.GetData(EndpointConstants.URL_BOARDINGHOUSE_GETALL);
             ListBoardingHouse = JsonConvert.DeserializeObject<List<BoardingHouseModel>>(resStringBHouse);
@@ -64,10 +64,41 @@ namespace BHSystem.Web.Features.Admin
             else _spinner!.Hide();
         }
 
+        private async Task getRoomByBHouse(int bHouseId)
+        {
+            try
+            {
+                await showLoading();
+                ListRoom = new List<RoomModel>();
+                var request = new Dictionary<string, object>
+                    {
+                        { "bhouse_id", bHouseId }
+                    };
+                var resStringRoom = await _service!.GetData(EndpointConstants.URL_ROOM_GET_BY_BHOUSE, request);
+                ListRoom = JsonConvert.DeserializeObject<List<RoomModel>>(resStringRoom);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "getRoomByBHouse");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+
+        }
+
         #endregion "Private Functions"
 
         #region "Protected Functions"
-     
+        protected async void OnChangeBHouseHandler(int bHouseId)
+        {
+            RoomPriceUpdate.BoardingHouse_Id = bHouseId;
+            await getRoomByBHouse(bHouseId);
+        }
+
         protected async Task OnRowDoubleClickHandler(GridRowClickEventArgs args) 
             => await OnOpenDialogHandler(EnumType.Update,args.Item as RoomPriceModel);
         

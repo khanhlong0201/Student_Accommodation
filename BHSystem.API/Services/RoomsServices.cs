@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Repositories;
 using BHSytem.Models.Entities;
+using BHSytem.Models.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,6 +15,7 @@ namespace BHSystem.API.Services
     public interface IRoomsService
     {
         Task<IEnumerable<Rooms>> GetDataAsync();
+        Task<IEnumerable<RoomModel>> GetAllByBHouseAsync(int bhouse_id);
     }
     public class RoomsService : IRoomsService
     {
@@ -26,5 +28,10 @@ namespace BHSystem.API.Services
         }
         
         public async Task<IEnumerable<Rooms>> GetDataAsync() => await _roomsRepository.GetAll();
+        public async Task<IEnumerable<RoomModel>> GetAllByBHouseAsync(int bhouse_id)
+        {
+            var result = await _roomsRepository.GetAllByBHouseAsync(bhouse_id);
+            return result;
+        }
     }
 }

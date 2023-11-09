@@ -44,5 +44,6 @@
         public const string URL_ROOM_GETALL = "Rooms/GetAll";
         public const string URL_ROOM_UPDATE = "Rooms/Update";
         public const string URL_ROOM_DELETE = "Rooms/Delete";
+        public const string URL_ROOM_GET_BY_BHOUSE = "Rooms/GetAllByBHouse";
     }
 }

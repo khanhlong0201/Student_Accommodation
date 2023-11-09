@@ -48,5 +48,27 @@ namespace BHSystem.API.Controllers
             }
 
         }
+
+        /// <summary>
+        /// lấy danh sách quận huyện theo thành phố
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllByBHouse")]
+        public async Task<IActionResult> GetAllByBHouse(int bhouse_id)
+        {
+            try
+            {
+                var data = await _roomsService.GetAllByBHouseAsync(bhouse_id);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "roomController", "GetAllByBHouse");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
     }
 }
