@@ -291,7 +291,7 @@ namespace BHSystem.Web.Features.Admin
                         return;
                     }
                     // lưu file -> nhả lên các 
-                    string resStringFile = await _apiService!.UploadMultiFiles("Images/UploadImages", ListBrowserFiles);
+                    string resStringFile = await _apiService!.UploadMultiFiles($"Images/UploadImages?subFolder={DefaultConstants.FOLDER_BHOUSE}", ListBrowserFiles);
                     if (!string.IsNullOrEmpty(resStringFile))
                     {
                         BHouseUpdate.ListFile = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile);

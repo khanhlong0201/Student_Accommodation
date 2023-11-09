@@ -58,7 +58,7 @@ namespace BHSystem.API.Controllers
 
         [HttpPost]
         [Route("UploadImages")]
-        public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files)
+        public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files, string subFolder)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace BHSystem.API.Controllers
                 //
                 var result = new List<ImagesDetailModel>();
                 string fileName = string.Empty;
-                string path = $"{this._webHostEnvironment.WebRootPath}\\ImagesBH";
+                string path = $"{this._webHostEnvironment.WebRootPath}\\{subFolder}";
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
                 foreach (var file in files)

@@ -5,7 +5,7 @@
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    @*<ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>*@
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 
 <div class="bh-table-content" style=" height: calc(100vh - 150px);">
@@ -20,6 +20,7 @@
                  FilterMode="@GridFilterMode.FilterMenu"
                  SelectionMode="@GridSelectionMode.Multiple"
                  ScrollMode="@GridScrollMode.Scrollable"
+                 OnRowDoubleClick="@OnRowDoubleClickHandler"
                  @bind-SelectedItems="@SelectedRooms">
         <GridSettings>
             <GridPagerSettings InputType="PagerInputType.Input" />
@@ -40,7 +41,7 @@
                     Số dòng: @context.Count
                 </FooterTemplate>
             </GridColumn>
-            <GridColumn Field=@nameof(BHouseModel.Name) Width="140px" Title="Tên phòng"></GridColumn>
+            <GridColumn Field=@nameof(BHouseModel.Name) Width="170px" Title="Tên phòng"></GridColumn>
             <GridColumn Field=@nameof(RoomModel.Length) DisplayFormat="@DefaultConstants.FORMAT_GRID_CURRENCY" Width="120px" Title="Chiều dài"></GridColumn>
             <GridColumn Field=@nameof(RoomModel.Width) DisplayFormat="@DefaultConstants.FORMAT_GRID_CURRENCY" Width="120px" Title="Chiều rộng"></GridColumn>
             <GridColumn Field=@nameof(RoomModel.Status) Width="140px" Title="Tình trạng"></GridColumn>
@@ -58,14 +59,16 @@
                 </Template>
             </GridColumn>
             <GridColumn Field=@nameof(RoomModel.User_Create) Width="140px" Title="Người tạo"></GridColumn>
-            <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
-            <GridColumn Field=@nameof(RoomModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="130px" Title="Ngày cập nhật"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="130px" Title="Ngày tạo"></GridColumn>
+            <GridColumn Field=@nameof(RoomModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="140px" Title="Ngày cập nhật"></GridColumn>
         </GridColumns>
     </TelerikGrid>
 </div>
 
 
 <BHDialog @bind-IsVisible="@IsShowDialog"
+    SaveAndClosed="@(()=> SaveDataHandler())"
+    SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
     Width="80%"
     Title="@(IsCreate ? "Thêm mới phòng" : "Cập nhật phòng")">
     <EditForm EditContext="@_EditContext">
@@ -74,11 +77,6 @@
             <BHLabel Value="Tên phòng:" IsRequired="true" />
             <TelerikTextBox @bind-Value="@RoomUpdate!.Name" Class="bh-link" Id="txtRoomName" />
             <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Name)" Id="txtRoomName" />
-        </div>
-        <div class="mt-2">
-            <BHLabel Value="Địa chỉ (hướng dẫn):" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@RoomUpdate!.Address" Class="bh-link" Id="txtAdddress" />
-            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Address)" Id="txtAdddress" />
         </div>
         <div class="mt-2">
             <div class="row">
@@ -113,6 +111,11 @@
             
         </div>
         <div class="mt-2">
+            <BHLabel Value="Địa chỉ (hướng dẫn nếu có):" />
+            <TelerikTextBox @bind-Value="@RoomUpdate!.Address" Class="bh-link" Id="txtAdddress" />
+            @*<BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Address)" Id="txtAdddress" />*@
+        </div>
+        <div class="mt-2">
             <BHLabel Value="Chọn hình ảnh:" IsRequired="true" />
             <InputFile id="ref-upload" multiple OnChange="@OnLoadFileHandler" accept="image/*" />
         </div>
@@ -130,12 +133,14 @@
         }
         <div class="mt-2">
             <BHLabel Value="Điền thông tin mô tả:" IsRequired="true" />
-            <TelerikEditor @bind-Value="@RoomUpdate.Description"
-                           Tools="@EditorToolSets.All"
-                           Id="txtDescription"
-                           Height="500px">
+            <TelerikEditor Value="@RoomUpdate.Description" 
+                ValueChanged="@((string value) => RoomUpdate.Description = value)"
+                ValueExpression="@(() => RoomUpdate.Description)"
+                Tools="@EditorToolSets.All"
+                Id="txtDescription"
+                Height="500px">
             </TelerikEditor>
-            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Width)" Id="txtDescription" />
+            <BHValidationTooltip ValidationFor="@(()=> RoomUpdate.Description)" Id="txtDescription" />
         </div>
 
     </EditForm>

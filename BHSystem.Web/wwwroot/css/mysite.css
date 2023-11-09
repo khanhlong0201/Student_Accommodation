@@ -447,3 +447,11 @@
 }
 
 /*end*/
+
+.k-window.k-dialog{
+    max-height: 90%;
+}
+
+.k-editor-content.k-invalid {
+    border: 1px solid rgba(243, 23, 0, 0.5);
+}

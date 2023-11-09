@@ -13,5 +13,6 @@
         public const int PAGE_SIZE = 1000;
 
         public const string FOLDER_BHOUSE = "ImagesBH";
+        public const string FOLDER_ROOM = "ImagesRoom";
     }
 }

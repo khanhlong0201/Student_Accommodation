@@ -2,6 +2,7 @@
 using BHSystem.API.Infrastructure;
 using BHSystem.API.Services;
 using BHSytem.Models;
+using BHSytem.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,83 @@ namespace BHSystem.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
+        }
+
+        /// <summary>
+        /// lấy danh sách phòng theo BHouse
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetDataByBHouse")]
+        public async Task<IActionResult> GetDataByBHouse(int pBHouseId)
+        {
+            try
+            {
+                var data = await _roomsService.GetDataByBHouseAsync(pBHouseId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "roomController", "Get");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// cập nhật thông tin phòng trọ
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> UpdateBoardingHouse(RequestModel model)
+        {
+            try
+            {
+                ResponseModel response = await _roomsService.UpdateDataAsync(model);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Thêm thông tin"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BoardingHouseController", "Create");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteRoom(RequestModel bhHouse)
+        {
+            try
+            {
+                await _roomsService.DeleteMulti(bhHouse);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã xóa dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Delete");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+            }
         }
     }
 }

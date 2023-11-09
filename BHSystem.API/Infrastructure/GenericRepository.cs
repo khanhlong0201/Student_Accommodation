@@ -15,6 +15,7 @@ namespace BHSystem.API.Infrastructure
         Task<T?> GetSingleByCondition(Expression<Func<T, bool>> expression);
         Task<bool> DeleteMulti(IEnumerable<T> objects);
         Task<T?> GetMax();
+        Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> expression);
 
     }    
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -28,6 +29,15 @@ namespace BHSystem.API.Infrastructure
         }
 
         public async Task<IEnumerable<T>> GetAll() => await _dbSet.ToListAsync();
+
+        /// <summary>
+        /// overload method
+        /// lấy danh sách theo điều kiện
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> expression) 
+            => await _dbSet.Where(expression).ToListAsync();
 
         public async Task<T?> GetById(int id) => await _dbSet.FindAsync(id);
 

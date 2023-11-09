@@ -1,4 +1,5 @@
-﻿using BHSystem.Web.Controls;
+﻿using BHSystem.Web.Constants;
+using BHSystem.Web.Controls;
 using BHSystem.Web.Core;
 using BHSystem.Web.Providers;
 using BHSystem.Web.ViewModels;
@@ -7,9 +8,13 @@ using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
 using Telerik.Blazor.Components;
 using Telerik.Blazor.Components.Editor;
+using Telerik.DataSource.Extensions;
 
 namespace BHSystem.Web.Features.Admin
 {
@@ -21,6 +26,7 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] private IConfiguration? _configuration { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
+        [Inject] private IJSRuntime? jsRuntime { get; set; }
 
         public List<RoomModel>? ListRooms { get; set; }
         public IEnumerable<RoomModel>? SelectedRooms { get; set; } = new List<RoomModel>();
@@ -80,6 +86,33 @@ namespace BHSystem.Web.Features.Admin
             return base.OnInitializedAsync();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(firstRender)
+            {
+                try
+                {
+                    if(pBHouseId > 0)
+                    {
+                        await showLoading();
+                        await getDataRoomByBHouse();
+                        return;
+                    }
+                    _toastService!.ShowError("Dữ liệu mã hóa phòng trọ không khớp. Vui lòng kiểm tra lại");
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "OnInitializedAsync");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
+            }    
+        }
+
         #endregion
 
         #region "Private Functions"
@@ -87,6 +120,43 @@ namespace BHSystem.Web.Features.Admin
         {
             if (isShow) { _spinner!.Show(); await Task.Yield(); }
             else _spinner!.Hide();
+        }
+
+        /// <summary>
+        /// lấy danh sách phòng trọ
+        /// </summary>
+        /// <returns></returns>
+        private async Task getDataRoomByBHouse()
+        {
+            ListRooms = new List<RoomModel>();
+            SelectedRooms = new List<RoomModel>();
+            var request = new Dictionary<string, object>
+            {
+                { "pBHouseId", pBHouseId }
+            };
+            string resString = await _apiService!.GetData("Rooms/GetDataByBHouse", request);
+            if (!string.IsNullOrEmpty(resString)) ListRooms = JsonConvert.DeserializeObject<List<RoomModel>>(resString);
+        }
+
+        /// <summary>
+        /// lấy danh sách ảnh
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        private async Task getImageDeteailByImageId(int imageId)
+        {
+            ListImages = new List<ImagesDetailModel>();
+            Dictionary<string, object> pParams = new Dictionary<string, object>()
+            {
+                {"imageId", $"{imageId}"}
+            };
+            var resString = await _apiService!.GetData(EndpointConstants.URL_IMAGE_DETAIL_GET_BY_IMAGE_ID, pParams);
+            if (!string.IsNullOrEmpty(resString))
+            {
+                string url = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
+                var lstData = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resString)!;
+                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id }).ToList();
+            }
         }
         #endregion
 
@@ -99,8 +169,13 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
+                if(pBHouseId < 0)
+                {
+                    _toastService!.ShowError("Dữ liệu mã hóa phòng trọ không khớp. Vui lòng kiểm tra lại");
+                    return;
+                }    
                 await showLoading();
-                //await getDataBHouse();
+                await getImageDeteailByImageId(pBHouseId);
             }
             catch (Exception ex)
             {
@@ -117,11 +192,15 @@ namespace BHSystem.Web.Features.Admin
         /// <summary>
         /// mở popup
         /// </summary>
-        protected async void OnOpenDialogHandler(EnumType pAction = EnumType.Add, BHouseModel? pItemDetails = null)
+        protected async void OnOpenDialogHandler(EnumType pAction = EnumType.Add, RoomModel? pItemDetails = null)
         {
             try
             {
-
+                if (pBHouseId < 0)
+                {
+                    _toastService!.ShowError("Dữ liệu mã hóa phòng trọ không khớp. Vui lòng kiểm tra lại");
+                    return;
+                }
                 if (pAction == EnumType.Add)
                 {
                     RoomUpdate = new RoomModel();
@@ -132,28 +211,115 @@ namespace BHSystem.Web.Features.Admin
                 }
                 else
                 {
-
-                    //BHouseUpdate.Id = pItemDetails!.Id;
-                    //BHouseUpdate.Name = pItemDetails!.Name;
-                    //BHouseUpdate.Qty = pItemDetails!.Qty;
-                    //BHouseUpdate.Ward_Id = pItemDetails!.Ward_Id;
-                    //BHouseUpdate.City_Id = pItemDetails!.City_Id;
-                    //BHouseUpdate.Distinct_Id = pItemDetails!.Distinct_Id;
-                    //BHouseUpdate.Adddress = pItemDetails!.Adddress;
-                    //BHouseUpdate.Image_Id = pItemDetails!.Image_Id;
-                    //IsCreate = false;
-                    //_EditContext = new EditContext(BHouseUpdate);
-                    //await showLoading();
-                    //Task task1 = getDistrictByCity(BHouseUpdate.City_Id);
-                    //Task task2 = getWardByDistrict(BHouseUpdate.Distinct_Id);
-                    //Task task3 = getImageDeteailByImageId(BHouseUpdate.Image_Id);
-                    //await Task.WhenAll(task1, task2, task3);
+                    RoomUpdate.Id = pItemDetails!.Id;
+                    RoomUpdate.Name = pItemDetails!.Name;
+                    RoomUpdate.Status = pItemDetails!.Status;
+                    RoomUpdate.BHouseId = pItemDetails!.BHouseId;
+                    RoomUpdate.Address = pItemDetails!.Address;
+                    RoomUpdate.Length  = pItemDetails!.Length;
+                    RoomUpdate.Width = pItemDetails!.Width;
+                    RoomUpdate.Price = pItemDetails!.Price;
+                    RoomUpdate.Image_Id = pItemDetails!.Image_Id;
+                    RoomUpdate.Description = pItemDetails!.Description;
+                    IsCreate = false;
+                    _EditContext = new EditContext(RoomUpdate);
+                    await showLoading();
+                    await getImageDeteailByImageId(RoomUpdate.Image_Id);
                 }
                 IsShowDialog = true;
             }
             catch (Exception ex)
             {
                 _logger!.LogError(ex, "BHousePage", "OnOpenDialogHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        protected void OnRowDoubleClickHandler(GridRowClickEventArgs args) => OnOpenDialogHandler(EnumType.Update, args.Item as RoomModel);
+
+        protected async void SaveDataHandler(EnumType pEnum = EnumType.SaveAndClose)
+        {
+            try
+            {
+                var checkData = _EditContext!.Validate();
+                if (!checkData) return;
+                await showLoading();
+                string sMessage = "Thêm";
+                string sAction = nameof(EnumType.Add);
+                if (RoomUpdate.Id > 0)
+                {
+                    sAction = nameof(EnumType.Update);
+                    sMessage = "Cập nhật";
+                }
+
+                async Task Action()
+                {
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(RoomUpdate),
+                        Type = sAction,
+                        UserId = pUserId
+                    };
+                    string resString = await _apiService!.AddOrUpdateData("Rooms/Update", request);
+                    if (!string.IsNullOrEmpty(resString))
+                    {
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin phòng trọ.");
+                        await getImageDeteailByImageId(pBHouseId);
+                        if (pEnum == EnumType.SaveAndCreate)
+                        {
+                            RoomUpdate = new RoomModel();
+                            ListImages = new List<ImagesDetailModel>();
+                            ListBrowserFiles = new List<IBrowserFile>();
+                            _EditContext = new EditContext(RoomUpdate);
+                            return;
+                        }
+                        IsShowDialog = false;
+                    }
+                }
+
+                if (sAction == nameof(EnumType.Add))
+                {
+                    if (ListBrowserFiles == null || !ListBrowserFiles.Any())
+                    {
+                        // kiểm tra file
+                        _toastService!.ShowWarning("Vui lòng chọn hình ảnh cho phòng");
+                        return;
+                    }
+                    RoomUpdate.BHouseId = pBHouseId;
+                    // lưu file -> nhả lên các 
+                    string resStringFile = await _apiService!.UploadMultiFiles($"Images/UploadImages?subFolder={DefaultConstants.FOLDER_ROOM}", ListBrowserFiles);
+                    if (!string.IsNullOrEmpty(resStringFile))
+                    {
+                        RoomUpdate.ListFile = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile);
+                        await Action();
+                    }
+                }
+                else
+                {
+                    // nếu có file đính kèm ->
+                    if (ListBrowserFiles != null && ListBrowserFiles.Any())
+                    {
+                        // lưu file -> nhả lên các 
+                        string resStringFile = await _apiService!.UploadMultiFiles($"Images/UploadImages?subFolder={DefaultConstants.FOLDER_ROOM}", ListBrowserFiles);
+                        if (!string.IsNullOrEmpty(resStringFile))
+                        {
+                            if (RoomUpdate.ListFile == null) RoomUpdate.ListFile = new List<ImagesDetailModel>();
+                            RoomUpdate.ListFile.AddRange(JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile));
+                            await Action();
+                        }
+                        return;
+                    }
+                    await Action();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "SaveDataHandler");
                 _toastService!.ShowError(ex.Message);
             }
             finally
@@ -195,6 +361,54 @@ namespace BHSystem.Web.Features.Admin
             finally
             {
                 await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        /// <summary>
+        /// Xóa 1 hoặc nhiều phòng trọ
+        /// </summary>
+        /// <returns></returns>
+        protected async Task ConfirmDeleteHandler()
+        {
+            if (pBHouseId < 0)
+            {
+                _toastService!.ShowError("Dữ liệu mã hóa phòng trọ không khớp. Vui lòng kiểm tra lại");
+                return;
+            }
+            if (SelectedRooms == null || !SelectedRooms.Any())
+            {
+                _toastService!.ShowWarning("Vui lòng chọn dòng để xóa");
+                return;
+            }
+            var confirm = await _rDialogs!.ConfirmAsync(" Bạn có chắc muốn xóa các dòng được chọn? ");
+            if (confirm)
+            {
+                try
+                {
+                    await showLoading();
+                    var oDelete = SelectedRooms.Select(m => new { m.Id });
+                    RequestModel request = new RequestModel()
+                    {
+                        Json = JsonConvert.SerializeObject(oDelete),
+                        UserId = pUserId
+                    };
+                    string resString = await _apiService!.AddOrUpdateData("Rooms/Delete", request);
+                    if (!string.IsNullOrEmpty(resString))
+                    {
+                        _toastService!.ShowSuccess($"Đã xóa thông tin phòng được chọn.");
+                        await getImageDeteailByImageId(pBHouseId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger!.LogError(ex, "ConfirmDeleteHandler");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
             }
         }
         #endregion
