@@ -155,7 +155,7 @@ namespace BHSystem.Web.Features.Admin
             {
                 string url = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
                 var lstData = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resString)!;
-                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id }).ToList();
+                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id, File_Name = m.ImageUrl }).ToList();
             }
         }
         #endregion
@@ -175,7 +175,7 @@ namespace BHSystem.Web.Features.Admin
                     return;
                 }    
                 await showLoading();
-                await getImageDeteailByImageId(pBHouseId);
+                await getDataRoomByBHouse();
             }
             catch (Exception ex)
             {
@@ -269,7 +269,7 @@ namespace BHSystem.Web.Features.Admin
                     if (!string.IsNullOrEmpty(resString))
                     {
                         _toastService!.ShowSuccess($"Đã {sMessage} thông tin phòng trọ.");
-                        await getImageDeteailByImageId(pBHouseId);
+                        await getDataRoomByBHouse();
                         if (pEnum == EnumType.SaveAndCreate)
                         {
                             RoomUpdate = new RoomModel();
@@ -301,6 +301,8 @@ namespace BHSystem.Web.Features.Admin
                 }
                 else
                 {
+                    RoomUpdate.ListFile = ListImages;
+                    if (RoomUpdate.ListFile == null) RoomUpdate.ListFile = new List<ImagesDetailModel>();
                     // nếu có file đính kèm ->
                     if (ListBrowserFiles != null && ListBrowserFiles.Any())
                     {

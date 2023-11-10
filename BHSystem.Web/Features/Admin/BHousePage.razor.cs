@@ -47,6 +47,7 @@ namespace BHSystem.Web.Features.Admin
                 try
                 {
                     await showLoading();
+                    await getDataBHouse();
                     await getCity();
                 }   
                 catch(Exception ex)
@@ -156,7 +157,7 @@ namespace BHSystem.Web.Features.Admin
             {
                 string url = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
                 var lstData = JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resString)!;
-                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id }).ToList();
+                ListImages = lstData.Select(m => new ImagesDetailModel() { ImageUrl = url + m.ImageUrl, Id = m.Id, Image_Id = m.Image_Id, File_Name = m.ImageUrl }).ToList();
             }    
         }
         #endregion
@@ -300,14 +301,15 @@ namespace BHSystem.Web.Features.Admin
                 }  
                 else
                 {
+                    BHouseUpdate.ListFile = ListImages;
+                    if (BHouseUpdate.ListFile == null) BHouseUpdate.ListFile = new List<ImagesDetailModel>();
                     // nếu có file đính kèm ->
-                    if(ListBrowserFiles != null && ListBrowserFiles.Any())
+                    if (ListBrowserFiles != null && ListBrowserFiles.Any())
                     {
                         // lưu file -> nhả lên các 
                         string resStringFile = await _apiService!.UploadMultiFiles("Images/UploadImages", ListBrowserFiles);
                         if (!string.IsNullOrEmpty(resStringFile))
                         {
-                            if (BHouseUpdate.ListFile == null) BHouseUpdate.ListFile = new List<ImagesDetailModel>();
                             BHouseUpdate.ListFile.AddRange(JsonConvert.DeserializeObject<List<ImagesDetailModel>>(resStringFile));
                             await Action();
                         }
