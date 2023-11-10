@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BHSytem.Models.Entities;
+using BHSystem.API.Extensions;
+
 namespace BHSystem.API.Infrastructure
 {
     public class ApplicationDbContext : DbContext
@@ -65,7 +67,12 @@ namespace BHSystem.API.Infrastructure
             modelBuilder.Entity<Comments>().HasOne(i => i.BoardingHouses).WithMany(c => c.Comments).HasForeignKey(i => i.BoardingHouse_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Comments>().HasOne(i => i.Users).WithMany(c => c.Comments).HasForeignKey(i => i.UserId).OnDelete(DeleteBehavior.Restrict);
 
+            // seed data
+            modelBuilder.SeedData();
             base.OnModelCreating(modelBuilder);
+            
+            
+
         }
     }
 }
