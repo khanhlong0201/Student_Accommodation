@@ -14,14 +14,20 @@ namespace BHSystem.API.Services
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId);
+
+        Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity);  
     }
     public class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IUserRolesRepository _userRolesRepository;
+        private readonly IRolesRepository _rolesRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public UsersService(IUsersRepository usersRepository, IUnitOfWork unitOfWork)
+        public UsersService(IUsersRepository usersRepository, IUserRolesRepository userRolesRepository, IRolesRepository rolesRepository, IUnitOfWork unitOfWork)
         {
             _usersRepository = usersRepository;
+            _userRolesRepository = userRolesRepository;
+            _rolesRepository = rolesRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<Users?> LoginAsync(UserModel request)
@@ -104,5 +110,32 @@ namespace BHSystem.API.Services
         }
 
         public async Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId) => await _usersRepository.GetUserByRoleAsync(pRoleId);
+
+        public async Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                entity.Type = "Add";
+                await _unitOfWork.BeginTransactionAsync();
+                await UpdateUserAsync(entity); //tạo user
+                var role = await _rolesRepository.GetDataByNameAsync("Client");
+                UserRoles userRoles = new UserRoles();
+                userRoles.UserId = entity.UserId;
+                userRoles.Role_Id = role.Id;
+                await _userRolesRepository.Add(userRoles);//tạo quyền userRole
+                response.StatusCode = 0;
+                response.Message = "Success";
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = -1;
+                response.Message = ex.Message;
+                await _unitOfWork.RollbackAsync();
+            }
+            return response;
+        }
     }
 }

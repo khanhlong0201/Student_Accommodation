@@ -7,6 +7,8 @@
         public const string URL_USER_GETALL = "Users/GetAll";
         public const string URL_USER_GET_USER_ROLE = "Users/GetUserByRole";
         public const string URL_USER_DELETE = "Users/Delete";
+        public const string URL_USER_REGISTER = "Users/Register";
+
 
         public const string URL_BOARDINGHOUSE_CREATE = "BoardingHouses/Create";
         public const string URL_BOARDINGHOUSE_GETALL = "BoardingHouses/GetAll";

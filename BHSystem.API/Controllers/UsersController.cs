@@ -220,5 +220,32 @@ namespace BHSystem.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("Register")]
+        //[Authorize] // khi nào gọi trên web tháo truyền token
+        public async Task<IActionResult> RegisterUserForClientAsync(RequestModel user)
+        {
+            try
+            {
+                ResponseModel response = await _userService.RegisterUserForClientAsync(user);
+                if (response.StatusCode != 0) return BadRequest(response);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đăngg ký thành công"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Register");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
     }
 }
