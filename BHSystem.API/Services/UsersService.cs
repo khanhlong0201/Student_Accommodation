@@ -14,14 +14,20 @@ namespace BHSystem.API.Services
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId);
+
+        Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity);  
     }
     public class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IUserRolesRepository _userRolesRepository;
+        private readonly IRolesRepository _rolesRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public UsersService(IUsersRepository usersRepository, IUnitOfWork unitOfWork)
+        public UsersService(IUsersRepository usersRepository, IUserRolesRepository userRolesRepository, IRolesRepository rolesRepository, IUnitOfWork unitOfWork)
         {
             _usersRepository = usersRepository;
+            _userRolesRepository = userRolesRepository;
+            _rolesRepository = rolesRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<Users?> LoginAsync(UserModel request)
@@ -51,6 +57,7 @@ namespace BHSystem.API.Services
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
                     user.User_Create = entity.UserId;
                     user.Date_Create = DateTime.Now;
+                    user.Type = entity.Kind;
                     await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
                     response.StatusCode = 0;
@@ -104,5 +111,40 @@ namespace BHSystem.API.Services
         }
 
         public async Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId) => await _usersRepository.GetUserByRoleAsync(pRoleId);
+
+        public async Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                entity.Type = "Add";
+                await _unitOfWork.BeginTransactionAsync();
+                entity.Kind = "Client";
+                var result= await UpdateUserAsync(entity); //tạo user
+                if(result.StatusCode != 0)
+                {
+                    response.StatusCode = -1;
+                    response.Message = result.Message;
+                    await _unitOfWork.RollbackAsync();
+                    return response;
+                }
+                var role = await _rolesRepository.GetDataByNameAsync("Client");
+                UserRoles userRoles = new UserRoles();
+                userRoles.UserId = entity.UserId;
+                userRoles.Role_Id = role.Id;
+                await _userRolesRepository.Add(userRoles);//tạo quyền userRole
+                response.StatusCode = 0;
+                response.Message = "Success";
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = -1;
+                response.Message = ex.Message;
+                await _unitOfWork.RollbackAsync();
+            }
+            return response;
+        }
     }
 }

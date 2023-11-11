@@ -11,7 +11,10 @@
                 <div class="d-flex justify-content-between" style="width: 100%; margin-top: 2px;">
                     @for (int i = 0; i < ListImages.Count(); i++)
                     {
-                        <CardImage Height="100px" Width="33%" Src="@($"{ListImages[i]}")" Class="bhimage-cover"></CardImage>
+                        if(i<3)
+                        {
+                            <CardImage Height="100px" Width="33%" Src="@($"{ListImages[i]}")" Class="bhimage-cover"></CardImage>
+                        }
                     }
                 </div>
             }
@@ -61,31 +64,35 @@
     [Parameter] public string? Contact { get; set; } // liên hệ
     [Parameter] public string? ImageUrlBHouse { get; set; } = "./images/img-default.png";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if(firstRender)
-        {
-            string urlRoom = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
-            string urlHouse = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
-            if (string.IsNullOrWhiteSpace(ImageUrlBHouse)) ImageUrlBHouse = "./images/img-default.png";
-            else ImageUrlBHouse = urlHouse + ImageUrlBHouse;
+        //try
+        //{
+        //    string urlRoom = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
+        //    string urlHouse = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
+        //    if (string.IsNullOrWhiteSpace(ImageUrlBHouse)) ImageUrlBHouse = "./images/img-default.png";
+        //    else ImageUrlBHouse = urlHouse + ImageUrlBHouse;
 
-            List<string> lstData = new List<string>();
-            if (ListImages != null && ListImages.Any())
-            {
-                ListImages.ForEach(item =>
-                {
-                    item = urlRoom + item;
-                    lstData.Add(item);
-                });
-            }
-            while (lstData.Count < 4)
-            {
-                lstData.Add("./images/img-default.png");
-            }; // thêm cho đủ 4 phần tử
+        //    List<string> lstData = new List<string>();
+        //    if (ListImages != null && ListImages.Any())
+        //    {
+        //        ListImages.ForEach(item =>
+        //        {
+        //            item = urlRoom + item;
+        //            lstData.Add(item);
+        //        });
+        //    }
+        //    while (lstData.Count < 4)
+        //    {
+        //        lstData.Add("./images/img-default.png");
+        //    }; // thêm cho đủ 4 phần tử
+
+        //    ListImages = lstData.Take(3).ToList();
+        //    StateHasChanged();
+        //}
+        //catch(Exception)
+        //{
             
-            ListImages = lstData.Take(3).ToList();
-            StateHasChanged();
-        }
+        //}
     }
 }

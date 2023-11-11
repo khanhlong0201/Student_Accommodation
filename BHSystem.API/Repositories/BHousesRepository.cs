@@ -56,7 +56,10 @@ namespace BHSystem.API.Repositories
                                 join t3 in _context.Citys on t2.City_Id equals t3.Id
                                 join t4 in _context.Users on t0.User_Id equals t4.UserId
                                 join t5 in _context.Rooms on t0.Id equals t5.Boarding_House_Id
-                                where t0.IsDeleted == false
+                                where t0.IsDeleted == false 
+                                && (oSearch.CityId <=0 || (oSearch.CityId > 0 && t3.Id == oSearch.CityId))
+                                && (oSearch.DistinctId <=0 || (oSearch.DistinctId > 0 && t2.Id == oSearch.DistinctId))
+                                && (oSearch.WardId <=0 || (oSearch.WardId > 0 && t0.Ward_Id == oSearch.WardId))
                                 select new CliBoardingHouseModel()
                                 {
                                     Id = t0.Id,
@@ -78,15 +81,10 @@ namespace BHSystem.API.Repositories
                                     //lấy ds ảnh
                                     ListImages = _context.ImagesDetails.Where(m=>m.Image_Id == t5.Image_Id).Select(m=>m.File_Path).ToList(),
                                     //
-                                }).OrderByDescending(m=>m.DateCreate).ToListAsync();
+                                })
+                                .OrderByDescending(m=>m.DateCreate).ToListAsync();
             if (result == null) return default;
-            //if(isHorizontal)
-            //{
-            //    // lấy ra 3 phần tử không trùng id phòng
-            //    result = result.DistinctBy(m => m.Id).Take(3).ToList();
-            //    return result;
-            //}
-
+  
             #region pagination
             CliResponseModel<CliBoardingHouseModel> response = new CliResponseModel<CliBoardingHouseModel>();
             int totalRecord = result.Count();

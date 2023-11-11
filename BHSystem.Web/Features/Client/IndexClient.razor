@@ -9,35 +9,52 @@
             <div class="banner__search-info">
                 <div class="row align-items-end">
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Khu vực</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Thành phố</label>
+                        <TelerikComboBox Data="@ListCity"
+                                         Value="@SearchModel.CityId"
+                                         ValueExpression="@(() => SearchModel.CityId)"
+                                         ValueChanged="@((int value) => OnChangeCityHandler(value))"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Class="bh-combo"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtCityId" Width="100%">
                         </TelerikComboBox>
                     </div>
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Mức giá</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Huyện quận</label>
+                        <TelerikComboBox Data="@ListDistinct"
+                                         Value="@SearchModel.DistinctId"
+                                         ValueExpression="@(() => SearchModel.DistinctId)"
+                                         ValueChanged="@((int value) => OnChangeDistinctHandler(value))"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtDistinct_Id" Width="100%">
                         </TelerikComboBox>
                     </div>
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Diện tích</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Xã phường</label>
+                        <TelerikComboBox Data="@ListWard"
+                                         Value="@SearchModel.WardId"
+                                         ValueExpression="@(() => SearchModel.WardId)"
+                                         ValueChanged="@((int value) => SearchModel.WardId = value)"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtWard_Id" Width="100%">
                         </TelerikComboBox>
                     </div>
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter" FillMode="@(ThemeConstants.Button.FillMode.Outline)" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Đặt lại</TelerikButton>
+                    <div class="col-xl-2 col-lg-4 col-md-6 col-sm-12">
+                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter" 
+                            FillMode="@(ThemeConstants.Button.FillMode.Outline)" 
+                            ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)"
+                            OnClick="@ReLoadDataHandler">Đặt lại</TelerikButton>
                     </div>
                 </div>
             </div>
@@ -105,25 +122,32 @@
                                             Contact="0357866848" />*@
                     </div>
 
-                    <nav aria-label="Page navigation" class="bh-pagination" style="margin-top: 10px">
-                        <ul class="pagination d-flex justify-content-center">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    @if(Pagination != null && Pagination.TotalPage > 0)
+                    {
+                        <nav aria-label="Page navigation" class="bh-pagination" style="margin-top: 10px">
+                            <ul class="pagination d-flex justify-content-center">
+                                <li class="page-item" disabled>
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                                @for (int i = 0; i < Pagination.TotalPage; i++)
+                                {
+                                    int pageIndex = (i + 1);
+                                    bool isActive = i == SearchModel.Page;
+                                    <li class="page-item @(isActive ? "active": "")"><a class="page-link" href="#">@pageIndex</a></li>
+                                }
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                    
                 </div>
                 <div class="col-lg-3 col-md-4 col-sm-12">
                     <TelerikCard Width="100%">
@@ -162,7 +186,7 @@
                                 </div>
                                 <div class="col-md-6 col-sm-12">
                                     <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
-                                    <span class="bh-link-hover bh-font-size">Tên 15 triệu</span>
+                                    <span class="bh-link-hover bh-font-size">Trên 15 triệu</span>
                                     <CardSeparator></CardSeparator>
                                 </div>
                             </div>

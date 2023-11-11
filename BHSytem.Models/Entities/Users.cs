@@ -29,6 +29,7 @@ namespace BHSytem.Models.Entities
         [StringLength(100)]
         public string? PasswordReset { get; set; }
         public int Ward_Id { get; set; }
+        public string Type { get; set; }
         public Wards Wards { get; set; } // Đây là dùng để tham chiếu đến bảng Wards.
         public virtual ICollection<Comments> Comments { get; set; }
         public virtual ICollection<BoardingHouses> BoardingHouses { get; set; }

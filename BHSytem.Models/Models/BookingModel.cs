@@ -11,6 +11,10 @@ namespace BHSytem.Models.Models
         [Required(ErrorMessage = "Vui lòng điền Số điện thoại")]
         public string? Phone { get; set; }
         public int Room_Id { get; set; }
+        public string? Room_Name { get; set; }
         public int UserId { get; set; }
+        public int Id { get; set; }
+        public string? Status { get; set; }
+
     }
 }

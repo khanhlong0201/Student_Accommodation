@@ -31,8 +31,13 @@
                     </div>
                     <div class="mt-2">
                         <BHLabel Value="Số điện thoại:" IsRequired="true" />
-                        <TelerikTextBox PlaceHolder="Tài khoản*:" @bind-Value="@RegisterRequest.Phone" Id="txtPhone" />
+                        <TelerikTextBox PlaceHolder="Số điện thoại*:" @bind-Value="@RegisterRequest.Phone" Id="txtPhone" />
                         <BHValidationTooltip ValidationFor="@(()=> RegisterRequest.Phone)" Id="txtPhone" />
+                    </div>
+                     <div class="mt-2">
+                        <BHLabel Value="Tên tài khoản:" IsRequired="true" />
+                        <TelerikTextBox PlaceHolder="Tên tài khoản*:" @bind-Value="@RegisterRequest.UserName" Id="txtUserName" />
+                        <BHValidationTooltip ValidationFor="@(()=> RegisterRequest.UserName)" Id="txtUserName" />
                     </div>
                     <div class="mt-2">
                         <BHLabel Value="Mật khẩu:" IsRequired="true" />
