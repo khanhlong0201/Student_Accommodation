@@ -39,7 +39,7 @@ namespace BHSystem.Web.Features.Admin
                 try
                 {
                     await showLoading();
-                    await getDataBooking();
+                    await getDataBooking("Chờ xử lý");
                 }   
                 catch(Exception ex)
                 {
@@ -71,15 +71,22 @@ namespace BHSystem.Web.Features.Admin
             // Gọi hàm và truyền giá trị cho pParams
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                { "status", type }
+                { "type", type }
             };
-            
-            ListBookingWaitting = new List<BookingModel>();
-            string resString = await _apiService!.GetData("BHouses/GetAll", parameters);
+           
+            string resString = await _apiService!.GetData(EndpointConstants.URL_BOOKING_GET_BY_STATUS, parameters);
             if (!string.IsNullOrEmpty(resString))
             {
-                if(type+""=="Chờ xử lý") ListBookingWaitting = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
-                else ListBookingAll = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
+                if (type + "" == "Chờ xử lý")
+                {
+                    ListBookingWaitting = new List<BookingModel>();
+                    ListBookingWaitting = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
+                }
+                else
+                {
+                    ListBookingAll = new List<BookingModel>();
+                    ListBookingAll = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
+                }
             }
         }
         #endregion
@@ -111,14 +118,14 @@ namespace BHSystem.Web.Features.Admin
         /// Từ chối 1 hoặc nhiều booking
         /// </summary>
         /// <returns></returns>
-        protected async Task ConfirmRefuseHandler()
+        protected async Task ConfirmHandler(string type= "")
         {
             if (SelectedBookingWaitting == null || !SelectedBookingWaitting.Any())
             {
                 _toastService!.ShowWarning("Vui lòng chọn dòng để từ chối");
                 return;
             }
-            var confirm = await _rDialogs!.ConfirmAsync("Bạn có chắc muốn từ chối các dòng được chọn? ");
+            var confirm = await _rDialogs!.ConfirmAsync($"Bạn có chắc muốn {type} các dòng được chọn? ");
             if (confirm)
             {
                 try
@@ -128,12 +135,14 @@ namespace BHSystem.Web.Features.Admin
                     RequestModel request = new RequestModel()
                     {
                         Json = JsonConvert.SerializeObject(oDelete),
-                        UserId = pUserId
+                        UserId = pUserId,
+                        Type = type
                     };
-                    string resString = await _apiService!.AddOrUpdateData("BHouses/Delete", request);
+                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_BOOKING_UPDATE_STATUS, request);
                     if (!string.IsNullOrEmpty(resString))
                     {
-                        _toastService!.ShowSuccess($"Đã từ chối thông tin các phòng được chọn.");
+                        if(type +""=="Từ chối") _toastService!.ShowSuccess($"Đã từ chối danh sách đặt phòng được chọn.");
+                        else _toastService!.ShowSuccess($"Đã phê duyệt danh sách đặt phòng được chọn.");
                         await getDataBooking();
                     }
                 }

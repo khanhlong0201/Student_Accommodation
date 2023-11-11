@@ -15,8 +15,9 @@ namespace BHSystem.API.Services
 {
     public interface IBookingsService
     {
-        Task<IEnumerable<Bookings>> GetDataAsync();
+        Task<IEnumerable<BookingModel>> GetDataAsync(string type);
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
+        Task<bool> UpdateStatusMulti(RequestModel entity);
     }
     public class BookingsService : IBookingsService
     {
@@ -28,7 +29,12 @@ namespace BHSystem.API.Services
             _unitOfWork = unitOfWork;
         }
         
-        public async Task<IEnumerable<Bookings>> GetDataAsync() => await _bookingsRepository.GetAll();
+        public async Task<IEnumerable<BookingModel>> GetDataAsync(string type)
+        {
+            return await _bookingsRepository.GetAllAsync(type);
+          
+        }  
+
 
         public async Task<ResponseModel> UpdateUserAsync(RequestModel entity)
         {
@@ -47,5 +53,30 @@ namespace BHSystem.API.Services
             }
             return response;
         }
+
+
+        /// <summary>
+        /// cập nhật trạng thái dữ liệu thực chất cập nhật cột status
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateStatusMulti(RequestModel entity)
+        {
+            List<BookingModel> lstBooking = JsonConvert.DeserializeObject<List<BookingModel>>(entity.Json + "")!;
+            foreach (BookingModel booking in lstBooking)
+            {
+                var bookingEntity = await _bookingsRepository.GetSingleByCondition(m => m.Id == booking.Id);
+                if (bookingEntity != null)
+                {
+                    bookingEntity.Status = entity.Type;//từ chối hoặc duyệt
+                    bookingEntity.Date_Update = DateTime.Now;
+                    bookingEntity.User_Update = entity.UserId;
+                    _bookingsRepository.Update(bookingEntity);
+                }
+            }
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
     }
 }
