@@ -6,7 +6,17 @@ using BHSytem.Models.Models;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
-
+using BHSystem.Web.Constants;
+using BHSystem.Web.Controls;
+using BHSystem.Web.Core;
+using BHSystem.Web.Services;
+using BHSystem.Web.ViewModels;
+using BHSytem.Models.Models;
+using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Newtonsoft.Json;
+using Telerik.Blazor.Components;
 namespace BHSystem.Web.Features.Client
 {
     public partial class RegisterPage
@@ -42,7 +52,13 @@ namespace BHSystem.Web.Features.Client
                 if (response != null && response.StatusCode == 200)
                 {
                     _toastService?.ShowSuccess(response?.Message);
-                    _navigationManager!.NavigateTo("/admin/user");
+                    // Chờ một khoảng thời gian trước khi chuyển hướng
+                    await Task.Delay(1000); // Thời gian delay là 2000 milliseconds (2 giây)
+                    _navigationManager!.NavigateTo("/client/login");
+                }
+                else
+                {
+                    _toastService?.ShowError(response?.Message);
                 }
             }
             catch (Exception ex) {

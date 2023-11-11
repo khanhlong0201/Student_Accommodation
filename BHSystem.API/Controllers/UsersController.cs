@@ -232,7 +232,7 @@ namespace BHSystem.API.Controllers
                 return Ok(new
                 {
                     StatusCode = 200,
-                    Message = "Đăngg ký thành công"
+                    Message = "Đăng ký thành công"
                 });
             }
             catch (Exception ex)

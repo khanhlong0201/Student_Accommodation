@@ -57,6 +57,7 @@ namespace BHSystem.API.Services
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
                     user.User_Create = entity.UserId;
                     user.Date_Create = DateTime.Now;
+                    user.Type = entity.Kind;
                     await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
                     response.StatusCode = 0;
@@ -119,7 +120,15 @@ namespace BHSystem.API.Services
             {
                 entity.Type = "Add";
                 await _unitOfWork.BeginTransactionAsync();
-                await UpdateUserAsync(entity); //tạo user
+                entity.Kind = "Client";
+                var result= await UpdateUserAsync(entity); //tạo user
+                if(result.StatusCode != 0)
+                {
+                    response.StatusCode = -1;
+                    response.Message = result.Message;
+                    await _unitOfWork.RollbackAsync();
+                    return response;
+                }
                 var role = await _rolesRepository.GetDataByNameAsync("Client");
                 UserRoles userRoles = new UserRoles();
                 userRoles.UserId = entity.UserId;

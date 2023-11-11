@@ -12,6 +12,7 @@ namespace BHSytem.Models.Models
         public string? Json { get; set; }
         public string? Type { get; set; }
         public string? Json_Detail { get; set; }
+        public string? Kind { get; set; }
     }
     public class ResponseModel
     {

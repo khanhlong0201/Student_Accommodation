@@ -20,6 +20,8 @@ namespace BHSystem.Web.ViewModels
 
         [Required(ErrorMessage = "Vui lòng điền Mật khẩu")]
         public string? Password { get; set; }
+        [Required(ErrorMessage = "Vui lòng điền tên tài khoản")]
+        public string? UserName { get; set; }
     }
 
     public class LoginResponseViewModel
