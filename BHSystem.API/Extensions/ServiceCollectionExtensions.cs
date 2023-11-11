@@ -101,6 +101,7 @@ namespace BHSystem.API.Extensions
 
                 ,
                     IsDeleted = true
+                ,   Type = "Admin"
                 });
             return modelBuilder;
         }
