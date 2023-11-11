@@ -19,6 +19,8 @@ namespace BHSystem.API.Services
         Task<IEnumerable<Rooms>> GetDataByBHouseAsync(int iBHouseId);
         Task<ResponseModel> UpdateDataAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
+        Task<IEnumerable<RoomModel>> GetAllByStatusAsync(string type);
+        Task<bool> UpdateStatusMulti(RequestModel entity);
     }
     public class RoomsService : IRoomsService
     {
@@ -166,6 +168,35 @@ namespace BHSystem.API.Services
                     boardinghousesEntity.Date_Update = DateTime.Now;
                     boardinghousesEntity.User_Update = entity.UserId;
                     _roomsRepository.Update(boardinghousesEntity);
+                }
+            }
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<RoomModel>> GetAllByStatusAsync(string type)
+        {
+            return await _roomsRepository.GetAllByStatusAsync(type);
+
+        }
+
+        /// <summary>
+        /// cập nhật trạng thái dữ liệu thực chất cập nhật cột status
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateStatusMulti(RequestModel entity)
+        {
+            List<RoomModel> lstRoom= JsonConvert.DeserializeObject<List<RoomModel>>(entity.Json + "")!;
+            foreach (RoomModel room in lstRoom)
+            {
+                var roomEntity = await _roomsRepository.GetSingleByCondition(m => m.Id == room.Id);
+                if (roomEntity != null)
+                {
+                    roomEntity.Status = entity.Type;//từ chối hoặc duyệt
+                    roomEntity.Date_Update = DateTime.Now;
+                    roomEntity.User_Update = entity.UserId;
+                    _roomsRepository.Update(roomEntity);
                 }
             }
             await _unitOfWork.CompleteAsync();

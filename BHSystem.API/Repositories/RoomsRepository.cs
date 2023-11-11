@@ -8,6 +8,7 @@ namespace BHSystem.API.Repositories
     public interface IRoomsRepository : IGenericRepository<Rooms>
     {
         Task<IEnumerable<RoomModel>> GetAllByBHouseAsync(int city_id);
+        Task<IEnumerable<RoomModel>> GetAllByStatusAsync(string type);
     }
     public class RoomsRepository : GenericRepository<Rooms>, IRoomsRepository
     {
@@ -24,5 +25,25 @@ namespace BHSystem.API.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<RoomModel>> GetAllByStatusAsync(string type)
+        {
+            var result = await (from a in _context.Rooms
+                                join b in _context.BoardingHouses on a.Boarding_House_Id equals b.Id
+                                join c in _context.Images on a.Image_Id equals c.Id
+                                from d in _context.ImagesDetails.Where(d => d.Image_Id == c.Id).Take(1) //inner join select top 1
+                                where a.IsDeleted == false && (type + "" == "" || a.Status == type)
+                                select new RoomModel()
+                                {
+                                    Id = a.Id,
+                                    Name = a.Name,
+                                    BHouseName = b.Name,
+                                    Image_Id = a.Image_Id,
+                                    Date_Create = a.Date_Create,
+                                    Date_Update = a.Date_Update,
+                                    Status = a.Status,
+                                    File_Path= d.File_Path
+                                }).ToListAsync();
+            return result;
+        }
     }
 }
