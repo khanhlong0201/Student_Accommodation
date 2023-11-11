@@ -15,8 +15,10 @@ namespace BHSytem.Models.Entities
         public string Phone { get; set; }
         public int Room_Id { get; set; }
         public int UserId { get; set; }
+        public string Status { get; set; }
         public Users Users { get; set; }
         public Rooms Rooms { get; set; }
 
     }
 }
+
