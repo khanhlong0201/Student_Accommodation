@@ -36,7 +36,7 @@ namespace BHSystem.Web.Features.Client
 
         protected override void OnInitialized()
         {
-            SearchModel.Limit = 10;
+            SearchModel.Limit = 2;
             SearchModel.Page = 0;
             base.OnInitialized();
         }
@@ -184,8 +184,29 @@ namespace BHSystem.Web.Features.Client
             try
             {
                 await showLoading();
-                SearchModel.Limit = 10;
+                SearchModel.Limit = 2;
                 SearchModel.Page = 0;
+                await getDataBHouse();
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ReLoadDataHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        protected async void OnChangePageIndex(int pageIndex)
+        {
+            try
+            {
+                await showLoading();
+                SearchModel.Limit = 2;
+                SearchModel.Page = pageIndex - 1;
                 await getDataBHouse();
             }
             catch (Exception ex)

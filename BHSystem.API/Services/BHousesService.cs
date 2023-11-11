@@ -13,6 +13,7 @@ namespace BHSystem.API.Services
         Task<ResponseModel> UpdateDataAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch);
+        Task<CliBoardingHouseModel?> CliGetDataBHouseDetail(int pRoomId);
     }
     public class BHousesService : IBHousesService
     {
@@ -157,6 +158,8 @@ namespace BHSystem.API.Services
             return true;
         }
 
-        public async Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch) => await _boardinghousesRepository.GetDataPagination(oSearch); 
+        public async Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch) => await _boardinghousesRepository.GetDataPagination(oSearch);
+
+        public async Task<CliBoardingHouseModel?> CliGetDataBHouseDetail(int pRoomId) => await _boardinghousesRepository.GetDataBHDetail(pRoomId);
     }
 }

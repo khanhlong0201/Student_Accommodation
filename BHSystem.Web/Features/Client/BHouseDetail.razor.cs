@@ -17,6 +17,7 @@ namespace BHSystem.Web.Features.Client
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
+        [Inject] IConfiguration? _configuration { get; set; }
 
         public int PageIndex = 1;
         public List<CarouselModel> CarouselData { get; set; } = new List<CarouselModel>()
@@ -33,14 +34,87 @@ namespace BHSystem.Web.Features.Client
         public bool IsShowDialog { get; set; }
         public BookingModel BookingUpdate { get; set; } = new BookingModel();
         public EditContext? _EditContext { get; set; }
+       
 
         [CascadingParameter]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        #region Properties
+        public CliBoardingHouseModel CliBoardingHouse { get; set; } = new CliBoardingHouseModel();
+        public List<string> ListImages { get; set; } = new List<string>();
+
+        #endregion
+
+    #region Override Functions
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(firstRender)
+            {
+                try
+                {
+                    await showLoading();
+                    await getDataDetail();
+                }
+                catch (Exception ex)
+                {
+                    _logger!.LogError(ex, "OnAfterRenderAsync");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
+            }    
+        }
+        #endregion
+
         #region "Private Functions"
         private async Task showLoading(bool isShow = true)
         {
             if (isShow) { _spinner!.Show(); await Task.Yield(); }
             else _spinner!.Hide();
+        }
+
+        private async Task getDataDetail()
+        {
+            try
+            {
+                Dictionary<string, object> pKeys = new Dictionary<string, object>()
+                {
+                    {"pRoomId", "6" }
+                };
+                string resString = await _apiService!.GetData(EndpointConstants.URL_CLI_BHOUSE_GETDATA_DETAIL, pKeys);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    string urlRoom = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
+                    CliBoardingHouse = JsonConvert.DeserializeObject<CliBoardingHouseModel>(resString);
+                    ListImages = new List<string>();
+                    if (CliBoardingHouse?.ListImages != null && CliBoardingHouse.ListImages.Any())
+                    {
+                        CliBoardingHouse.ListImages.ForEach(item =>
+                        {
+                            item = urlRoom + item;
+                            ListImages.Add(item);
+                        });
+                    }
+
+                    if(!ListImages.Any())
+                    {
+
+                    }    
+                }    
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "SaveDataHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
         }
         #endregion
 
@@ -60,6 +134,9 @@ namespace BHSystem.Web.Features.Client
             }
         }
 
+        /// <summary>
+        /// lưu dữ liệu booking
+        /// </summary>
         protected async void SaveDataHandler()
         {
             try

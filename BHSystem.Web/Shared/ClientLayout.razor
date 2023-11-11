@@ -74,11 +74,24 @@ body {
                     </div>
                     <div>
                         <i class="fa-solid fa-user-plus"></i>
-                        <span style="margin-left: 2.5px"><a href="/register">Đăng kí</a></span>
+                        <span style="margin-left: 2.5px"><a href="/client/register">Đăng kí</a></span>
                     </div>
-                    <div>
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                        <span style="margin-left: 2.5px">Đăng nhập</span>
+                    @if(@FullName + "" == "")
+                    {
+                        <div>
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                            <span style="margin-left: 2.5px"><a href="/client/login">Đăng nhập</a></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span style="margin-left: 2.5px"><a href="/client/logout">Đăng xuất</a></span>
+                        </div>
+                    }
+                     <div>
+                        <span style="margin-left: 2.5px">@FullName</span>
                     </div>
                 </div>
             </div>
@@ -183,7 +196,7 @@ body {
         </div>
         <div class="credit">
             Created By
-            <span>Mr. Nguyen Tan Hai</span>| All Rights Reserved.
+            <span>Mr. Hoàng Long</span>| All Rights Reserved.
         </div>
     </div>
     <!-- Footer -->

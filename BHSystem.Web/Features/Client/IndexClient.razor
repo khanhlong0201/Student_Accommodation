@@ -101,25 +101,10 @@
                                             CreateTime="Đăng tin hôm qua"
                                             Contact="@item.Phone"
                                             ImageUrlBHouse = "@item.ImageUrlBHouse"
+                                            RoomId="@item.RoomId"
                                             ListImages="@item.ListImages"/>
                             }
                         }
-
-                        @*<ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
-                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
-                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
-                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
-                                            Contact="0357866848" />
-                        <ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
-                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
-                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
-                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
-                                            Contact="0357866848" />
-                        <ItemBHouseVertical Title="Phòng full nội thất, có ban công thoáng mát 25-30m2 giá 4,5tr-5,8tr. LH: 0938 565 *** Chị Linh"
-                                            Description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure ex deleniti facere sapiente voluptas libero facilis dolores possimus.
-                                    Ea nobis cum corporis. Qui nulla eos odit. Assumenda eos officia neque."
-                                            Address="Quận 1, Hồ Chí Minh" Price="8.5" Acreage="22" FullName="Nguyễn Văn A" CreateTime="Đăng tin hôm qua"
-                                            Contact="0357866848" />*@
                     </div>
 
                     @if(Pagination != null && Pagination.TotalPage > 0)
@@ -136,7 +121,9 @@
                                 {
                                     int pageIndex = (i + 1);
                                     bool isActive = i == SearchModel.Page;
-                                    <li class="page-item @(isActive ? "active": "")"><a class="page-link" href="#">@pageIndex</a></li>
+                                    <li class="page-item @(isActive ? "active": "")">
+                                        <a class="page-link" @onclick="@(() => OnChangePageIndex((pageIndex)))">@pageIndex</a>
+                                    </li>
                                 }
                                 <li class="page-item">
                                     <a class="page-link" aria-label="Next">

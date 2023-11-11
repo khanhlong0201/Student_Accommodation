@@ -15,6 +15,8 @@ namespace BHSytem.Models.Models
         public int UserId { get; set; }
         public int Id { get; set; }
         public string? Status { get; set; }
+        public DateTime? Date_Create { get; set; }
+        public DateTime? Date_Update { get; set; }
 
     }
 }

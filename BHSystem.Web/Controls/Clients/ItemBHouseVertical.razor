@@ -22,7 +22,7 @@
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
             <CardBody>
-                <Telerik.Blazor.Components.CardTitle Class="bh-hover"><a href="/chi-tiet">@Title</a></Telerik.Blazor.Components.CardTitle>
+                <Telerik.Blazor.Components.CardTitle Class="bh-hover"><a href="@($"/chi-tiet?key={RoomId}")">@Title</a></Telerik.Blazor.Components.CardTitle>
                 <div class="">
                     <Telerik.Blazor.Components.CardTitle Class="k-button-flat-primary">@Price /tháng</Telerik.Blazor.Components.CardTitle>
                     <CardSubTitle>Diện tích: @Acreage m²</CardSubTitle>
@@ -63,36 +63,6 @@
     [Parameter] public string? Acreage { get; set; } // Diện tích
     [Parameter] public string? Contact { get; set; } // liên hệ
     [Parameter] public string? ImageUrlBHouse { get; set; } = "./images/img-default.png";
+    [Parameter] public int RoomId { get; set; }
 
-    protected override void OnInitialized()
-    {
-        //try
-        //{
-        //    string urlRoom = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
-        //    string urlHouse = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
-        //    if (string.IsNullOrWhiteSpace(ImageUrlBHouse)) ImageUrlBHouse = "./images/img-default.png";
-        //    else ImageUrlBHouse = urlHouse + ImageUrlBHouse;
-
-        //    List<string> lstData = new List<string>();
-        //    if (ListImages != null && ListImages.Any())
-        //    {
-        //        ListImages.ForEach(item =>
-        //        {
-        //            item = urlRoom + item;
-        //            lstData.Add(item);
-        //        });
-        //    }
-        //    while (lstData.Count < 4)
-        //    {
-        //        lstData.Add("./images/img-default.png");
-        //    }; // thêm cho đủ 4 phần tử
-
-        //    ListImages = lstData.Take(3).ToList();
-        //    StateHasChanged();
-        //}
-        //catch(Exception)
-        //{
-            
-        //}
-    }
 }

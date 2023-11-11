@@ -56,28 +56,31 @@
                                          LoopPages="@true"
                                          @bind-Page="@PageIndex"
                                          AutomaticPageChange="@true"
-                                         Data="@CarouselData"
+                                         Data="@ListImages"
                                          Width="100%" Height="384px">
                             <Template>
-                                <img src="@(context.Url)" alt="Photograph" width="512" height="384" style="width: 100%" />
+                                <img src="@(context)" alt="Photograph" width="512" height="384" style="width: 100%" />
                             </Template>
                         </TelerikCarousel>
                     </div>
                     <div style="margin-top: 24px">
-                        <span>Cho thuê/Hồ Chí Minh/Quận 9/Nhà trọ, phòng trọ tại đường Lò Lu</span>
-                        <p class="bh-detail-title">Nhà trọ sạch sẽ - hệ thống phòng trọ gần khu công nghệ cao</p>
-                        <span class="bh-detail-address">Đường Lò Lu, Phường Trường Thạnh, Quận 9, Hồ Chí Minh</span>
+                        @*<span>Cho thuê/Hồ Chí Minh/Quận 9/Nhà trọ, phòng trọ tại đường Lò Lu</span>*@
+                        <span>
+                            @($"Cho thuê/ {CliBoardingHouse.CityName}/ {CliBoardingHouse.DistinctName}/ {CliBoardingHouse.WardName}/ {CliBoardingHouse.RoomAddresss}")
+                        </span>
+                        <p class="bh-detail-title">@CliBoardingHouse.RoomName</p>
+                        <span class="bh-detail-address">@($"{CliBoardingHouse.Addresss}, {CliBoardingHouse.WardName}, {CliBoardingHouse.DistinctName}, {CliBoardingHouse.CityName}")</span>
                     </div>
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center bh-detail-info">
                             <div class="d-flex align-items-center">
                                 <div>
                                     <p>Mức giá</p>
-                                    <p>2 Triệu/tháng</p>
+                                    <p>@($"{CliBoardingHouse.Price.ToString(DefaultConstants.FORMAT_CURRENCY)}")/tháng</p>
                                 </div>
                                 <div style="margin-left: 30px">
                                     <p>Diện tích</p>
-                                    <p>36 m²</p>
+                                    <p>@($"{CliBoardingHouse.Acreage.ToString(DefaultConstants.FORMAT_CURRENCY)}") m²</p>
                                 </div>
                             </div>
                             <div class="bh-detail-info__icon">
@@ -87,25 +90,7 @@
                     </div>
                     <div class="mt-4 bh-detail-desc">
                         <p class="bh-detail-title bh-detail-desc__title">Thông tin mô tả</p>
-
-                        Nhà trọ sạch sẽ, luôn sạch sẽ, luôn gọn gàng.
-                        <br />
-                        <br />
-                        - Phòng có diện tích từ 17m² - 36m².
-                        <br />
-                        - Vị trí thuận tiện di chuyển khu công nghệ cao, trường Hutech, Nguyễn Tất Thành, Tài chính Marketing.
-                        <br />
-                        - Có nhà vệ sinh riêng.
-                        <br />
-                        - Có máy lọc nước uống miễn phí.
-                        <br />
-                        - Máy giặt chung giá siêu rẻ.
-                        <br />
-                        - Nhà xe rộng rãi, không gian thông thoáng.
-                        <br />
-
-                        <br />
-                        <br />
+                        @((MarkupString)$"{CliBoardingHouse.Desciption}")
                         Với lòng liên hệ qua Hotline: 1900 5049 hoặc Zalo: 0827 372 737 để xem phòng trực tiếp.
 
                     </div>
@@ -119,7 +104,7 @@
                             <div class="bh-detail-header">
                                 <img class="bh-detail-contact__avt" src="https://cdn-icons-png.flaticon.com/128/2102/2102633.png" alt="">
                                 <span class="bh-detail-contact__name">Được đăng bởi</span>
-                                <p class="bh-detail-contact__name contact-fullname">Nhà Trọ sạch sẽ</p>
+                                <p class="bh-detail-contact__name contact-fullname">@CliBoardingHouse.FullName</p>
                             </div>
                             <div class="mt-2 bh-btn-fullsize">
                                 <TelerikButton Class="bh-btn-search btn-contact mb-1"
@@ -134,7 +119,7 @@
 
                                 <TelerikButton Class="bh-btn-search btn-contact mb-1 mt-3"
                                                FillMode="@(ThemeConstants.Button.FillMode.Outline)" IconClass="fa-brands fa-whatsapp"
-                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Liên hệ: 0357866848</TelerikButton>
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Liên hệ: @CliBoardingHouse.Phone</TelerikButton>
                             </div>
                         </CardBody>
                     </TelerikCard>

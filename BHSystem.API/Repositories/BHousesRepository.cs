@@ -11,6 +11,7 @@ namespace BHSystem.API.Repositories
     {
         Task<IEnumerable<BoardingHouseModel>> GetAllAsync();
         Task<CliResponseModel<CliBoardingHouseModel>?> GetDataPagination(BHouseSearchModel oSearch);
+        Task<CliBoardingHouseModel?> GetDataBHDetail(int pRoomId);
     }
     public class BHousesRepository: GenericRepository<BoardingHouses>, IBHousesRepository
     {
@@ -102,5 +103,44 @@ namespace BHSystem.API.Repositories
             #endregion
             return response;
         }
+
+        /// <summary>
+        /// lấy chi tiết phòng
+        /// </summary>
+        /// <param name="pRoomId"></param>
+        /// <returns></returns>
+        public async Task<CliBoardingHouseModel?> GetDataBHDetail(int pRoomId)
+        {
+            var result = await (from t0 in _dbSet
+                          join t1 in _context.Wards on t0.Ward_Id equals t1.Id
+                          join t2 in _context.Distincts on t1.Distincts_Id equals t2.Id
+                          join t3 in _context.Citys on t2.City_Id equals t3.Id
+                          join t4 in _context.Users on t0.User_Id equals t4.UserId
+                          join t5 in _context.Rooms on t0.Id equals t5.Boarding_House_Id
+                          where t0.IsDeleted == false && t5.Id == pRoomId
+                          select new CliBoardingHouseModel()
+                          {
+                              Id = t0.Id,
+                              RoomId = t5.Id,
+                              BHouseName = t0.Name,
+                              RoomName = t5.Name,
+                              Addresss = t0.Adddress,
+                              RoomAddresss = t5.Address,
+                              CityName = t3.Name,
+                              DistinctName = t2.Name,
+                              WardName = t1.Name,
+                              Phone = t4.Phone,
+                              FullName = t4.FullName,
+                              DateCreate = t5.Date_Create,
+                              Acreage = Math.Round(t5.Length * t5.Width, 2),
+                              Price = t5.Price,
+                              Desciption = t5.Description,
+                              //ImageUrlBHouse = _context.ImagesDetails.Where(m => m.Image_Id == t0.Image_Id).Select(m => m.File_Path).FirstOrDefault(),
+                              //lấy ds ảnh
+                              ListImages = _context.ImagesDetails.Where(m => m.Image_Id == t5.Image_Id).Select(m => m.File_Path).ToList(),
+                              //
+                          }).FirstOrDefaultAsync();
+            return result;
+        }    
     }
 }

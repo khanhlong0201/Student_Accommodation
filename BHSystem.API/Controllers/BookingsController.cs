@@ -35,11 +35,11 @@ namespace BHSystem.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string type)
         {
             try
             {
-                var data = await _bookingsService.GetDataAsync();
+                var data = await _bookingsService.GetDataAsync(type);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -67,6 +67,32 @@ namespace BHSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "BookingsController", "CreateTicket");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateStatus")]
+       // [Authorize] //khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> UpdateStatusMulti(RequestModel booking)
+        {
+            try
+            {
+                await _bookingsService.UpdateStatusMulti(booking);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã cập dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BoardingHouseController", "UpdateStatusMulti");
                 return StatusCode(StatusCodes.Status400BadRequest, new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,

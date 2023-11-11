@@ -79,7 +79,7 @@ namespace BHSystem.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "UserController", "Delete");
+                _logger.LogError(ex, "BHousesController", "Delete");
                 return StatusCode(StatusCodes.Status400BadRequest, new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
@@ -107,7 +107,35 @@ namespace BHSystem.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "UserController", "Delete");
+                _logger.LogError(ex, "BHousesController", "Delete");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("CliGetDataDetails")]
+        public async Task<IActionResult> CliGetDataDetails([FromQuery] int pRoomId)
+        {
+            try
+            {
+                var result = await _boardinghousesService.CliGetDataBHouseDetail(pRoomId);
+                if (result == null)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new
+                    {
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Message = "Không tìm thấy dữ liệu. Vui lòng làm mới lại trang"
+                    });
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BHousesController", "CliGetDataDetails");
                 return StatusCode(StatusCodes.Status400BadRequest, new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,

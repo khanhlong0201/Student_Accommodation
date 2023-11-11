@@ -1,11 +1,11 @@
-﻿@page "/admin/approve"
+﻿@page "/admin/approve-booking"
 
 <TelerikTabStrip>
     <TabStripTab Title="Chờ xử lý">
         <TelerikToolBar Class="border-bottom-0">
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler("Chờ xử lý"))">Làm mới</ToolBarButton>
-            <ToolBarButton IconClass="fa-solid fa-plus bh-color-green">Phê duyệt</ToolBarButton>
-            <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red">Từ chối</ToolBarButton>
+            <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> ConfirmHandler("Phê duyệt"))">Phê duyệt</ToolBarButton>
+            <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmHandler("Từ chối"))">Từ chối</ToolBarButton>
         </TelerikToolBar>
 
         <div class="bh-table-content" style=" height: calc(100vh - 150px);">
