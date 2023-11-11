@@ -42,4 +42,16 @@ namespace BHSytem.Models.Models
             Data = Activator.CreateInstance<T>(); //longtran Tạo một thể hiện
         }
     }
+
+    public class CliResponseModel<T> where T : class
+    {
+        public PaginationModel Pagination { get; set; }
+        public List<T> ListData { get; set; }
+
+        public CliResponseModel()
+        {
+            Pagination = new PaginationModel();
+            ListData = new List<T>();
+        }
+    }
 }

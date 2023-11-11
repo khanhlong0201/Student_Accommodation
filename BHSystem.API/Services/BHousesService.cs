@@ -12,6 +12,7 @@ namespace BHSystem.API.Services
         Task<IEnumerable<BoardingHouseModel>> GetDataAsync();
         Task<ResponseModel> UpdateDataAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
+        Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch);
     }
     public class BHousesService : IBHousesService
     {
@@ -155,5 +156,7 @@ namespace BHSystem.API.Services
             await _unitOfWork.CompleteAsync();
             return true;
         }
+
+        public async Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch) => await _boardinghousesRepository.GetDataPagination(oSearch); 
     }
 }

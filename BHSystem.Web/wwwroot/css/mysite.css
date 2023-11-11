@@ -455,3 +455,28 @@
 .k-editor-content.k-invalid {
     border: 1px solid rgba(243, 23, 0, 0.5);
 }
+
+.bhimage-cover{
+    object-fit: cover;
+}
+
+.bh-subtitle-bhouseIndex {
+    display: -webkit-box;
+    max-width: 100%;
+    height: 80px;
+    margin: 0 auto;
+    font-size: 12px;
+    line-height: 1;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #666666 !important;
+    font-weight: 400;
+}
+    .bh-subtitle-bhouseIndex * {
+        color: #666666 !important;
+        font-weight: 400 !important;
+        font-size: 12px!important;
+        line-height: normal!important;
+    }

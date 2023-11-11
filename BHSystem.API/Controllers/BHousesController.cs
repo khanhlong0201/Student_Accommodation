@@ -87,5 +87,33 @@ namespace BHSystem.API.Controllers
                 });
             }
         }
+
+        [HttpPost]
+        [Route("CliGetDataBHouse")]
+        public async Task<IActionResult> CliGetDataBHouse(BHouseSearchModel oSearch)
+        {
+            try
+            {
+                var result = await _boardinghousesService.CliGetDataBHouse(oSearch);
+                if(result == null || result.ListData == null || !result.ListData.Any())
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new
+                    {
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Message = "Không tìm thấy dữ liệu. Vui lòng làm mới lại trang"
+                    });
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Delete");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+            }
+        }
     }
 }

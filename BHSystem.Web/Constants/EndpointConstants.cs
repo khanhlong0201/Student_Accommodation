@@ -45,5 +45,9 @@
         public const string URL_ROOM_UPDATE = "Rooms/Update";
         public const string URL_ROOM_DELETE = "Rooms/Delete";
         public const string URL_ROOM_GET_BY_BHOUSE = "Rooms/GetAllByBHouse";
+
+        #region Client URL
+        public const string URL_CLI_BHOUSE_GETDATA = "BHouses/CliGetDataBHouse";
+        #endregion
     }
 }

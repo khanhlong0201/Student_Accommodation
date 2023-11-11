@@ -1,23 +1,32 @@
-﻿<TelerikCard class="bh-item__hover mt-3" Width="100%">
+﻿@using BHSystem.Web.Extensions;
+@inject IConfiguration _configuration;
+@inject IJSRuntime _jsRuntime;
+
+<TelerikCard class="bh-item__hover mt-3" Width="100%">
     <div class="row mb-1">
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <CardImage Height="140px" Width="100%" Src="@($"https://file4.batdongsan.com.vn/resize/1275x717/2023/10/06/20231006104703-4300_wm.jpg")"></CardImage>
-            <div class="d-flex justify-content-between" style="width: 100%; margin-top: 2px;">
-                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104703-446c_wm.jpg")"></CardImage>
-                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104702-9de7_wm.jpg")"></CardImage>
-                <CardImage Height="100px" Width="33%" Src="@($"https://file4.batdongsan.com.vn/crop/140x140/2023/10/06/20231006104702-9de7_wm.jpg")"></CardImage>
-            </div>
+            <CardImage Height="140px" Width="100%" Src="@($"{ImageUrlBHouse}")" Class="bhimage-cover"></CardImage>
+            @if(ListImages != null && ListImages.Any())
+            {
+                <div class="d-flex justify-content-between" style="width: 100%; margin-top: 2px;">
+                    @for (int i = 0; i < ListImages.Count(); i++)
+                    {
+                        <CardImage Height="100px" Width="33%" Src="@($"{ListImages[i]}")" Class="bhimage-cover"></CardImage>
+                    }
+                </div>
+            }
+            
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
             <CardBody>
                 <Telerik.Blazor.Components.CardTitle Class="bh-hover"><a href="/chi-tiet">@Title</a></Telerik.Blazor.Components.CardTitle>
                 <div class="">
-                    <Telerik.Blazor.Components.CardTitle Class="k-button-flat-primary">@Price triệu/tháng</Telerik.Blazor.Components.CardTitle>
+                    <Telerik.Blazor.Components.CardTitle Class="k-button-flat-primary">@Price /tháng</Telerik.Blazor.Components.CardTitle>
                     <CardSubTitle>Diện tích: @Acreage m²</CardSubTitle>
                     <CardSubTitle><i class="fa-solid fa-location-dot" style="margin-right: 5px;"></i>@Address</CardSubTitle>
                 </div>
-                <CardSubTitle>
-                    @Description
+                <CardSubTitle Class="bh-subtitle-bhouseIndex">
+                    @((MarkupString)$"{Description}")
                 </CardSubTitle>
             </CardBody>
         </div>
@@ -41,7 +50,7 @@
 </TelerikCard>
 
 @code {
-    [Parameter] public List<ImageViewModel>? ListImage { get; set; } // ds ảnh
+    [Parameter] public List<string>? ListImages { get; set; } // ds ảnh
     [Parameter] public string FullName { get; set; } = "Nguyễn Văn A"; // Tên người đăng tin
     [Parameter] public string CreateTime { get; set; } = "Đăng tin hôm qua"; // chuỗi đăng tin...
     [Parameter] public string? Title { get; set; } // title
@@ -50,4 +59,33 @@
     [Parameter] public string? Price { get; set; } // số tiền
     [Parameter] public string? Acreage { get; set; } // Diện tích
     [Parameter] public string? Contact { get; set; } // liên hệ
+    [Parameter] public string? ImageUrlBHouse { get; set; } = "./images/img-default.png";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            string urlRoom = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_ROOM + "/";
+            string urlHouse = _configuration!.GetSection("appSettings:ApiUrl").Value + DefaultConstants.FOLDER_BHOUSE + "/";
+            if (string.IsNullOrWhiteSpace(ImageUrlBHouse)) ImageUrlBHouse = "./images/img-default.png";
+            else ImageUrlBHouse = urlHouse + ImageUrlBHouse;
+
+            List<string> lstData = new List<string>();
+            if (ListImages != null && ListImages.Any())
+            {
+                ListImages.ForEach(item =>
+                {
+                    item = urlRoom + item;
+                    lstData.Add(item);
+                });
+            }
+            while (lstData.Count < 4)
+            {
+                lstData.Add("./images/img-default.png");
+            }; // thêm cho đủ 4 phần tử
+            
+            ListImages = lstData.Take(3).ToList();
+            StateHasChanged();
+        }
+    }
 }
