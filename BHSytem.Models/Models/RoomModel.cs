@@ -26,5 +26,7 @@ namespace BHSytem.Models.Models
         [Required(ErrorMessage = "Vui lòng điền Thông tin mô tả")]
         public string? Description { get; set; } // mô tả
         public List<ImagesDetailModel>? ListFile { get; set; }
+        public DateTime? Date_Create { get; set; }
+        public DateTime? Date_Update { get; set; }
     }
 }

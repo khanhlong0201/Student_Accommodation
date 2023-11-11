@@ -15,7 +15,7 @@ using Telerik.Blazor.Components;
 
 namespace BHSystem.Web.Features.Admin
 {
-    public partial class ApproveBookingPage
+    public partial class ApproveRoomPage
     {
         [Inject] private ILogger<UserPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
@@ -23,9 +23,9 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] private IConfiguration? _configuration { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
-        public List<BookingModel>? ListBookingWaitting { get; set; }
-        public List<BookingModel>? ListBookingAll { get; set; }
-        public IEnumerable<BookingModel>? SelectedBookingWaitting { get; set; } = new List<BookingModel>();
+        public List<RoomModel>? ListRoomWaitting { get; set; }
+        public List<RoomModel>? ListRoomAll { get; set; }
+        public IEnumerable<RoomModel>? SelectedRoomWaitting { get; set; } = new List<RoomModel>();
         public BHConfirm? _rDialogs { get; set; }
 
         [CascadingParameter]
@@ -38,7 +38,7 @@ namespace BHSystem.Web.Features.Admin
                 try
                 {
                     await showLoading();
-                    await getDataBooking("Chờ xử lý");
+                    await getDataRoom("Chờ xử lý");
                 }   
                 catch(Exception ex)
                 {
@@ -62,10 +62,10 @@ namespace BHSystem.Web.Features.Admin
         }
 
         /// <summary>
-        /// lấy danh sách booking
+        /// lấy danh sách phòng cần phê duyệt
         /// </summary>
         /// <returns></returns>
-        private async Task getDataBooking(string type = "")
+        private async Task getDataRoom(string type = "")
         {
             // Gọi hàm và truyền giá trị cho pParams
             Dictionary<string, object> parameters = new Dictionary<string, object>
@@ -73,18 +73,18 @@ namespace BHSystem.Web.Features.Admin
                 { "type", type }
             };
            
-            string resString = await _apiService!.GetData(EndpointConstants.URL_BOOKING_GET_BY_STATUS, parameters);
+            string resString = await _apiService!.GetData(EndpointConstants.URL_ROOM_GET_BY_STATUS, parameters);
             if (!string.IsNullOrEmpty(resString))
             {
                 if (type + "" == "Chờ xử lý")
                 {
-                    ListBookingWaitting = new List<BookingModel>();
-                    ListBookingWaitting = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
+                    ListRoomWaitting = new List<RoomModel>();
+                    ListRoomWaitting = JsonConvert.DeserializeObject<List<RoomModel>>(resString);
                 }
                 else
                 {
-                    ListBookingAll = new List<BookingModel>();
-                    ListBookingAll = JsonConvert.DeserializeObject<List<BookingModel>>(resString);
+                    ListRoomAll = new List<RoomModel>();
+                    ListRoomAll = JsonConvert.DeserializeObject<List<RoomModel>>(resString);
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace BHSystem.Web.Features.Admin
             try
             {
                 await showLoading();
-                await getDataBooking(Wait);
+                await getDataRoom(Wait);
             }
             catch (Exception ex)
             {
@@ -119,7 +119,7 @@ namespace BHSystem.Web.Features.Admin
         /// <returns></returns>
         protected async Task ConfirmHandler(string type= "")
         {
-            if (SelectedBookingWaitting == null || !SelectedBookingWaitting.Any())
+            if (SelectedRoomWaitting == null || !SelectedRoomWaitting.Any())
             {
                 _toastService!.ShowWarning("Vui lòng chọn dòng để từ chối");
                 return;
@@ -130,19 +130,19 @@ namespace BHSystem.Web.Features.Admin
                 try
                 {
                     await showLoading();
-                    var oDelete = SelectedBookingWaitting.Select(m => new { m.Id });
+                    var oDelete = SelectedRoomWaitting.Select(m => new { m.Id });
                     RequestModel request = new RequestModel()
                     {
                         Json = JsonConvert.SerializeObject(oDelete),
                         UserId = pUserId,
                         Type = type
                     };
-                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_BOOKING_UPDATE_STATUS, request);
+                    string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROOM_UPDATE_STATUS, request);
                     if (!string.IsNullOrEmpty(resString))
                     {
-                        if(type +""=="Từ chối") _toastService!.ShowSuccess($"Đã từ chối danh sách đặt phòng được chọn.");
-                        else _toastService!.ShowSuccess($"Đã phê duyệt danh sách đặt phòng được chọn.");
-                        await getDataBooking("Chờ xử lý");
+                        if(type +""=="Từ chối") _toastService!.ShowSuccess($"Đã từ chối danh sách phòng được chọn.");
+                        else _toastService!.ShowSuccess($"Đã phê duyệt danh sách phòng được chọn.");
+                        await getDataRoom("Chờ xử lý");
                     }
                 }
                 catch (Exception ex)

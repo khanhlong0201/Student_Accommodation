@@ -47,6 +47,9 @@
         public const string URL_ROOM_UPDATE = "Rooms/Update";
         public const string URL_ROOM_DELETE = "Rooms/Delete";
         public const string URL_ROOM_GET_BY_BHOUSE = "Rooms/GetAllByBHouse";
+        public const string URL_ROOM_GET_BY_STATUS = "Rooms/GetAllByStaus";
+        public const string URL_ROOM_UPDATE_STATUS = "Rooms/UpdateStatus";
+
 
         public const string URL_BOOKING_GET_BY_STATUS = "Bookings/GetAll";
         public const string URL_BOOKING_UPDATE_STATUS = "Bookings/UpdateStatus";

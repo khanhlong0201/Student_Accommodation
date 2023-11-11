@@ -1,5 +1,4 @@
-﻿@page "/admin/approve-booking"
-
+﻿@page "/admin/approve-room"
 <TelerikTabStrip>
     <TabStripTab Title="Chờ xử lý">
         <TelerikToolBar Class="border-bottom-0">
@@ -9,7 +8,7 @@
         </TelerikToolBar>
 
         <div class="bh-table-content" style=" height: calc(100vh - 150px);">
-            <TelerikGrid Data="@ListBookingWaitting"
+            <TelerikGrid Data="@ListRoomWaitting"
                          Height="100%"
                          Width="100%"
                          RowHeight="25"
@@ -20,19 +19,19 @@
                          FilterMode="@GridFilterMode.FilterMenu"
                          SelectionMode="@GridSelectionMode.Multiple"
                          ScrollMode="@GridScrollMode.Scrollable"
-                         @bind-SelectedItems="@SelectedBookingWaitting">
+                         @bind-SelectedItems="@SelectedRoomWaitting">
                 <GridSettings>
                     <GridPagerSettings InputType="PagerInputType.Input" />
                 </GridSettings>
                 <GridAggregates>
-                    <GridAggregate Field=@nameof(BookingModel.Id) Aggregate="@GridAggregateType.Count" />
+                    <GridAggregate Field=@nameof(RoomModel.Id) Aggregate="@GridAggregateType.Count" />
                 </GridAggregates>
                 <GridColumns>
                     <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
-                    <GridColumn Field=@nameof(BookingModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã đặt phòng">
+                    <GridColumn Field=@nameof(RoomModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã đặt phòng">
                         <Template>
                             @{
-                                var model = (context as BookingModel);
+                                var model = (context as RoomModel);
                                 <span class="h-link">@model!.Id</span>
                             }
                         </Template>
@@ -40,10 +39,10 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(BookingModel.Room_Id) Width="140px" Title="Mã Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="140px" Title="Tên Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
-                    <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
+                     <GridColumn Field=@nameof(RoomModel.Id) Width="140px" Title="Mã Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.Name) Width="140px" Title="Tên Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.UserName) Width="170px" Title="Tên chủ trọ"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo phòng"></GridColumn>
                 </GridColumns>
             </TelerikGrid>
         </div>
@@ -53,7 +52,7 @@
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
         </TelerikToolBar>
         <div class="bh-table-content" style=" height: calc(100vh - 150px);">
-            <TelerikGrid Data="@ListBookingAll"
+            <TelerikGrid Data="@ListRoomAll"
                          Height="100%"
                          Width="100%"
                          RowHeight="25"
@@ -64,19 +63,19 @@
                          FilterMode="@GridFilterMode.FilterMenu"
                          SelectionMode="@GridSelectionMode.Multiple"
                          ScrollMode="@GridScrollMode.Scrollable"
-                         @bind-SelectedItems="@SelectedBookingWaitting">
+                         @bind-SelectedItems="@SelectedRoomWaitting">
                 <GridSettings>
                     <GridPagerSettings InputType="PagerInputType.Input" />
                 </GridSettings>
                 <GridAggregates>
-                    <GridAggregate Field=@nameof(BookingModel.Id) Aggregate="@GridAggregateType.Count" />
+                    <GridAggregate Field=@nameof(RoomModel.Id) Aggregate="@GridAggregateType.Count" />
                 </GridAggregates>
                 <GridColumns>
                     @*<GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>*@
-                    <GridColumn Field=@nameof(BookingModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã đặt phòng">
+                    <GridColumn Field=@nameof(RoomModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã đặt phòng">
                         <Template>
                             @{
-                                var model = (context as BookingModel);
+                                var model = (context as RoomModel);
                                 <span class="h-link">@model!.Id</span>
                             }
                         </Template>
@@ -84,12 +83,12 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(BookingModel.Room_Id) Width="140px" Title="Mã Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="140px" Title="Tên Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Status) Width="170px" Title="Trạng thái"></GridColumn>
-                    <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
-                     <GridColumn Field=@nameof(BHouseModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày xác nhận"></GridColumn>
+                     <GridColumn Field=@nameof(RoomModel.Id) Width="140px" Title="Mã Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.Name) Width="140px" Title="Tên Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.UserName) Width="170px" Title="Tên chủ trọ"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.Status) Width="170px" Title="Trạng thái"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo phòng"></GridColumn>
+                     <GridColumn Field=@nameof(RoomModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày xác nhận"></GridColumn>
                 </GridColumns>
             </TelerikGrid>
         </div>
