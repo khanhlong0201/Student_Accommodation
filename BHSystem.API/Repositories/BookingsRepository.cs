@@ -17,6 +17,7 @@ namespace BHSystem.API.Repositories
             var result = await (from a in _context.Bookings
                                 join b in _context.Rooms on a.Room_Id equals b.Id
                                 join c in _context.Users on a.UserId equals c.UserId
+                                join d in _context.BoardingHouses on b.Boarding_House_Id equals d.Id
                                 where a.IsDeleted == false && (type +""=="" || a.Status == type)
                                 select new BookingModel()
                                 {
@@ -27,6 +28,7 @@ namespace BHSystem.API.Repositories
                                     Date_Create = a.Date_Create ,
                                     Date_Update = a.Date_Update,
                                     Status = a.Status,
+                                    BHouse_Name = d.Name
                                 }).ToListAsync();
             return result;
         }
