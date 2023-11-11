@@ -15,7 +15,7 @@ using Telerik.Blazor.Components;
 
 namespace BHSystem.Web.Features.Admin
 {
-    public partial class ApprovePage
+    public partial class ApproveBookingPage
     {
         [Inject] private ILogger<UserPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
