@@ -46,7 +46,7 @@
             </div>
         </div>
         <div>
-            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Liên hệ: @Contact</TelerikButton>
+            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)"><a href="@($"tel:{@Contact}")" target="_blank" style="color: white">Liên hệ: @Contact</a></TelerikButton>
             <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)"><i class="fa-regular fa-heart"></i></TelerikButton>
         </div>
     </div>
@@ -54,8 +54,8 @@
 
 @code {
     [Parameter] public List<string>? ListImages { get; set; } // ds ảnh
-    [Parameter] public string FullName { get; set; } = "Nguyễn Văn A"; // Tên người đăng tin
-    [Parameter] public string CreateTime { get; set; } = "Đăng tin hôm qua"; // chuỗi đăng tin...
+    [Parameter] public string FullName { get; set; } = ""; // Tên người đăng tin
+    [Parameter] public string CreateTime { get; set; } = ""; // chuỗi đăng tin...
     [Parameter] public string? Title { get; set; } // title
     [Parameter] public string? Description { get; set; } // mô tả về phòng
     [Parameter] public string? Address { get; set; } // Địa chỉ

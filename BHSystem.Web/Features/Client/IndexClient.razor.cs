@@ -36,7 +36,7 @@ namespace BHSystem.Web.Features.Client
 
         protected override void OnInitialized()
         {
-            SearchModel.Limit = 2;
+            SearchModel.Limit = 4;
             SearchModel.Page = 0;
             base.OnInitialized();
         }
@@ -57,8 +57,8 @@ namespace BHSystem.Web.Features.Client
                 }
                 finally
                 {
-                    await showLoading(false);
                     await InvokeAsync(StateHasChanged);
+                    await showLoading(false);
                 }
             }    
         }
