@@ -39,9 +39,14 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(RoomModel.Id) Width="140px" Title="Mã Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.BHouseName) Width="140px" Title="Tên Trọ"></GridColumn>
                     <GridColumn Field=@nameof(RoomModel.Name) Width="140px" Title="Tên Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(RoomModel.UserName) Width="170px" Title="Tên chủ trọ"></GridColumn>
+                     <GridColumn Field=@nameof(RoomModel.IsDeleted) Width="140px" Title="Hình ảnh">
+                        <Template>
+                            <BHUploadFileImage ImageUrl="@((context as RoomModel).File_Path)" Accept="image/*" 
+                                    CssIcon="w1FileCss" ></BHUploadFileImage>
+                        </Template>
+                    </GridColumn>
                     <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo phòng"></GridColumn>
                 </GridColumns>
             </TelerikGrid>
@@ -83,9 +88,14 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(RoomModel.Id) Width="140px" Title="Mã Phòng"></GridColumn>
+                    <GridColumn Field=@nameof(RoomModel.BHouseName) Width="140px" Title="Tên Trọ"></GridColumn>
                     <GridColumn Field=@nameof(RoomModel.Name) Width="140px" Title="Tên Phòng"></GridColumn>
-                    <GridColumn Field=@nameof(RoomModel.UserName) Width="170px" Title="Tên chủ trọ"></GridColumn>
+                     <GridColumn Field=@nameof(RoomModel.IsDeleted) Width="140px" Title="Hình ảnh">
+                        <Template>
+                            <BHUploadFileImage ImageUrl="@((context as RoomModel).File_Path)" Accept="image/*" 
+                                    CssIcon="w1FileCss" ></BHUploadFileImage>
+                        </Template>
+                    </GridColumn>
                     <GridColumn Field=@nameof(RoomModel.Status) Width="170px" Title="Trạng thái"></GridColumn>
                     <GridColumn Field=@nameof(RoomModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo phòng"></GridColumn>
                      <GridColumn Field=@nameof(RoomModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày xác nhận"></GridColumn>

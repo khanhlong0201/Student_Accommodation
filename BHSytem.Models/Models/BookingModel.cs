@@ -17,6 +17,7 @@ namespace BHSytem.Models.Models
         public string? Status { get; set; }
         public DateTime? Date_Create { get; set; }
         public DateTime? Date_Update { get; set; }
+        public string? BHouse_Name { get; set; }
 
     }
 }
