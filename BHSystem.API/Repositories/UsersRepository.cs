@@ -16,7 +16,8 @@ namespace BHSystem.API.Repositories
     {
         public UsersRepository(ApplicationDbContext context) : base(context){ }
 
-        public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName && m.Password == request.Password);
+        public async Task<Users?> LoginAsync(Users request) => await _dbSet.FirstOrDefaultAsync(m => m.UserName == request.UserName 
+            && m.Password == request.Password && m.IsDeleted == false);
 
         public async Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId)
         {
