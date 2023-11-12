@@ -1,11 +1,13 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Core;
 using BHSystem.Web.Features.Admin;
+using BHSystem.Web.Providers;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
 namespace BHSystem.Web.Features.Client
@@ -42,10 +44,34 @@ namespace BHSystem.Web.Features.Client
         #region Properties
         public CliBoardingHouseModel CliBoardingHouse { get; set; } = new CliBoardingHouseModel();
         public List<string> ListImages { get; set; } = new List<string>();
-
+        public int pRoomId { get; set; }
         #endregion
 
-    #region Override Functions
+        #region Override Functions
+
+        protected override Task OnInitializedAsync()
+        {
+            try
+            {
+                // đọc giá tri câu query
+                var uri = _navigationManager?.ToAbsoluteUri(_navigationManager.Uri);
+                if (uri != null)
+                {
+                    var queryStrings = QueryHelpers.ParseQuery(uri.Query);
+                    if (queryStrings.Count() > 0)
+                    {
+                        string key = uri.Query.Substring(5); // để tránh parse lỗi;
+                        pRoomId = Convert.ToInt32(key);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "OnInitializedAsync");
+            }
+            return base.OnInitializedAsync();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if(firstRender)
@@ -82,7 +108,7 @@ namespace BHSystem.Web.Features.Client
             {
                 Dictionary<string, object> pKeys = new Dictionary<string, object>()
                 {
-                    {"pRoomId", "6" }
+                    {"pRoomId", $"{pRoomId}" }
                 };
                 string resString = await _apiService!.GetData(EndpointConstants.URL_CLI_BHOUSE_GETDATA_DETAIL, pKeys);
                 if (!string.IsNullOrEmpty(resString))
@@ -144,13 +170,14 @@ namespace BHSystem.Web.Features.Client
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 await showLoading();
-                BookingUpdate.Room_Id = 3;
+                BookingUpdate.Room_Id = pRoomId;
                 BookingUpdate.UserId = 1;
+                BookingUpdate.Status = "Chờ xử lý";
                 RequestModel request = new RequestModel()
                 {
                     Json = JsonConvert.SerializeObject(BookingUpdate),
                     Type = nameof(EnumType.Add),
-                    UserId = pUserId
+                    UserId = 1    
                 };
                 string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_BOOKING_UPDATE, request);
                 if (!string.IsNullOrEmpty(resString))

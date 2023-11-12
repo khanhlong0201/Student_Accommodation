@@ -28,5 +28,6 @@ namespace BHSytem.Models.Models
         public List<ImagesDetailModel>? ListFile { get; set; }
         public DateTime? Date_Create { get; set; }
         public DateTime? Date_Update { get; set; }
+        public string? File_Path { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -126,5 +127,55 @@ namespace BHSystem.API.Controllers
                 });
             }
         }
+
+
+        /// <summary>
+        /// lấy danh sách phòng theo trạng thái
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllByStatus")]
+        public async Task<IActionResult> GetAllByStatus(string type)
+        {
+            try
+            {
+                var data = await _roomsService.GetAllByStatusAsync(type);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "GetAllByStatus");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route("UpdateStatus")]
+        // [Authorize] //khi nào gọi trên web tháo truỳen token
+        public async Task<IActionResult> UpdateStatusMulti(RequestModel room)
+        {
+            try
+            {
+                await _roomsService.UpdateStatusMulti(room);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Đã cập dữ liệu"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "UpdateStatusMulti");
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ex.Message
+                });
+
+            }
+        }
+
     }
 }

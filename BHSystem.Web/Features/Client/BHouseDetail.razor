@@ -115,11 +115,15 @@
                                                FillMode="@(ThemeConstants.Button.FillMode.Outline)"
                                                ImageUrl="./images/zalo.png"
                                                
-                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Chat qua Zalo</TelerikButton>
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">
+                                    <a href="@($"https://zalo.me/{@CliBoardingHouse.Phone}")" target="_blank">Chat qua Zalo</a>
+                                </TelerikButton>
 
                                 <TelerikButton Class="bh-btn-search btn-contact mb-1 mt-3"
                                                FillMode="@(ThemeConstants.Button.FillMode.Outline)" IconClass="fa-brands fa-whatsapp"
-                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">Liên hệ: @CliBoardingHouse.Phone</TelerikButton>
+                                               ThemeColor="@(ThemeConstants.Button.ThemeColor.Base)">
+                                    <a href="@($"tel:{@CliBoardingHouse.Phone}")" target="_blank">Liên hệ: @CliBoardingHouse.Phone</a>
+                                </TelerikButton>
                             </div>
                         </CardBody>
                     </TelerikCard>

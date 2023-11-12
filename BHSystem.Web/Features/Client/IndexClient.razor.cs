@@ -204,6 +204,7 @@ namespace BHSystem.Web.Features.Client
         {
             try
             {
+                if (pageIndex < 0 || pageIndex > Pagination.TotalPage) return;
                 await showLoading();
                 SearchModel.Limit = 2;
                 SearchModel.Page = pageIndex - 1;
