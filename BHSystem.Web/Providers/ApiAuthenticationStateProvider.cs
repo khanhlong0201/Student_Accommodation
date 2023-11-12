@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json;
@@ -8,9 +9,11 @@ namespace BHSystem.Web.Providers
     public class ApiAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        public ApiAuthenticationStateProvider(ILocalStorageService localStorage)
+        private readonly NavigationManager _nav;
+        public ApiAuthenticationStateProvider(ILocalStorageService localStorage, NavigationManager nav)
         {
             _localStorage = localStorage;
+            _nav = nav;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -20,6 +23,10 @@ namespace BHSystem.Web.Providers
                 var savedToken = await _localStorage.GetItemAsync<string>("authToken");
                 if (string.IsNullOrWhiteSpace(savedToken))
                 {
+                    string sPath = _nav.ToBaseRelativePath(_nav.Uri);
+                    if($"{sPath}".ToUpper().Contains("ADMIN") 
+                        && !$"{sPath}".ToUpper().Contains("ADMIN/LOGIN")
+                        && !$"{sPath}".ToUpper().Contains("ADMIN/LOGOUT")) _nav.NavigateTo("/trang-chu");
                     return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
                 }
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));

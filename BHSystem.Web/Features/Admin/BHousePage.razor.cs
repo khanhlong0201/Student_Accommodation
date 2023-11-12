@@ -194,12 +194,11 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
-
+                ListBrowserFiles = new List<IBrowserFile>();
                 if (pAction == EnumType.Add)
                 {
                     BHouseUpdate = new BHouseModel();
                     ListImages = new List<ImagesDetailModel>();
-                    ListBrowserFiles = new List<IBrowserFile>();
                     IsCreate = true;
                     _EditContext = new EditContext(BHouseUpdate);
                 }

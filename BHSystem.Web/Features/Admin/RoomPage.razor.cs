@@ -214,12 +214,12 @@ namespace BHSystem.Web.Features.Admin
                     IsShowUpdateStatus = true;
                     Status = "";
                     return;
-                }    
+                }
+                ListBrowserFiles = new List<IBrowserFile>();
                 if (pAction == EnumType.Add)
                 {
                     RoomUpdate = new RoomModel();
                     ListImages = new List<ImagesDetailModel>();
-                    ListBrowserFiles = new List<IBrowserFile>();
                     IsCreate = true;
                     _EditContext = new EditContext(RoomUpdate);
                 }

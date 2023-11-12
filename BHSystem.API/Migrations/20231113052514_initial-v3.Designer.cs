@@ -4,6 +4,7 @@ using BHSystem.API.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231113052514_initial-v3")]
+    partial class initialv3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -449,44 +451,6 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Menu_Id");
 
                     b.ToTable("RoleMenus");
-
-                    b.HasData(
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-001",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-002",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-003",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-004",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-005",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Role_Id = 1,
-                            Menu_Id = "000-006",
-                            IsDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Roles", b =>
@@ -520,20 +484,6 @@ namespace BHSystem.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDeleted = false,
-                            Name = "Admintrator"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDeleted = false,
-                            Name = "Bussiness Partner"
-                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.RoomPrices", b =>
@@ -663,14 +613,6 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Role_Id");
 
                     b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 2,
-                            Role_Id = 1,
-                            IsDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Users", b =>
@@ -736,28 +678,6 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Ward_Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            FullName = "Khách Vãn Lai",
-                            IsDeleted = false,
-                            Password = "",
-                            Type = "Client",
-                            UserName = "",
-                            Ward_Id = 1
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            FullName = "Testing",
-                            IsDeleted = false,
-                            Password = "KZY9mwl2Mv4NM4jrKXv4ug==",
-                            Type = "Admin",
-                            UserName = "testing",
-                            Ward_Id = 1
-                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Wards", b =>

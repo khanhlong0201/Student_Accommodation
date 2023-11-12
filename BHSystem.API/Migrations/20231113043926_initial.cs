@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BHSystem.API.Migrations
 {
-    public partial class init : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -198,6 +198,7 @@ namespace BHSystem.API.Migrations
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     PasswordReset = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Ward_Id = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Date_Create = table.Column<DateTime>(type: "datetime2", nullable: true),
                     User_Create = table.Column<int>(type: "int", nullable: true),
@@ -338,6 +339,7 @@ namespace BHSystem.API.Migrations
                     Width = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Image_Id = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Date_Create = table.Column<DateTime>(type: "datetime2", nullable: true),
                     User_Create = table.Column<int>(type: "int", nullable: true),
@@ -371,6 +373,7 @@ namespace BHSystem.API.Migrations
                     Phone = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
                     Room_Id = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Date_Create = table.Column<DateTime>(type: "datetime2", nullable: true),
                     User_Create = table.Column<int>(type: "int", nullable: true),
