@@ -10,7 +10,7 @@ namespace BHSystem.API.Services
     public interface IUsersService
     {
         Task<Users?> LoginAsync(UserModel request);
-        Task<IEnumerable<Users>> GetDataAsync();
+        Task<IEnumerable<UserModel>> GetDataAsync();
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId);
@@ -39,7 +39,7 @@ namespace BHSystem.API.Services
             return await _usersRepository.LoginAsync(user);
         }
 
-        public async Task<IEnumerable<Users>> GetDataAsync() => await _usersRepository.GetAll();
+        public async Task<IEnumerable<UserModel>> GetDataAsync() => await _usersRepository.GetAllAsync();
 
         public async Task<ResponseModel> UpdateUserAsync(RequestModel entity)
         {

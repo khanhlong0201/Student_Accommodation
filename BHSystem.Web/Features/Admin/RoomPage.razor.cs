@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using Telerik.Blazor.Components;
 using Telerik.Blazor.Components.Editor;
@@ -36,7 +37,9 @@ namespace BHSystem.Web.Features.Admin
         public EditContext? _EditContext { get; set; }
         public BHConfirm? _rDialogs { get; set; }
         public int pBHouseId { get; set; } = -1;
-
+        public bool IsShowUpdateStatus { get; set; }
+        public List<string> ListStatus = new List<string>() { "Đã thuê", "Phòng trống" };
+        public string Status = "";
         public List<IBrowserFile> ListBrowserFiles { get; set; } = new();   // Danh sách file lưu tạm => Upload file
         public List<ImagesDetailModel> ListImages = new List<ImagesDetailModel>();
 
@@ -200,7 +203,18 @@ namespace BHSystem.Web.Features.Admin
                 {
                     _toastService!.ShowError("Dữ liệu mã hóa phòng trọ không khớp. Vui lòng kiểm tra lại");
                     return;
-                }
+                } 
+                if(pAction == EnumType.UpdateStatus)
+                {
+                    if (SelectedRooms == null || !SelectedRooms.Any())
+                    {
+                        _toastService!.ShowWarning("Vui lòng chọn dòng để cập nhật tình trạng.");
+                        return;
+                    }
+                    IsShowUpdateStatus = true;
+                    Status = "";
+                    return;
+                }    
                 if (pAction == EnumType.Add)
                 {
                     RoomUpdate = new RoomModel();
@@ -398,7 +412,7 @@ namespace BHSystem.Web.Features.Admin
                     if (!string.IsNullOrEmpty(resString))
                     {
                         _toastService!.ShowSuccess($"Đã xóa thông tin phòng được chọn.");
-                        await getImageDeteailByImageId(pBHouseId);
+                        await getDataRoomByBHouse();
                     }
                 }
                 catch (Exception ex)
@@ -411,6 +425,42 @@ namespace BHSystem.Web.Features.Admin
                     await showLoading(false);
                     await InvokeAsync(StateHasChanged);
                 }
+            }
+        }
+
+        protected async void ConfirmUpdateStatus()
+        {
+            if (string.IsNullOrEmpty(Status))
+            {
+                _toastService!.ShowError("Vui lòng chọn tình trạng");
+                return;
+            }
+            try
+            {
+                await showLoading();
+                var oDelete = SelectedRooms!.Select(m => new { m.Id });
+                RequestModel request = new RequestModel()
+                {
+                    Json = JsonConvert.SerializeObject(oDelete),
+                    UserId = pUserId,
+                    Type = Status
+                };
+                string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_ROOM_UPDATE_STATUS, request);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    _toastService!.ShowSuccess($"Đã nhập nhật tình trạng [{Status}] cho các phòng được chọn");
+                    await getDataRoomByBHouse();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ConfirmUpdateStatus");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
             }
         }
         #endregion
