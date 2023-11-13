@@ -51,7 +51,14 @@ namespace BHSystem.API.Repositories
         /// <returns></returns>
         public async Task<CliResponseModel<CliBoardingHouseModel>?> GetDataPagination(BHouseSearchModel oSearch)
         {
-
+            bool isSearchPrice = !string.IsNullOrEmpty(oSearch.KeyPrice);
+            decimal priceFrom = 0;
+            decimal priceTo = 0;
+            bool isSearchAcreage = !string.IsNullOrEmpty(oSearch.KeyAcreage);
+            decimal acreageFrom = 0;
+            decimal acreageTo = 0;
+            if (isSearchPrice) outPrice(oSearch.KeyPrice+ "", out priceFrom, out priceTo);
+            if (isSearchAcreage) outAcreage(oSearch.KeyAcreage + "", out acreageFrom, out acreageTo);
             var result = await (from t0 in _dbSet
                                 join t1 in _context.Wards on t0.Ward_Id equals t1.Id
                                 join t2 in _context.Distincts on t1.Distincts_Id equals t2.Id
@@ -62,6 +69,8 @@ namespace BHSystem.API.Repositories
                                 && (oSearch.CityId <=0 || (oSearch.CityId > 0 && t3.Id == oSearch.CityId))
                                 && (oSearch.DistinctId <=0 || (oSearch.DistinctId > 0 && t2.Id == oSearch.DistinctId))
                                 && (oSearch.WardId <=0 || (oSearch.WardId > 0 && t0.Ward_Id == oSearch.WardId))
+                                && (isSearchPrice == false || (isSearchPrice && t5.Price >= priceFrom && t5.Price < priceTo))
+                                && (isSearchAcreage == false || (isSearchAcreage && (t5.Length * t5.Width) >= acreageFrom && (t5.Length * t5.Width) < acreageTo))
                                 select new CliBoardingHouseModel()
                                 {
                                     Id = t0.Id,
@@ -142,6 +151,82 @@ namespace BHSystem.API.Repositories
                               //
                           }).FirstOrDefaultAsync();
             return result;
+        }
+
+        #region Private Functions
+        private void outPrice(string key, out decimal from, out decimal to)
+        {
+            from = 0;
+            to = 100000000;
+            switch(key)
+            {
+                case "1":
+                    from = 0;
+                    to = 1000000;
+                    break;
+                case "2":
+                    from = 1000000;
+                    to = 3000000;
+                    break;
+                case "3":
+                    from = 3000000;
+                    to = 5000000;
+                    break;
+                case "4":
+                    from = 5000000;
+                    to = 7000000;
+                    break;
+                case "5":
+                    from = 7000000;
+                    to = 10000000;
+                    break;
+                case "6":
+                    from = 10000000;
+                    to = 15000000;
+                    break;
+                case "7":
+                    from = 15000000;
+                    to = 100000000000;
+                    break;
+                default:
+                    from = 0;
+                    to = 100000000;
+                    break;
+            }    
+        }
+
+        private void outAcreage(string key, out decimal from, out decimal to)
+        {
+            from = 0;
+            to = 500;
+            switch (key)
+            {
+                case "1":
+                    from = 0;
+                    to = 20;
+                    break;
+                case "2":
+                    from = 20;
+                    to = 30;
+                    break;
+                case "3":
+                    from = 30;
+                    to = 40;
+                    break;
+                case "4":
+                    from = 40;
+                    to = 50;
+                    break;
+                case "5":
+                    from = 50;
+                    to = 500;
+                    break;
+                default:
+                    from = 0;
+                    to = 500;
+                    break;
+            }
         }    
+        #endregion
     }
 }

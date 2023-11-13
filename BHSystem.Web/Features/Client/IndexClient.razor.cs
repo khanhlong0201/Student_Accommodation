@@ -32,13 +32,36 @@ namespace BHSystem.Web.Features.Client
         public List<CityModel> ListCity { get; set; } = new List<CityModel>();
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
         public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
+
+        public Dictionary<string, string> ListPrices = new Dictionary<string, string>();
+        public Dictionary<string, string> ListAcreages = new Dictionary<string, string>();
         #region Override Functions
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            SearchModel.Limit = 4;
-            SearchModel.Page = 0;
-            base.OnInitialized();
+            try
+            {
+                await showLoading();
+                SearchModel.Limit = 5;
+                SearchModel.Page = 0;
+                ListPrices.Add("1", "Dưới 1 triệu");
+                ListPrices.Add("2", "Từ 1 - 3 triệu");
+                ListPrices.Add("3", "Từ 3 - 5 triệu");
+                ListPrices.Add("4", "Từ 5 - 7 triệu");
+                ListPrices.Add("5", "Từ 7 - 10 triệu");
+                ListPrices.Add("6", "Từ 10 - 15 triệu");
+                ListPrices.Add("7", "Trên 15 triệu");
+
+                ListAcreages.Add("1", "Dưới 20 m²");
+                ListAcreages.Add("2", "20 -30 m²");
+                ListAcreages.Add("3", "30 -40 m²");
+                ListAcreages.Add("4", "40 -50 m²");
+                ListAcreages.Add("5", "Trên 50 m²");
+            }
+            catch(Exception)
+            {
+
+            }
         }
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -46,7 +69,6 @@ namespace BHSystem.Web.Features.Client
             {
                 try
                 {
-                    await showLoading();
                     await getDataBHouse();
                     await getCity();
                 }
@@ -184,7 +206,7 @@ namespace BHSystem.Web.Features.Client
             try
             {
                 await showLoading();
-                SearchModel.Limit = 2;
+                SearchModel.Limit = 5;
                 SearchModel.Page = 0;
                 await getDataBHouse();
             }
@@ -206,13 +228,36 @@ namespace BHSystem.Web.Features.Client
             {
                 if (pageIndex < 0 || pageIndex > Pagination.TotalPage) return;
                 await showLoading();
-                SearchModel.Limit = 2;
+                SearchModel.Limit = 5;
                 SearchModel.Page = pageIndex - 1;
                 await getDataBHouse();
             }
             catch (Exception ex)
             {
                 _logger!.LogError(ex, "ReLoadDataHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        protected async void OnChangePrice(string key, bool isPrice = true)
+        {
+            try
+            {
+                await showLoading();
+                SearchModel.Limit = 5;
+                SearchModel.Page = 0;
+                if (isPrice) SearchModel.KeyPrice = SearchModel.KeyPrice == key ? "" : key; 
+                else SearchModel.KeyAcreage = SearchModel.KeyAcreage == key ? "" : key;
+                await getDataBHouse();
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "OnChangePrice");
                 _toastService!.ShowError(ex.Message);
             }
             finally

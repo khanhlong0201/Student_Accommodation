@@ -161,7 +161,15 @@
                         <CardBody>
                             <h1 class="bh-h1">Xem theo giá</h1>
                             <div class="row">
-                                <div class="col-md-6 col-sm-12">
+                                @foreach(var item in ListPrices)
+                                {
+                                    <div class="col-md-6 col-sm-12" @onclick="@(()=> OnChangePrice(item.Key))">
+                                        <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                        <span class="bh-link-hover bh-font-size @(SearchModel.KeyPrice == item.Key ? "bh-color-active" : "")">@item.Value</span>
+                                        <CardSeparator></CardSeparator>
+                                    </div>
+                                }
+                                @*<div class="col-md-6 col-sm-12">
                                     <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
                                     <span class="bh-link-hover bh-font-size">Dưới 1 triệu</span>
                                     <CardSeparator></CardSeparator>
@@ -195,7 +203,7 @@
                                     <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
                                     <span class="bh-link-hover bh-font-size">Trên 15 triệu</span>
                                     <CardSeparator></CardSeparator>
-                                </div>
+                                </div>*@
                             </div>
                         </CardBody>
                     </TelerikCard>
@@ -203,12 +211,17 @@
                         <CardBody>
                             <h1 class="bh-h1">Lọc theo diện tích</h1>
                             <div class="row">
-                                <div class="col-md-6 col-sm-12">
-                                    <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
-                                    <span class="bh-link-hover bh-font-size">Dưới 20 m²</span>
-                                    <CardSeparator></CardSeparator>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
+                                @foreach(var item in ListAcreages)
+                                {
+                                    <div class="col-md-6 col-sm-12" 
+                                        @onclick="@(()=> OnChangePrice(item.Key, false))">
+                                        <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
+                                        <span class="bh-link-hover bh-font-size @(SearchModel.KeyAcreage == item.Key ? "bh-color-active" : "")">@item.Value</span>
+                                        <CardSeparator></CardSeparator>
+                                    </div>
+                                }
+                                
+                                @*<div class="col-md-6 col-sm-12">
                                     <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
                                     <span class="bh-link-hover bh-font-size">20 -30 m²</span>
                                     <CardSeparator></CardSeparator>
@@ -227,7 +240,7 @@
                                     <i class="fa-solid fa-chevron-right" style="font-size: 9px; margin-right: 5px;"></i>
                                     <span class="bh-link-hover bh-font-size">Trên 50 m²</span>
                                     <CardSeparator></CardSeparator>
-                                </div>
+                                </div>*@
                             </div>
                         </CardBody>
                     </TelerikCard>
