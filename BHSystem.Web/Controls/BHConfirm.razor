@@ -47,7 +47,27 @@
         });
         return _TaskCompletionSource.Task;
     }
-    private void YesClick() => _TaskCompletionSource?.SetResult(true);
-    private void NoClick() => _TaskCompletionSource?.SetResult(false);
+    private void YesClick()
+    {
+        try
+        {
+            _TaskCompletionSource?.SetResult(true);
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+    private void NoClick()
+    {
+        try
+        {
+            _TaskCompletionSource?.SetResult(false);
+        }
+        catch(Exception)
+        {
+            
+        }
+    }
     public void Dispose() => _TaskCompletionSource = null;
 }
