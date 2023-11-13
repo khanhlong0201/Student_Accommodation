@@ -55,8 +55,9 @@ namespace BHSystem.API.Services
                         break;
                     }    
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
-                    user.User_Create = entity.UserId;
+                    user.User_Create = 1;
                     user.Date_Create = DateTime.Now;
+                    user.Ward_Id = 1;
                     user.Type = entity.Kind;
                     await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();

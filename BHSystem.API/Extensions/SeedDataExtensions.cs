@@ -22,7 +22,8 @@ namespace BHSystem.API.Extensions
         {
             modelBuilder.Entity<Roles>().HasData(
                 new Roles() { Id = 1, Name = "Admintrator"}, // default
-                new Roles() { Id = 2, Name = "Bussiness Partner" }
+                new Roles() { Id = 2, Name = "Bussiness Partner" },
+                new Roles() { Id = 3, Name = "Client" }
                 );
             return modelBuilder;
         }

@@ -9,11 +9,7 @@
                     <div>
                         <TelerikButton OnClick="@CloseDialogHandler">&nbsp;Đóng&nbsp;</TelerikButton>
                         <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" Hidden="!IsShowButtonSaveAndCreate" OnClick="@SaveAndCreate">@TitleBtnSaveAndCreate</TelerikButton>
-                    @if (IsShowButtons)
-                    {
-                        <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@SaveAndCreate">@TitleBtnSaveAndCreate</TelerikButton>
-                        <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@SaveAndClosed">@TitleBtnSaveAndClosed</TelerikButton>
-                    }
+                         <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" Hidden="!IsShowButtons" OnClick="@SaveAndClosed">@TitleBtnSaveAndClosed</TelerikButton>
                     </div>
                 </div>
         </DialogButtons>
