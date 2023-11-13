@@ -58,6 +58,8 @@ namespace BHSytem.Models.Models
         public int CityId { get; set; }
         public int DistinctId { get; set;}
         public int WardId { get;set; }
+        public string? KeyPrice { get; set; }
+        public string? KeyAcreage { get; set; }
 
         public int Page { get; set; }
         public int Limit { get; set; }

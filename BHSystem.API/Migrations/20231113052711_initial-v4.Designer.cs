@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231110151825_editUser")]
-    partial class editUser
+    [Migration("20231113052711_initial-v4")]
+    partial class initialv4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,6 +109,10 @@ namespace BHSystem.API.Migrations
 
                     b.Property<int>("Room_Id")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -355,6 +359,68 @@ namespace BHSystem.API.Migrations
                     b.HasKey("MenuId");
 
                     b.ToTable("Menus");
+
+                    b.HasData(
+                        new
+                        {
+                            MenuId = "000-001",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/report",
+                            Name = "Biểu đồ thống kê",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-002",
+                            Icon = "fa-solid fa-people-roof",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/boarding-house",
+                            Name = "Quản lý phòng trọ",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-003",
+                            Icon = "fa-solid fa-user-check",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-room",
+                            Name = "Phê duyệt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-004",
+                            Icon = "fa-solid fa-user-pen",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-booking",
+                            Name = "Xác nhận đặt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-005",
+                            Icon = "fa-solid fa-users",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/user",
+                            Name = "Quản lý người dùng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-006",
+                            Icon = "fa-solid fa-folder-tree",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/role",
+                            Name = "Quản lý nhóm quyền",
+                            Parent = ""
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.RoleMenus", b =>
@@ -385,6 +451,44 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Menu_Id");
 
                     b.ToTable("RoleMenus");
+
+                    b.HasData(
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-001",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-002",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-003",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-004",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-005",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Role_Id = 1,
+                            Menu_Id = "000-006",
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Roles", b =>
@@ -418,6 +522,20 @@ namespace BHSystem.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "Admintrator"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "Bussiness Partner"
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.RoomPrices", b =>
@@ -547,6 +665,14 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Role_Id");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Role_Id = 1,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Users", b =>
@@ -590,6 +716,10 @@ namespace BHSystem.API.Migrations
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -608,6 +738,28 @@ namespace BHSystem.API.Migrations
                     b.HasIndex("Ward_Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            FullName = "Khách Vãn Lai",
+                            IsDeleted = false,
+                            Password = "",
+                            Type = "Client",
+                            UserName = "",
+                            Ward_Id = 1
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            FullName = "Testing",
+                            IsDeleted = false,
+                            Password = "KZY9mwl2Mv4NM4jrKXv4ug==",
+                            Type = "Admin",
+                            UserName = "testing",
+                            Ward_Id = 1
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.Wards", b =>

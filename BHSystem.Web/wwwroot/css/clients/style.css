@@ -243,3 +243,7 @@ textarea.h-input:focus {
     color: black;
 }
 /*bh-detail*/
+
+.bh-color-active {
+    color: #ff6358;
+}

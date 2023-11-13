@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231111072551_edit_Booking")]
-    partial class edit_Booking
+    [Migration("20231113050343_initial-v1")]
+    partial class initialv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -359,6 +359,68 @@ namespace BHSystem.API.Migrations
                     b.HasKey("MenuId");
 
                     b.ToTable("Menus");
+
+                    b.HasData(
+                        new
+                        {
+                            MenuId = "000-001",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/report",
+                            Name = "Biểu đồ thống kê",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-002",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/boarding-house",
+                            Name = "Quản lý phòng trọ",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-003",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-room",
+                            Name = "Phê duyệt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-004",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-booking",
+                            Name = "Xác nhận đặt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-005",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/user",
+                            Name = "Quản lý người dùng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-006",
+                            Icon = "fa-solid fa-folder-tree",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/role",
+                            Name = "Quản lý nhóm quyền",
+                            Parent = ""
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.RoleMenus", b =>

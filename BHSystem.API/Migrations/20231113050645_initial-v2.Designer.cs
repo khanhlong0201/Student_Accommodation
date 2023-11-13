@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BHSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231031001211_init")]
-    partial class init
+    [Migration("20231113050645_initial-v2")]
+    partial class initialv2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,6 +109,10 @@ namespace BHSystem.API.Migrations
 
                     b.Property<int>("Room_Id")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -355,6 +359,68 @@ namespace BHSystem.API.Migrations
                     b.HasKey("MenuId");
 
                     b.ToTable("Menus");
+
+                    b.HasData(
+                        new
+                        {
+                            MenuId = "000-001",
+                            Icon = "fa fa-chart-bar",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/report",
+                            Name = "Biểu đồ thống kê",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-002",
+                            Icon = "fa-solid fa-people-roof",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/boarding-house",
+                            Name = "Quản lý phòng trọ",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-003",
+                            Icon = "fa-solid fa-user-check",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-room",
+                            Name = "Phê duyệt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-004",
+                            Icon = "fa-solid fa-user-pen",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/approve-booking",
+                            Name = "Xác nhận đặt phòng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-005",
+                            Icon = "fa-solid fa-users",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/user",
+                            Name = "Quản lý người dùng",
+                            Parent = ""
+                        },
+                        new
+                        {
+                            MenuId = "000-006",
+                            Icon = "fa-solid fa-folder-tree",
+                            IsDeleted = false,
+                            Level = 0,
+                            Link = "/admin/role",
+                            Name = "Quản lý nhóm quyền",
+                            Parent = ""
+                        });
                 });
 
             modelBuilder.Entity("BHSytem.Models.Entities.RoleMenus", b =>
@@ -475,6 +541,10 @@ namespace BHSystem.API.Migrations
                     b.Property<DateTime?>("Date_Update")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Image_Id")
                         .HasColumnType("int");
 
@@ -585,6 +655,10 @@ namespace BHSystem.API.Migrations
                     b.Property<string>("Phone")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(50)

@@ -4,6 +4,7 @@ using BHSystem.Web.Features.Admin;
 using BHSystem.Web.Providers;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Models;
+using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -20,6 +21,7 @@ namespace BHSystem.Web.Features.Client
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
         [Inject] IConfiguration? _configuration { get; set; }
+        [Inject] ILocalStorageService? _localStorage { get; set; }
 
         public int PageIndex = 1;
         public List<CarouselModel> CarouselData { get; set; } = new List<CarouselModel>()
@@ -45,6 +47,10 @@ namespace BHSystem.Web.Features.Client
         public CliBoardingHouseModel CliBoardingHouse { get; set; } = new CliBoardingHouseModel();
         public List<string> ListImages { get; set; } = new List<string>();
         public int pRoomId { get; set; }
+        public List<CityModel> ListCity { get; set; } = new List<CityModel>();
+        public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
+        public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
+        public BHouseSearchModel SearchModel { get; set; } = new BHouseSearchModel();
         #endregion
 
         #region Override Functions
@@ -79,6 +85,7 @@ namespace BHSystem.Web.Features.Client
                 try
                 {
                     await showLoading();
+                    await getCity();
                     await getDataDetail();
                 }
                 catch (Exception ex)
@@ -142,6 +149,63 @@ namespace BHSystem.Web.Features.Client
                 await InvokeAsync(StateHasChanged);
             }
         }
+
+        private async Task getCity()
+        {
+            var resStringCity = await _apiService!.GetData(EndpointConstants.URL_CITY_GETALL);
+            ListCity = JsonConvert.DeserializeObject<List<CityModel>>(resStringCity);
+        }
+
+        private async Task getDistrictByCity(int iCityId)
+        {
+            try
+            {
+                await showLoading();
+                ListDistinct = new List<DistinctModel>();
+                var request = new Dictionary<string, object>
+                    {
+                        { "city_id", iCityId }
+                    };
+                var resStringDistinct = await _apiService!.GetData(EndpointConstants.URL_DISTINCT_GET_BY_CITY, request);
+                ListDistinct = JsonConvert.DeserializeObject<List<DistinctModel>>(resStringDistinct);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "OnLoadDistrictByCity");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+
+        }
+
+        private async Task getWardByDistrict(int iDistinctId)
+        {
+            try
+            {
+                await showLoading();
+                ListWard = new List<WardModel>();
+                var request = new Dictionary<string, object>
+                    {
+                        { "distinct_id", iDistinctId }
+                    };
+                var resStringWard = await _apiService!.GetData(EndpointConstants.URL_WARD_GET_BY_DISTINCT, request);
+                ListWard = JsonConvert.DeserializeObject<List<WardModel>>(resStringWard);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "onLoadWardByDistrict");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
         #endregion
 
         #region "Protected Functions"
@@ -194,6 +258,42 @@ namespace BHSystem.Web.Features.Client
             finally
             {
                 await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        protected async void OnChangeCityHandler(int iCityId)
+        {
+            SearchModel.CityId = iCityId;
+            SearchModel.DistinctId = 0;
+            await getDistrictByCity(iCityId);
+        }
+
+        protected async void OnChangeDistinctHandler(int iDistinctId)
+        {
+            SearchModel.DistinctId = iDistinctId;
+            SearchModel.WardId = 0;
+            await getWardByDistrict(iDistinctId);
+        }
+
+        protected async void ReLoadDataHandler()
+        {
+            try
+            {
+                SearchModel.Limit = 5;
+                SearchModel.Page = 0;
+                if (await _localStorage!.ContainKeyAsync("oFilter")) await _localStorage!.RemoveItemAsync("oFilter");
+                await _localStorage!.SetItemAsync("oFilter", SearchModel);
+                _navigationManager!.NavigateTo("/trang-chu");
+                //await getDataBHouse();
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ReLoadDataHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
                 await InvokeAsync(StateHasChanged);
             }
         }

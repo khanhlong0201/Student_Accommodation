@@ -36,6 +36,7 @@ namespace BHSystem.API.Repositories
                                 {
                                     Id = a.Id,
                                     Name = a.Name,
+                                    BHouseId = b.Id,
                                     BHouseName = b.Name,
                                     Image_Id = a.Image_Id,
                                     Date_Create = a.Date_Create,

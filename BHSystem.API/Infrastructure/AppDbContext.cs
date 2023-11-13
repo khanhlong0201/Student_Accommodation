@@ -68,7 +68,11 @@ namespace BHSystem.API.Infrastructure
             modelBuilder.Entity<Comments>().HasOne(i => i.Users).WithMany(c => c.Comments).HasForeignKey(i => i.UserId).OnDelete(DeleteBehavior.Restrict);
 
             //// seed data
-            //modelBuilder.SeedData();
+            modelBuilder.SeedDataMenus();
+            modelBuilder.SeedDataRoles();
+            modelBuilder.SeedDataUsers();
+            modelBuilder.SeedDataRoleMenus();
+            modelBuilder.SeedDataRoleUsers();
             base.OnModelCreating(modelBuilder);
             
             

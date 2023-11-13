@@ -5,6 +5,7 @@
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-regular fa-pen-to-square bh-color-green" OnClick="@(()=> OnOpenDialogHandler(EnumType.UpdateStatus))">Cập nhật thuê phòng</ToolBarButton>
     <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 
@@ -145,6 +146,21 @@
 
     </EditForm>
 
+</BHDialog>
+
+<BHDialog @bind-IsVisible="@IsShowUpdateStatus"
+          Width="40%"
+          TitleBtnSaveAndClosed="Cập nhật"
+          IsShowButtonSaveAndCreate="false"
+          SaveAndClosed="@(()=> ConfirmUpdateStatus())"
+          Title="Cập nhật tình trạng phòng">
+    <BHLabel Value="Chọn tình trạng phòng:" IsRequired="true" />
+    <TelerikComboBox @bind-Value="@Status"
+        Data="@ListStatus"
+        Placeholder="Chọn tình trạng"
+        Filterable="true"
+        Width="100%">
+    </TelerikComboBox>
 </BHDialog>
 
 <BHConfirm @ref="@_rDialogs" />

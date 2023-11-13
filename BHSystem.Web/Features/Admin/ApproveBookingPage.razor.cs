@@ -141,7 +141,7 @@ namespace BHSystem.Web.Features.Admin
                     if (!string.IsNullOrEmpty(resString))
                     {
                         if(type +""=="Từ chối") _toastService!.ShowSuccess($"Đã từ chối danh sách đặt phòng được chọn.");
-                        else _toastService!.ShowSuccess($"Đã phê duyệt danh sách đặt phòng được chọn.");
+                        else _toastService!.ShowSuccess($"Đã Xác nhận thông tin. Vui lòng vào phòng trọ cập nhật tình trạng");
                         await getDataBooking("Chờ xử lý");
                     }
                 }

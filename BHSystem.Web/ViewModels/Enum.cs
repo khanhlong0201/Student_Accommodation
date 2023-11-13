@@ -13,6 +13,7 @@
         @SaveAndCreate,
         @Report,
         @RoleUser,
-        @RoleMenu
+        @RoleMenu,
+        @UpdateStatus
     }
 }

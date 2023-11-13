@@ -14,5 +14,10 @@
 
         public const string FOLDER_BHOUSE = "ImagesBH";
         public const string FOLDER_ROOM = "ImagesRoom";
+
+        public const string APPROVAL_TYPE_NAME = "Phê duyệt";
+        public const string DENY_TYPE_NAME = "Từ chối";
+        public const string PENDING_TYPE_NAME = "Chờ xử lý";
+        public const string CLOSED_TYPE_NAME = "Đã thuê";
     }
 }

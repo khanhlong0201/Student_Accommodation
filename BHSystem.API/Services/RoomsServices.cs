@@ -28,13 +28,15 @@ namespace BHSystem.API.Services
         private readonly IImagesRepository _imageRepository;
         private readonly IImagesDetailsRepository _imageDetailRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBHousesRepository _boardinghousesRepository;
         public RoomsService(IRoomsRepository roomsRepository, IImagesRepository imageRepository
-            , IImagesDetailsRepository imageDetailRepository, IUnitOfWork unitOfWork)
+            , IImagesDetailsRepository imageDetailRepository, IUnitOfWork unitOfWork, IBHousesRepository bHousesRepository)
         {
             _roomsRepository = roomsRepository;
             _unitOfWork = unitOfWork;
             _imageRepository = imageRepository;
             _imageDetailRepository = imageDetailRepository;
+            _boardinghousesRepository = bHousesRepository;
         }
         
         public async Task<IEnumerable<Rooms>> GetDataAsync() => await _roomsRepository.GetAll();
@@ -56,6 +58,7 @@ namespace BHSystem.API.Services
                         response.StatusCode = 0;
                         response.Message = "Success";
                         await _unitOfWork.CommitAsync();
+                        await UpdateQtyBHouse(oItem.BHouseId); // Cập nhật lại số lượng phòng
                         break;
                     case "Update":
                         var roomEntity = await _roomsRepository.GetSingleByCondition(m => m.Id == oItem.Id);
@@ -70,6 +73,7 @@ namespace BHSystem.API.Services
                         response.StatusCode = 0;
                         response.Message = "Success";
                         await _unitOfWork.CommitAsync();
+                        //await UpdateQtyBHouse(oItem.BHouseId); // Cập nhật lại số lượng phòng
                         break;
                     default: break;
                 }
@@ -105,7 +109,7 @@ namespace BHSystem.API.Services
             Rooms oRoom = new Rooms();
             oRoom.Name = oItem.Name + "";
             oRoom.Boarding_House_Id = oItem.BHouseId;
-            oRoom.Status = "Open";
+            oRoom.Status = "Chờ xử lý";
             oRoom.Address = oItem.Address + "";
             oRoom.Description = oItem.Description + "";
             oRoom.Length = oItem.Length;
@@ -202,5 +206,30 @@ namespace BHSystem.API.Services
             await _unitOfWork.CompleteAsync();
             return true;
         }
+
+        /// <summary>
+        /// cập nhật sl phòng
+        /// </summary>
+        /// <param name="pBHouseId"></param>
+        /// <returns></returns>
+        private async Task UpdateQtyBHouse(int pBHouseId)
+        {
+            try
+            {
+                var bhouseEntity = await _boardinghousesRepository.GetSingleByCondition(m => m.Id == pBHouseId);
+                if (bhouseEntity != null)
+                {
+                    var data = await _roomsRepository.GetAll(m => m.Boarding_House_Id == pBHouseId && m.IsDeleted == false);
+                    bhouseEntity.Qty = data?.Count() ?? 0;
+                    _boardinghousesRepository.Update(bhouseEntity);
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+            catch(Exception)
+            {
+
+            }
+            
+        }    
     }
 }

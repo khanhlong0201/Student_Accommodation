@@ -1,4 +1,5 @@
-﻿using BHSystem.Web.Controls;
+﻿using BHSystem.Web.Constants;
+using BHSystem.Web.Controls;
 using BHSystem.Web.Core;
 using BHSystem.Web.Providers;
 using BHSystem.Web.Services;
@@ -8,6 +9,7 @@ using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 using Telerik.Blazor.Resources;
 
@@ -19,6 +21,7 @@ namespace BHSystem.Web.Features.Admin
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private ICliUserService? _userService { get; set; }
+        [Inject] private IApiService? _apiService { get; set; }
         public List<UserModel>? ListUser { get; set; }
         public IEnumerable<UserModel>? SelectedUsers { get; set; } = new List<UserModel>();
         public bool IsInitialDataLoadComplete { get; set; } = true;
@@ -30,6 +33,33 @@ namespace BHSystem.Web.Features.Admin
 
         [CascadingParameter]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        public List<CityModel> ListCity { get; set; } = new List<CityModel>();
+        public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
+        public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                try
+                {
+                    await showLoading();
+                    await getCity();
+                    await getDataUser();
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "OnAfterRenderAsync");
+                    _toastService!.ShowError(ex.Message);
+                }
+                finally
+                {
+                    await showLoading(false);
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
 
         #region "Private Functions"
         private async Task showLoading(bool isShow = true)
@@ -50,10 +80,67 @@ namespace BHSystem.Web.Features.Admin
             SelectedUsers = new List<UserModel>();
             ListUser = await _userService!.GetDataAsync();
         }
+
+        private async Task getCity()
+        {
+            var resStringCity = await _apiService!.GetData(EndpointConstants.URL_CITY_GETALL);
+            ListCity = JsonConvert.DeserializeObject<List<CityModel>>(resStringCity);
+        }
+
+        private async Task getDistrictByCity(int iCityId)
+        {
+            try
+            {
+                await showLoading();
+                ListDistinct = new List<DistinctModel>();
+                var request = new Dictionary<string, object>
+                    {
+                        { "city_id", iCityId }
+                    };
+                var resStringDistinct = await _apiService!.GetData(EndpointConstants.URL_DISTINCT_GET_BY_CITY, request);
+                ListDistinct = JsonConvert.DeserializeObject<List<DistinctModel>>(resStringDistinct);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "OnLoadDistrictByCity");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+
+        }
+
+        private async Task getWardByDistrict(int iDistinctId)
+        {
+            try
+            {
+                await showLoading();
+                ListWard = new List<WardModel>();
+                var request = new Dictionary<string, object>
+                    {
+                        { "distinct_id", iDistinctId }
+                    };
+                var resStringWard = await _apiService!.GetData(EndpointConstants.URL_WARD_GET_BY_DISTINCT, request);
+                ListWard = JsonConvert.DeserializeObject<List<WardModel>>(resStringWard);
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "onLoadWardByDistrict");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
         #endregion "Private Functions"
 
         #region "Protected Functions"
-        
+
 
         /// <summary>
         /// load dữ liệu
@@ -82,7 +169,7 @@ namespace BHSystem.Web.Features.Admin
         /// <summary>
         /// mở popup
         /// </summary>
-        protected void OnOpenDialogHandler(EnumType pAction = EnumType.Add, UserModel? pItemDetails = null)
+        protected async void OnOpenDialogHandler(EnumType pAction = EnumType.Add, UserModel? pItemDetails = null)
         {
             try
             {
@@ -91,6 +178,7 @@ namespace BHSystem.Web.Features.Admin
                 {
                     UserUpdate = new UserModel();
                     IsCreate = true;
+                    _EditContext = new EditContext(UserUpdate);
                 }
                 else
                 {
@@ -100,15 +188,27 @@ namespace BHSystem.Web.Features.Admin
                     UserUpdate.Password = EncryptHelper.Decrypt(pItemDetails!.Password+"");
                     UserUpdate.Address = pItemDetails!.Address;
                     UserUpdate.Email = pItemDetails!.Email;
+                    UserUpdate.Ward_Id = pItemDetails!.Ward_Id;
+                    UserUpdate.City_Id = pItemDetails!.City_Id;
+                    UserUpdate.Distinct_Id = pItemDetails!.Distinct_Id;
                     IsCreate = false;
+                    _EditContext = new EditContext(UserUpdate);
+                    await showLoading();
+                    Task task1 = getDistrictByCity(UserUpdate.City_Id);
+                    Task task2 = getWardByDistrict(UserUpdate.Distinct_Id);
+                    await Task.WhenAll(task1, task2);
                 }
                 IsShowDialog = true;
-                _EditContext = new EditContext(UserUpdate);
             }
             catch (Exception ex)
             {
                 _logger!.LogError(ex, "ReceiptController", "OnOpenDialogHandler");
                 _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -131,7 +231,7 @@ namespace BHSystem.Web.Features.Admin
                 var checkData = _EditContext!.Validate();
                 if (!checkData) return;
                 await showLoading();
-                UserUpdate.Ward_Id = 1;
+                //UserUpdate.Ward_Id = 1;
                 bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction, pUserId);
                 if (isUpdate)
                 {
@@ -196,6 +296,18 @@ namespace BHSystem.Web.Features.Admin
                     await InvokeAsync(StateHasChanged);
                 }
             }
+        }
+
+        protected async void OnChangeCityHandler(int iCityId)
+        {
+            UserUpdate.City_Id = iCityId;
+            await getDistrictByCity(iCityId);
+        }
+
+        protected async void OnChangeDistinctHandler(int iDistinctId)
+        {
+            UserUpdate.Distinct_Id = iDistinctId;
+            await getWardByDistrict(iDistinctId);
         }
         #endregion "Protected Functions"
     }

@@ -4,11 +4,11 @@
     <TabStripTab Title="Chờ xử lý">
         <TelerikToolBar Class="border-bottom-0">
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler("Chờ xử lý"))">Làm mới</ToolBarButton>
-            <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> ConfirmHandler("Phê duyệt"))">Phê duyệt</ToolBarButton>
+            <ToolBarButton IconClass="fa-solid fa-check bh-color-green" OnClick="@(()=> ConfirmHandler("Phê duyệt"))">Phê duyệt</ToolBarButton>
             <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmHandler("Từ chối"))">Từ chối</ToolBarButton>
         </TelerikToolBar>
 
-        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+        <div class="bh-table-content" style=" height: calc(100vh - 215px);">
             <TelerikGrid Data="@ListBookingWaitting"
                          Height="100%"
                          Width="100%"
@@ -40,8 +40,8 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="140px" Title="Tên trọ"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="140px" Title="Tên phòng"></GridColumn>
+                     <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
                     <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
                 </GridColumns>
@@ -52,7 +52,7 @@
          <TelerikToolBar Class="border-bottom-0">
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
         </TelerikToolBar>
-        <div class="bh-table-content" style=" height: calc(100vh - 150px);">
+        <div class="bh-table-content" style=" height: calc(100vh - 215px);">
             <TelerikGrid Data="@ListBookingAll"
                          Height="100%"
                          Width="100%"
@@ -84,8 +84,8 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="140px" Title="Tên trọ"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="140px" Title="Tên phòng"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.Status) Width="170px" Title="Trạng thái"></GridColumn>
                     <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>

@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\ImagesBH\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

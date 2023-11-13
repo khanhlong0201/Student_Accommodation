@@ -189,7 +189,7 @@ namespace BHSystem.API.Controllers
                     });
                 }
                 Dictionary<string, string> pResult = new Dictionary<string, string>();
-                IEnumerable<Users>? lstUserNotExistRole = new List<Users>();
+                IEnumerable<UserModel>? lstUserNotExistRole = new List<UserModel>();
                 string sJsonExist = "";
                 if (lstUserExistRole == null || !lstUserExistRole.Any())
                 {

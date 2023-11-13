@@ -63,9 +63,12 @@
                 </FooterTemplate>
             </GridColumn>
             <GridColumn Field=@nameof(UserModel.FullName) Width="170px" Title="Tên người dùng"></GridColumn>
-            <GridColumn Field=@nameof(UserModel.Address) Width="140px" Title="Địa chỉ"></GridColumn>
             <GridColumn Field=@nameof(UserModel.Phone) Width="140px" Title="Số điện thoại"></GridColumn>
             <GridColumn Field=@nameof(UserModel.Email) Width="140px" Title="Email"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.Address) Width="140px" Title="Địa chỉ"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.Ward_Name) Width="160px" Title="Quận huyện"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.Distinct_Name) Width="160px" Title="Phường xã"></GridColumn>
+            <GridColumn Field=@nameof(UserModel.City_Name) Width="160px" Title="Tỉnh thành"></GridColumn>
             <GridColumn Field=@nameof(UserModel.IsDeleted) Width="140px" Title="Đã xóa">
                 <Template>
                     @{
@@ -104,7 +107,57 @@
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
         </div>
         <div class="mt-2">
-            <BHLabel Value="Đia chỉ:" />
+            <BHLabel Value="Số điện thoại:" IsRequired="true" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Phone" Id="txtPhone" />
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPhone" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Thành phố:" IsRequired="true" />
+            <TelerikComboBox Data="@ListCity"
+                Value="@UserUpdate.City_Id"
+                ValueExpression="@(() => UserUpdate.City_Id)"
+                ValueChanged="@((int value) => OnChangeCityHandler(value))"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtCityId" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.City_Id)" Id="txtCityId" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Huyện quận:" IsRequired="true" />
+            <TelerikComboBox Data="@ListDistinct"
+                Value="@UserUpdate.Distinct_Id"
+                ValueExpression="@(() => UserUpdate.Distinct_Id)"
+                ValueChanged="@((int value) => OnChangeDistinctHandler(value))"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtDistinct_Id" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Distinct_Id)" Id="txtDistinct_Id" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Xã phường:" IsRequired="true" />
+            <TelerikComboBox Data="@ListWard"
+                Value="@UserUpdate.Ward_Id"
+                ValueExpression="@(() => UserUpdate.Ward_Id)"
+                ValueChanged="@((int value) => UserUpdate.Ward_Id = value)"
+                Placeholder="Chọn thành phố..."
+                TextField="@nameof(CityModel.Name)"
+                ValueField="@nameof(CityModel.Id)"
+                Filterable="true"
+                ClearButton="false"
+                Id="txtWard_Id" Width="100%">
+            </TelerikComboBox>
+            <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Ward_Id)" Id="txtWard_Id" />
+        </div>
+        <div class="mt-2">
+            <BHLabel Value="Đia chỉ cụ thể:" />
             <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
         </div>
         <div class="mt-2">
