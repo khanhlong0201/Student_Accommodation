@@ -3,6 +3,7 @@ using BHSystem.Web.Core;
 using BHSystem.Web.Extensions;
 using BHSystem.Web.Features.Admin;
 using BHSytem.Models.Models;
+using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace BHSystem.Web.Features.Client
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] NavigationManager? _navigationManager { get; set; }
         [Inject] IConfiguration? _configuration { get; set; }
+        [Inject] ILocalStorageService? _localStorage { get; set; }
 
         #region Properties Test
         public string binding { get; set; } = "";
@@ -69,6 +71,14 @@ namespace BHSystem.Web.Features.Client
             {
                 try
                 {
+                    if(await _localStorage!.ContainKeyAsync("oFilter"))
+                    {
+                        SearchModel = await _localStorage!.GetItemAsync<BHouseSearchModel>("oFilter");
+                        Task task1 = getDistrictByCity(SearchModel.CityId);
+                        Task task2 = getWardByDistrict(SearchModel.DistinctId);
+                        await Task.WhenAll(task1, task2);
+                        await _localStorage!.RemoveItemAsync("oFilter");
+                    }    
                     await getDataBHouse();
                     await getCity();
                 }

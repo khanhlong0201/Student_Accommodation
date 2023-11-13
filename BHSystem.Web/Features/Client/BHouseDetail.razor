@@ -8,35 +8,52 @@
             <div class="banner__search-info">
                 <div class="row align-items-end">
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Khu vực</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Thành phố</label>
+                        <TelerikComboBox Data="@ListCity"
+                                         Value="@SearchModel.CityId"
+                                         ValueExpression="@(() => SearchModel.CityId)"
+                                         ValueChanged="@((int value) => OnChangeCityHandler(value))"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Class="bh-combo"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtCityId" Width="100%">
                         </TelerikComboBox>
                     </div>
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Mức giá</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Huyện quận</label>
+                        <TelerikComboBox Data="@ListDistinct"
+                                         Value="@SearchModel.DistinctId"
+                                         ValueExpression="@(() => SearchModel.DistinctId)"
+                                         ValueChanged="@((int value) => OnChangeDistinctHandler(value))"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtDistinct_Id" Width="100%">
                         </TelerikComboBox>
                     </div>
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <label for="mail" class="k-label k-form-label">Diện tích</label>
-                        <TelerikComboBox @bind-Value="@binding"
-                                         Data="@ListData"
-                                         Placeholder="Chọn khu vực"
+                        <label for="mail" class="k-label k-form-label">Xã phường</label>
+                        <TelerikComboBox Data="@ListWard"
+                                         Value="@SearchModel.WardId"
+                                         ValueExpression="@(() => SearchModel.WardId)"
+                                         ValueChanged="@((int value) => SearchModel.WardId = value)"
+                                         Placeholder="Chọn thành phố..."
+                                         TextField="@nameof(CityModel.Name)"
+                                         ValueField="@nameof(CityModel.Id)"
                                          Filterable="true"
-                                         Width="100%">
+                                         ClearButton="true"
+                                         Id="txtWard_Id" Width="100%">
                         </TelerikComboBox>
                     </div>
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter" FillMode="@(ThemeConstants.Button.FillMode.Outline)" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">Đặt lại</TelerikButton>
+                    <div class="col-xl-2 col-lg-4 col-md-6 col-sm-12">
+                        <TelerikButton Class="bh-btn-search mb-1" IconClass="fa-solid fa-filter"
+                                       FillMode="@(ThemeConstants.Button.FillMode.Outline)"
+                                       ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)"
+                                       OnClick="@ReLoadDataHandler">Đặt lại</TelerikButton>
                     </div>
                 </div>
             </div>
@@ -45,6 +62,8 @@
     </section>
 </div>
 <!-- Search -->
+
+
 <div id="h-service">
     <div className="h-wrapper">
         <section className="h-service">
