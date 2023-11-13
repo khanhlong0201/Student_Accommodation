@@ -102,11 +102,12 @@ body {
                         <img class="h-logo" src="./images/logoclient.jpg" />
                     </a>
                     <nav class="h-navbar @(IsActive ? "active": "")">
-                        <a href="#">Trang chủ</a>
-                        <a href="#">Đăng tin</a>
-                        <a href="#">Bảng giá dịch vụ</a>
-                        <a href="#">Tìm phòng trọ</a>
-                        <a href="#">Tin tức</a>
+                        <a href="trang-chu">Trang chủ</a>
+                        <a href="/admin/boarding-house">Đăng phòng</a>
+                        <a href="/admin/news">Đăng tin</a>
+                        @*<a href="#">Bảng giá dịch vụ</a>
+                        <a href="#">Tìm phòng trọ</a>*@
+                        <a href="/news">Tin tức</a>
                     </nav>
                 </div>
                 <a onclick="@OnClickShowSearch" style="cursor: pointer" class="h-header-main__booking">Tra cứu</a>
