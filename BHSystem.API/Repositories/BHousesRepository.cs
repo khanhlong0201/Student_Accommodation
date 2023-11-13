@@ -15,6 +15,7 @@ namespace BHSystem.API.Repositories
     }
     public class BHousesRepository: GenericRepository<BoardingHouses>, IBHousesRepository
     {
+        private List<string> ListStatus = new List<string>() { "Phê duyệt", "Phòng trống" };
         public BHousesRepository(ApplicationDbContext context) : base(context) { }
         public async Task<IEnumerable<BoardingHouseModel>> GetAllAsync()
         {
@@ -57,7 +58,7 @@ namespace BHSystem.API.Repositories
                                 join t3 in _context.Citys on t2.City_Id equals t3.Id
                                 join t4 in _context.Users on t0.User_Id equals t4.UserId
                                 join t5 in _context.Rooms on t0.Id equals t5.Boarding_House_Id
-                                where t0.IsDeleted == false 
+                                where t0.IsDeleted == false && ListStatus.Contains(t5.Status)
                                 && (oSearch.CityId <=0 || (oSearch.CityId > 0 && t3.Id == oSearch.CityId))
                                 && (oSearch.DistinctId <=0 || (oSearch.DistinctId > 0 && t2.Id == oSearch.DistinctId))
                                 && (oSearch.WardId <=0 || (oSearch.WardId > 0 && t0.Ward_Id == oSearch.WardId))
