@@ -18,6 +18,7 @@ namespace BHSystem.API.Services
         Task<IEnumerable<BookingModel>> GetDataAsync(string type);
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> UpdateStatusMulti(RequestModel entity);
+        Task<IEnumerable<BookingModel>> GetAllByPhoneAsync(string phone);
     }
     public class BookingsService : IBookingsService
     {
@@ -33,7 +34,12 @@ namespace BHSystem.API.Services
         {
             return await _bookingsRepository.GetAllAsync(type);
           
-        }  
+        }
+        public async Task<IEnumerable<BookingModel>> GetAllByPhoneAsync(string phone)
+        {
+            return await _bookingsRepository.GetAllByPhoneAsync(phone);
+
+        }
 
 
         public async Task<ResponseModel> UpdateUserAsync(RequestModel entity)

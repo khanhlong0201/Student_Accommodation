@@ -28,4 +28,10 @@
     <Folder Include="wwwroot\Upload\Room\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Controls\Clients\ItemBHouseBookingHistory.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -33,6 +33,7 @@
         public const string URL_MENU_GET_BY_USER = "Menus/GetMenuByUser";
 
         public const string URL_BOOKING_UPDATE = "Bookings/Update";
+        public const string URL_BOOKING_GET_BY_PHONE = "Bookings/GetAllByPhone";
 
         public const string URL_IMAGE_DETAIL_GET_BY_IMAGE_ID = "ImagesDetails/GetImageDetailByImageIdAsync";
         public const string URL_IMAGE_DETAIL_DELTETE = "ImagesDetails/Delete";

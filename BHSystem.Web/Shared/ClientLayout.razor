@@ -86,7 +86,7 @@ body {
                     else
                     {
                         <div>
-                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <i class="c"></i>
                             <span style="margin-left: 2.5px"><a href="/client/logout">Đăng xuất</a></span>
                         </div>
                     }
@@ -109,7 +109,7 @@ body {
                         <a href="#">Tin tức</a>
                     </nav>
                 </div>
-                <a href="#" class="h-header-main__booking">Tra cứu</a>
+                <a onclick="@OnClickShowSearch" style="cursor: pointer" class="h-header-main__booking">Tra cứu</a>
                 <!-- <BiMenu id="menu-btn" /> -->
                 <i id="menu-btn" class="fa-solid fa-bars" @onclick="@ActiveMenuHander"></i>
             </section>
@@ -202,7 +202,14 @@ body {
     </div>
     <!-- Footer -->
 </TelerikRootComponent>
-
+<!-- Boarding House -->
+<BHDialog @bind-IsVisible="@IsShowBookingHistory"
+    Width="80%"
+    IsShowButtons= "false"
+    Title="Tra cứu lịch sử đặt phòng">
+    <ItemBHouseBookingHistory></ItemBHouseBookingHistory>
+    
+</BHDialog>
 
 @code{
     public List<CarouselModel> CarouselData { get; set; } = new List<CarouselModel>()
@@ -221,10 +228,17 @@ body {
     public string binding { get; set; } = "";
 
     public bool IsActive = false;
+    public bool IsShowBookingHistory { get; set; } = false;
 
     protected void ActiveMenuHander()
     {
         IsActive = !IsActive;
         StateHasChanged();
     }
+    protected void OnClickShowSearch()
+    {
+        IsShowBookingHistory = true;
+        StateHasChanged();
+    }
+
 }

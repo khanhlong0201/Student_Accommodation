@@ -34,6 +34,27 @@ namespace BHSystem.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Route("GetAllByPhone")]
+        public async Task<IActionResult> GetAllByPhone(string phone)
+        {
+            try
+            {
+                var data = await _bookingsService.GetAllByPhoneAsync(phone);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "_bookingsController", "GetAllByPhone");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// lấy lịch sử đặt phòng theo sdt
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> Get(string type)
         {
