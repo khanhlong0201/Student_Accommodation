@@ -45,7 +45,7 @@ namespace BHSystem.Web.Features.Client
             {
                 await showLoading();
                 SearchModel.Limit = 5;
-                SearchModel.Page = 0;
+                SearchModel.Page = 1;
                 ListPrices.Add("1", "Dưới 1 triệu");
                 ListPrices.Add("2", "Từ 1 - 3 triệu");
                 ListPrices.Add("3", "Từ 3 - 5 triệu");
@@ -217,7 +217,7 @@ namespace BHSystem.Web.Features.Client
             {
                 await showLoading();
                 SearchModel.Limit = 5;
-                SearchModel.Page = 0;
+                SearchModel.Page = 1;
                 await getDataBHouse();
             }
             catch (Exception ex)
@@ -238,7 +238,7 @@ namespace BHSystem.Web.Features.Client
             {
                 await showLoading();
                 SearchModel.Limit = 5;
-                SearchModel.Page = pageIndex - 1;
+                SearchModel.Page = pageIndex;
                 await getDataBHouse();
             }
             catch (Exception ex)
@@ -259,7 +259,7 @@ namespace BHSystem.Web.Features.Client
             {
                 await showLoading();
                 SearchModel.Limit = 5;
-                SearchModel.Page = 0;
+                SearchModel.Page = 1;
                 if (isPrice) SearchModel.KeyPrice = SearchModel.KeyPrice == key ? "" : key; 
                 else SearchModel.KeyAcreage = SearchModel.KeyAcreage == key ? "" : key;
                 await getDataBHouse();
