@@ -21,6 +21,8 @@ namespace BHSystem.API.Infrastructure
         public DbSet<Citys> Citys { get; set; }
         public DbSet<ImagesDetails> ImagesDetails { get; set; }
         public DbSet<Images> Images { get; set; }
+        public DbSet<Messages> Messages { get; set; }
+        public DbSet<UserMessages> UserMessages { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
            : base(options)
         {
@@ -67,16 +69,14 @@ namespace BHSystem.API.Infrastructure
             modelBuilder.Entity<Comments>().HasOne(i => i.BoardingHouses).WithMany(c => c.Comments).HasForeignKey(i => i.BoardingHouse_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Comments>().HasOne(i => i.Users).WithMany(c => c.Comments).HasForeignKey(i => i.UserId).OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<UserMessages>().HasKey(m => new { m.Message_Id, m.UserId});
             //// seed data
-            modelBuilder.SeedDataMenus();
-            modelBuilder.SeedDataRoles();
-            modelBuilder.SeedDataUsers();
-            modelBuilder.SeedDataRoleMenus();
-            modelBuilder.SeedDataRoleUsers();
+            //modelBuilder.SeedDataMenus();
+            //modelBuilder.SeedDataRoles();
+            //modelBuilder.SeedDataUsers();
+            //modelBuilder.SeedDataRoleMenus();
+            //modelBuilder.SeedDataRoleUsers();
             base.OnModelCreating(modelBuilder);
-            
-            
-
         }
     }
 }
@@ -84,3 +84,6 @@ namespace BHSystem.API.Infrastructure
 //lệnh chạy migration
 //dotnet ef migrations add DropColumnWithIdentity
 //dotnet ef database update
+
+// add-migration initial
+// update-database
