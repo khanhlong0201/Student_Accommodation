@@ -27,6 +27,7 @@ namespace BHSystem.API.Extensions
             services.AddScoped<IBookingsRepository, BookingsRepository>();
             services.AddScoped<IBoardingHousesRepository, BoardingHousesRepository>();
             services.AddScoped<IBHousesRepository, BHousesRepository>();
+            services.AddScoped<IMessagesRepository, MessagesRepository>();
             return services;
         }
         public static IServiceCollection AddClientScopeService(this IServiceCollection services)
@@ -48,62 +49,8 @@ namespace BHSystem.API.Extensions
             services.AddScoped<IBookingsService, BookingsService>();
             services.AddScoped<IBoardingHousesService, BoardingHousesService>();
             services.AddScoped<IBHousesService, BHousesService>();
+            services.AddScoped<IMessagesService, MessagesService>();
             return services;
         }
-
-        //public static ModelBuilder SeedData(this ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Citys>().HasData(
-        //       new Citys()
-        //       {
-        //           Id = 1
-        //       ,
-        //           Name = "HCM"
-        //       ,
-        //           IsDeleted = true
-        //       });
-        //    modelBuilder.Entity<Distincts>().HasData(
-        //       new Distincts()
-        //       {
-        //           Id = 1
-        //       ,
-        //           Name = "Ho Chi Minh"
-        //       ,
-        //           City_Id = 1
-        //           ,
-        //           IsDeleted = true
-        //       });
-
-        //    modelBuilder.Entity<Wards>().HasData(
-        //       new Wards()
-        //       {
-        //           Id = 1
-        //       ,
-        //           Name = "Go Vap"
-        //       ,
-        //           Distincts_Id = 1
-        //           ,
-        //           IsDeleted = true
-        //       });
-
-        //    modelBuilder.Entity<Users>().HasData(
-        //        new Users()
-        //        {
-        //            UserId = 1
-        //        ,
-        //            FullName = "HaiNguyen"
-        //        ,
-        //            UserName = "hainguyen456"
-        //        ,
-        //            Password = "KZY9mwl2Mv4NM4jrKXv4ug=="
-        //        ,
-        //            Ward_Id = 1
-
-        //        ,
-        //            IsDeleted = true
-        //        ,   Type = "Admin"
-        //        });
-        //    return modelBuilder;
-        //}
     }
 }
