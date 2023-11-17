@@ -17,6 +17,7 @@ namespace BHSystem.Web.Features.Admin
 {
     public partial class UserPage
     {
+        [Inject] NavigationManager? _navigationManager { get; set; }
         [Inject] private ILogger<UserPage>? _logger { get; init; }
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private IToastService? _toastService { get; set; }
@@ -41,12 +42,29 @@ namespace BHSystem.Web.Features.Admin
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
         public List<WardModel>? ListWard { get; set; } = new List<WardModel>();
 
+        [CascadingParameter(Name = "pListMenus")]
+        private List<MenuModel>? ListMenus { get; set; } // giá trị từ MainLayout
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 try
                 {
+                    //var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/user".ToUpper()); // tìm lấy menu không
+                    //if(findMenu == null)
+                    //{
+                    //    _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
+                    //    var fisrtMenu = ListMenus?.FirstOrDefault();
+                    //    if(fisrtMenu == null)
+                    //    {
+                    //        await Task.Delay(4500);
+                    //        _navigationManager!.NavigateTo("/admin/login");
+                    //        return;
+                    //    }
+                    //    await Task.Delay(4500);
+                    //    _navigationManager!.NavigateTo($"{fisrtMenu.Link}");
+                    //    return;
+                    //}    
                     await showLoading();
                     await getCity();
                     await getDataUser();
