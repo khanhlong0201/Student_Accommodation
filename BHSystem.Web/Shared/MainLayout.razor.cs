@@ -25,6 +25,7 @@ namespace BHSystem.Web.Shared
         public string FullName { get; set; } = "";
         public string UserName { get; set; } = "";
         public int UserId { get; set; } = -1;
+        public bool IsSupperAdmin { get; set; } = false;
         public List<MenuModel>? ListMenus { get; set; }
         private bool preventOnAfterRender { get; set; } = false;
 
@@ -44,6 +45,7 @@ namespace BHSystem.Web.Shared
                     if (oUser != null)
                     {
                         UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
+                        IsSupperAdmin = oUser.User.Claims.FirstOrDefault(m => m.Type == "IsAdmin")?.Value + "" == "Admin";
                         FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
                         UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
                         await showLoading(true);

@@ -55,10 +55,9 @@ namespace BHSystem.API.Services
                         break;
                     }    
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
-                    user.User_Create = 1;
+                    user.User_Create = entity.UserId;
                     user.Date_Create = DateTime.Now;
-                    user.Ward_Id = 1;
-                    user.Type = entity.Kind;
+                    user.Type = entity.Kind+ "";
                     await _usersRepository.Add(user);
                     await _unitOfWork.CompleteAsync();
                     response.StatusCode = 0;
@@ -76,6 +75,7 @@ namespace BHSystem.API.Services
                     userEntity.FullName = user.FullName;
                     userEntity.Phone = user.Phone;
                     userEntity.Email = user.Email;
+                    user.Type = entity.Kind + "";
                     userEntity.Date_Update = DateTime.Now;
                     userEntity.User_Update = entity.UserId;
                     _usersRepository.Update(userEntity);
@@ -122,22 +122,29 @@ namespace BHSystem.API.Services
                 entity.Type = "Add";
                 await _unitOfWork.BeginTransactionAsync();
                 entity.Kind = "Client";
-                var result= await UpdateUserAsync(entity); //tạo user
-                if(result.StatusCode != 0)
+                Users user = JsonConvert.DeserializeObject<Users>(entity.Json + "")!;
+                if (await _usersRepository.CheckContainsAsync(m => m.UserName == user.UserName))
                 {
                     response.StatusCode = -1;
-                    response.Message = result.Message;
-                    await _unitOfWork.RollbackAsync();
+                    response.Message = "Tên đăng nhập đã tồn tại";
                     return response;
                 }
+                user.Password = EncryptHelper.Encrypt(user.Password + "");
+                user.User_Create = 1;
+                user.Date_Create = DateTime.Now;
+                user.Ward_Id = 1;
+                user.Type = entity.Kind + "";
+                await _usersRepository.Add(user);
+                await _unitOfWork.CompleteAsync();
                 var role = await _rolesRepository.GetDataByNameAsync("Client");
                 UserRoles userRoles = new UserRoles();
                 userRoles.UserId = entity.UserId;
                 userRoles.Role_Id = role.Id;
                 await _userRolesRepository.Add(userRoles);//tạo quyền userRole
+                await _unitOfWork.CompleteAsync();
+                await _unitOfWork.CommitAsync();
                 response.StatusCode = 0;
                 response.Message = "Success";
-                await _unitOfWork.CommitAsync();
             }
             catch (Exception ex)
             {

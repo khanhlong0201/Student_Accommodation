@@ -28,8 +28,11 @@ namespace BHSystem.Web.Features.Admin
         public IEnumerable<BookingModel>? SelectedBookingWaitting { get; set; } = new List<BookingModel>();
         public BHConfirm? _rDialogs { get; set; }
 
-        [CascadingParameter]
+        [CascadingParameter(Name = "pUserId")]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pIsSupperAdmin")]
+        private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
         #region
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

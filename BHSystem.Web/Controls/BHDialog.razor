@@ -5,13 +5,16 @@
             @ChildContent
         </DialogContent>
         <DialogButtons>
-                <div class="d-flex justify-content-end">
-                    <div>
-                        <TelerikButton OnClick="@CloseDialogHandler">&nbsp;Đóng&nbsp;</TelerikButton>
-                        <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" Hidden="!IsShowButtonSaveAndCreate" OnClick="@SaveAndCreate">@TitleBtnSaveAndCreate</TelerikButton>
-                         <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" Hidden="!IsShowButtons" OnClick="@SaveAndClosed">@TitleBtnSaveAndClosed</TelerikButton>
+                @if(IsShowButtons)
+                {
+                    <div class="d-flex justify-content-end">
+                        <div>
+                            <TelerikButton OnClick="@CloseDialogHandler">&nbsp;Đóng&nbsp;</TelerikButton>
+                            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" Hidden="!IsShowButtonSaveAndCreate" OnClick="@SaveAndCreate">@TitleBtnSaveAndCreate</TelerikButton>
+                            <TelerikButton ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@SaveAndClosed">@TitleBtnSaveAndClosed</TelerikButton>
+                        </div>
                     </div>
-                </div>
+                }
         </DialogButtons>
     </TelerikDialog>
 </TelerikRootComponent>

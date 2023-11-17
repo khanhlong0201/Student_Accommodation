@@ -40,5 +40,6 @@ namespace BHSytem.Models.Models
         public string? Ward_Name { get; set; }
         public string? Distinct_Name { get; set; }
         public string? City_Name { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

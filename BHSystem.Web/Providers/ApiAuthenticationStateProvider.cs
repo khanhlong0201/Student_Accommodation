@@ -1,19 +1,26 @@
-﻿using Blazored.LocalStorage;
+﻿using BHSystem.Web.Constants;
+using BHSytem.Models.Entities;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text.Json;
 
 namespace BHSystem.Web.Providers
 {
-    public class ApiAuthenticationStateProvider : AuthenticationStateProvider
+    public class ApiAuthenticationStateProvider : AuthenticationStateProvider, IDisposable
     {
         private readonly ILocalStorageService _localStorage;
         private readonly NavigationManager _nav;
-        public ApiAuthenticationStateProvider(ILocalStorageService localStorage, NavigationManager nav)
+        private readonly IConfiguration _configuration;
+        private HubConnection? hubConnection { get; set; }
+        public ApiAuthenticationStateProvider(ILocalStorageService localStorage, NavigationManager nav, IConfiguration configuration)
         {
             _localStorage = localStorage;
             _nav = nav;
+            _configuration = configuration;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -70,5 +77,26 @@ namespace BHSystem.Web.Providers
             }
             return Convert.FromBase64String(base64);
         }
+
+        private void connectHub(string userId)
+        {
+            try
+            {
+                string urlChat = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
+                hubConnection = new HubConnectionBuilder()
+                .WithUrl(urlChat, options =>{ options.Headers.Add("UserName", userId) ;}).Build();
+
+                hubConnection.On<Messages>("ReceiveEmployee", (incomingEmp) =>
+                {
+                    
+                });
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void Dispose() => hubConnection?.DisposeAsync();
     }
 }

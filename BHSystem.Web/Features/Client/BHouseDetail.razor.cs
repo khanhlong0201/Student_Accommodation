@@ -38,10 +38,13 @@ namespace BHSystem.Web.Features.Client
         public bool IsShowDialog { get; set; }
         public BookingModel BookingUpdate { get; set; } = new BookingModel();
         public EditContext? _EditContext { get; set; }
-       
 
-        [CascadingParameter]
+
+        [CascadingParameter(Name = "pUserId")]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pIsSupperAdmin")]
+        private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
 
         #region Properties
         public CliBoardingHouseModel CliBoardingHouse { get; set; } = new CliBoardingHouseModel();

@@ -1,4 +1,5 @@
 ﻿using BHSystem.API;
+using BHSystem.API.Common;
 using BHSystem.API.Extensions;
 using BHSystem.API.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,6 +56,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+builder.Services.AddSignalR(); // đăng kí service SignalR
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,7 +74,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<SignalHubProvider>("/Signalhub"); // kết nối tới Hub
 app.Run();
 
 // add-migration initial

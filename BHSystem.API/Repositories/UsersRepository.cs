@@ -56,6 +56,7 @@ namespace BHSystem.API.Repositories
                                     City_Name = t3.Name,
                                     City_Id = t3.Id,
                                     Distinct_Id = t2.Id,
+                                    IsAdmin = t0.Type == "Admin"
                                 }).ToListAsync();
             return result;
         }

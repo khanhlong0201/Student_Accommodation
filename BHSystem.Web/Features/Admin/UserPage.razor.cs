@@ -31,8 +31,11 @@ namespace BHSystem.Web.Features.Admin
         public EditContext? _EditContext { get; set; }
         public BHConfirm? _rDialogs { get; set; }
 
-        [CascadingParameter]
+        [CascadingParameter(Name = "pUserId")]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pIsSupperAdmin")]
+        private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
 
         public List<CityModel> ListCity { get; set; } = new List<CityModel>();
         public List<DistinctModel>? ListDistinct { get; set; } = new List<DistinctModel>();
@@ -187,10 +190,12 @@ namespace BHSystem.Web.Features.Admin
                     UserUpdate.UserName = pItemDetails!.UserName;
                     UserUpdate.Password = EncryptHelper.Decrypt(pItemDetails!.Password+"");
                     UserUpdate.Address = pItemDetails!.Address;
+                    UserUpdate.Phone = pItemDetails!.Phone;
                     UserUpdate.Email = pItemDetails!.Email;
                     UserUpdate.Ward_Id = pItemDetails!.Ward_Id;
                     UserUpdate.City_Id = pItemDetails!.City_Id;
                     UserUpdate.Distinct_Id = pItemDetails!.Distinct_Id;
+                    UserUpdate.IsAdmin = pItemDetails!.IsAdmin;
                     IsCreate = false;
                     _EditContext = new EditContext(UserUpdate);
                     await showLoading();
@@ -221,6 +226,11 @@ namespace BHSystem.Web.Features.Admin
         {
             try
             {
+                if(!pIsSupperAdmin)
+                {
+                    _toastService!.ShowInfo($"Chỉ có tài khoản Admin mới được phép cập nhật thông tin người dùng.");
+                    return;
+                }    
                 string sMessage = "Thêm";
                 string sAction = nameof(EnumType.Add);
                 if (UserUpdate.UserId > 0)
@@ -232,7 +242,8 @@ namespace BHSystem.Web.Features.Admin
                 if (!checkData) return;
                 await showLoading();
                 //UserUpdate.Ward_Id = 1;
-                bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction, pUserId);
+                string sKind = UserUpdate.IsAdmin ? "Admin" : "Client";
+                bool isUpdate = await _userService!.UpdateAsync(JsonConvert.SerializeObject(UserUpdate), sAction, pUserId, sKind);
                 if (isUpdate)
                 {
                     _toastService!.ShowSuccess($"Đã {sMessage} thông tin người dùng.");

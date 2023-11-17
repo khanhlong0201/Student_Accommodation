@@ -19,7 +19,7 @@ namespace BHSystem.Web.Services
     public interface ICliUserService
     {
         Task<string> LoginAsync(LoginViewModel request);
-        Task<bool> UpdateAsync(string pJson, string pAction, int pUserId);
+        Task<bool> UpdateAsync(string pJson, string pAction, int pUserId, string pKind);
         Task<List<UserModel>?> GetDataAsync();
         Task<bool> DeleteAsync(string pJson, int pUserId);
         Task LogoutAsync();
@@ -63,7 +63,7 @@ namespace BHSystem.Web.Services
             }
         }
 
-        public async Task<bool> UpdateAsync(string pJson, string pAction, int pUserId)
+        public async Task<bool> UpdateAsync(string pJson, string pAction, int pUserId, string pKind)
         {
             try
             {
@@ -71,7 +71,8 @@ namespace BHSystem.Web.Services
                 {
                     Json = pJson,
                     Type = pAction,
-                    UserId = pUserId
+                    UserId = pUserId,
+                    Kind = pKind
                 };
                 var resString = await AddOrUpdateData(EndpointConstants.URL_USER_UPDATE, request, isAuth: true);
                 if (!string.IsNullOrEmpty(resString)) return true;

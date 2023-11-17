@@ -81,13 +81,13 @@ namespace BHSystem.API.Controllers
                     new Claim("UserName", response.UserName + ""),
                     new Claim("FullName", response.FullName + ""),
                     new Claim("Phone", response.Phone + ""),
-                    new Claim("Email", response.Email + ""),
+                    new Claim("IsAdmin", response.Type + ""),
                 }; // thông tin mã hóa (payload)
                 // JWT: json web token: Header - Payload - SIGNATURE (base64UrlEncode(header) + "." + base64UrlEncode(payload), your - 256 - bit - secret)
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:JwtSecurityKey").Value + "")); // key mã hóa
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); // loại mã hóa (Header)
-                //var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token
-                var expiry = DateTime.Now.AddMinutes(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token test 1 phút hết tonken
+                var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token
+                //var expiry = DateTime.Now.AddMinutes(Convert.ToInt32(_configuration.GetSection("Jwt:JwtExpiryInDays").Value)); // hết hạn token test 1 phút hết tonken
                 var token = new JwtSecurityToken(
                     _configuration.GetSection("Jwt:JwtIssuer").Value,
                     _configuration.GetSection("Jwt:JwtAudience").Value,

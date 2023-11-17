@@ -43,8 +43,11 @@ namespace BHSystem.Web.Features.Admin
         public List<IBrowserFile> ListBrowserFiles { get; set; } = new();   // Danh sách file lưu tạm => Upload file
         public List<ImagesDetailModel> ListImages = new List<ImagesDetailModel>();
 
-        [CascadingParameter]
+        [CascadingParameter(Name = "pUserId")]
         private int pUserId { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pIsSupperAdmin")]
+        private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
 
         public List<IEditorTool> Tools { get; set; } =
         new List<IEditorTool>()

@@ -26,8 +26,8 @@
 </div>*@
 <TelerikToolBar Class="border-bottom-0">
     <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler())">Làm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
-    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-plus bh-color-green" Enabled="@pIsSupperAdmin" OnClick="@(()=> OnOpenDialogHandler())">Thêm mới</ToolBarButton>
+    <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" Enabled="@pIsSupperAdmin" OnClick="@(()=> ConfirmDeleteHandler())">Xóa dòng</ToolBarButton>
 </TelerikToolBar>
 <div class="bh-table-content" style=" height: calc(100vh - 150px);">
     <TelerikGrid Data="@ListUser"
@@ -69,11 +69,11 @@
             <GridColumn Field=@nameof(UserModel.Ward_Name) Width="160px" Title="Quận huyện"></GridColumn>
             <GridColumn Field=@nameof(UserModel.Distinct_Name) Width="160px" Title="Phường xã"></GridColumn>
             <GridColumn Field=@nameof(UserModel.City_Name) Width="160px" Title="Tỉnh thành"></GridColumn>
-            <GridColumn Field=@nameof(UserModel.IsDeleted) Width="140px" Title="Đã xóa">
+            <GridColumn Field=@nameof(UserModel.IsAdmin) Width="140px" Title="Admin ?">
                 <Template>
                     @{
                         var model = (context as UserModel);
-                        <TelerikCheckBox @bind-Value="@model!.IsDeleted"Enabled="false" />
+                        <TelerikCheckBox @bind-Value="@model!.IsAdmin" Enabled="false" />
                     }
                 </Template>
             </GridColumn>
@@ -86,6 +86,7 @@
 
 
 <BHDialog @bind-IsVisible="@IsShowDialog"
+    IsShowButtons="@pIsSupperAdmin"
     SaveAndClosed="@(()=> SaveDataHandler())"
     SaveAndCreate="@(()=> SaveDataHandler(EnumType.SaveAndCreate))"
     Title="@(IsCreate ? "Thêm mới người dùng" : "Cập nhật người dùng")">
@@ -93,22 +94,22 @@
         <DataAnnotationsValidator />
         <div>
             <BHLabel Value="Tên người dùng:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.FullName" Class="bh-link" Id="txtFullName" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.FullName" Enabled="@pIsSupperAdmin" Class="bh-link" Id="txtFullName" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtFullName" />
         </div>
         <div class="mt-2">
             <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Id="txtUserName" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Enabled="@pIsSupperAdmin" Id="txtUserName" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtUserName" />
         </div>
         <div class="mt-2">
             <BHLabel Value="Mật khẩu:" IsRequired="true" />
-            <TelerikTextBox Password="true" @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
+            <TelerikTextBox Password="true" @bind-Value="@UserUpdate!.Password" Enabled="@pIsSupperAdmin" Id="txtPassword" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
         </div>
         <div class="mt-2">
             <BHLabel Value="Số điện thoại:" IsRequired="true" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Phone" Id="txtPhone" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Phone" Enabled="@pIsSupperAdmin" Id="txtPhone" />
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPhone" />
         </div>
         <div class="mt-2">
@@ -122,6 +123,7 @@
                 ValueField="@nameof(CityModel.Id)"
                 Filterable="true"
                 ClearButton="false"
+                Enabled="@pIsSupperAdmin"
                 Id="txtCityId" Width="100%">
             </TelerikComboBox>
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.City_Id)" Id="txtCityId" />
@@ -137,6 +139,7 @@
                 ValueField="@nameof(CityModel.Id)"
                 Filterable="true"
                 ClearButton="false"
+                Enabled="@pIsSupperAdmin"
                 Id="txtDistinct_Id" Width="100%">
             </TelerikComboBox>
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Distinct_Id)" Id="txtDistinct_Id" />
@@ -152,17 +155,22 @@
                 ValueField="@nameof(CityModel.Id)"
                 Filterable="true"
                 ClearButton="false"
+                Enabled="@pIsSupperAdmin"
                 Id="txtWard_Id" Width="100%">
             </TelerikComboBox>
             <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Ward_Id)" Id="txtWard_Id" />
         </div>
         <div class="mt-2">
             <BHLabel Value="Đia chỉ cụ thể:" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Address" Enabled="@pIsSupperAdmin" />
         </div>
         <div class="mt-2">
             <BHLabel Value="Email:" />
-            <TelerikTextBox @bind-Value="@UserUpdate!.Email" />
+            <TelerikTextBox @bind-Value="@UserUpdate!.Email" Enabled="@pIsSupperAdmin" />
+        </div>
+        <div class="mt-2">
+            <TelerikCheckBox Title="Admin?" Enabled="@pIsSupperAdmin" @bind-Value="@UserUpdate!.IsAdmin" />
+            <BHLabel Value="Admin? " />
         </div>
     </EditForm>
     
