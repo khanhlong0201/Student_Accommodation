@@ -15,7 +15,8 @@ namespace BHSystem.API.Services
         Task<bool> DeleteMulti(RequestModel entity);
         Task<IEnumerable<Users>> GetUserByRoleAsync(int pRoleId);
 
-        Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity);  
+        Task<ResponseModel> RegisterUserForClientAsync(RequestModel entity);
+        Task<UserModel?> GetUserById(int pUserId);
     }
     public class UsersService : IUsersService
     {
@@ -160,5 +161,7 @@ namespace BHSystem.API.Services
             }
             return response;
         }
+
+        public async Task<UserModel?> GetUserById(int pUserId) => await _usersRepository.GetUserById(pUserId);
     }
 }

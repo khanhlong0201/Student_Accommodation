@@ -247,5 +247,39 @@ namespace BHSystem.API.Controllers
             }
         }
 
+        /// <summary>
+        /// lấy danh sách user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetUserById")]
+        [Authorize]
+        public async Task<IActionResult> GetUserById(int pUserId)
+        {
+            try
+            {
+                var data = await _userService.GetUserById(pUserId);
+                if(data == null)
+                {
+                    return BadRequest(new
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        Message = "Không tìm thấy thông tin người dùng"
+                    });
+                }    
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController", "Get");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        ex.Message
+                    });
+            }
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Core;
 using BHSystem.Web.Features.Admin;
+using BHSystem.Web.Providers;
 using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Entities;
@@ -20,6 +21,7 @@ namespace BHSystem.Web.Shared
         [Inject] private ILogger<MainLayout>? _logger { get; init; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
+        [Inject] NavigationManager? _navigationManager { get; set; }
         public string breadcumb { get; set; } = "";
         public DateTime dt { get; set; } = DateTime.Now;
         public string FullName { get; set; } = "";
@@ -83,8 +85,18 @@ namespace BHSystem.Web.Shared
             else _spinner!.Hide();
         }
 
-       
+
         #endregion
+
+        protected void NavigatoEncrypt()
+        {
+            Dictionary<string, string> pParams = new Dictionary<string, string>
+            {
+                { "UserId", $"{UserId}" },
+            };
+            string key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key phân quyền
+            _navigationManager!.NavigateTo($"/admin/info-user?key={key}");
+        }
     }
 
 

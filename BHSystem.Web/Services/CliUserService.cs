@@ -23,6 +23,7 @@ namespace BHSystem.Web.Services
         Task<List<UserModel>?> GetDataAsync();
         Task<bool> DeleteAsync(string pJson, int pUserId);
         Task LogoutAsync();
+        Task<UserModel?> GetUserById(int pUserId);
     }
     public class CliUserService : ApiService, ICliUserService
     {
@@ -128,6 +129,29 @@ namespace BHSystem.Web.Services
         {
             await _localStorage.RemoveItemAsync("authToken");
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
+        }   
+        
+        public async Task<UserModel?> GetUserById(int pUserId)
+        {
+            try
+            {
+                Dictionary<string, object> pParams = new Dictionary<string, object>()
+                {
+                    {"pUserId", $"{pUserId}"}
+                };
+                var resString = await GetData(EndpointConstants.URL_USER_BY_ID, pParams, isAuth: true);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    var data = JsonConvert.DeserializeObject<UserModel>(resString);
+                    return data;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UpdateAsync");
+                _toastService.ShowError(ex.Message);
+            }
+            return default;
         }    
 
 

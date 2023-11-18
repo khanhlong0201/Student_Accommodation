@@ -1,11 +1,13 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Core;
+using BHSystem.Web.Providers;
 using BHSytem.Models.Models;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
+using NPOI.POIFS.Crypt.Dsig;
 
 namespace BHSystem.Web.Shared
 {
@@ -159,6 +161,16 @@ namespace BHSystem.Web.Shared
                 await showLoading(false);
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        protected void NavigatoEncrypt()
+        {
+            Dictionary<string, string> pParams = new Dictionary<string, string>
+            {
+                { "UserId", $"{UserId}" },
+            };
+            string key = EncryptHelper.Encrypt(JsonConvert.SerializeObject(pParams)); // mã hóa key phân quyền
+            _navigationManager!.NavigateTo($"/admin/info-user?key={key}");
         }
     }
 

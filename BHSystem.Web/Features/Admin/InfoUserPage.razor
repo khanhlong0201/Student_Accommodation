@@ -1,0 +1,93 @@
+﻿@page "/admin/info-user"
+
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="card card-body">
+            <EditForm EditContext="@_EditContext">
+                <DataAnnotationsValidator />
+                <div>
+                    <BHLabel Value="Tên người dùng:" IsRequired="true" />
+                    <TelerikTextBox @bind-Value="@UserUpdate!.FullName" Class="bh-link" Id="txtFullName" />
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtFullName" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Tên đăng nhập:" IsRequired="true" />
+                    <TelerikTextBox @bind-Value="@UserUpdate!.UserName" Id="txtUserName" />
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtUserName" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Mật khẩu:" IsRequired="true" />
+                    <TelerikTextBox Password="true" @bind-Value="@UserUpdate!.Password" Id="txtPassword" />
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPassword" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Số điện thoại:" IsRequired="true" />
+                    <TelerikTextBox @bind-Value="@UserUpdate!.Phone" Id="txtPhone" />
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.FullName)" Id="txtPhone" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Thành phố:" IsRequired="true" />
+                    <TelerikComboBox Data="@ListCity"
+                                     Value="@UserUpdate.City_Id"
+                                     ValueExpression="@(() => UserUpdate.City_Id)"
+                                     ValueChanged="@((int value) => OnChangeCityHandler(value))"
+                                     Placeholder="Chọn thành phố..."
+                                     TextField="@nameof(CityModel.Name)"
+                                     ValueField="@nameof(CityModel.Id)"
+                                     Filterable="true"
+                                     ClearButton="false"
+                                     Id="txtCityId" Width="100%">
+                    </TelerikComboBox>
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.City_Id)" Id="txtCityId" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Huyện quận:" IsRequired="true" />
+                    <TelerikComboBox Data="@ListDistinct"
+                                     Value="@UserUpdate.Distinct_Id"
+                                     ValueExpression="@(() => UserUpdate.Distinct_Id)"
+                                     ValueChanged="@((int value) => OnChangeDistinctHandler(value))"
+                                     Placeholder="Chọn thành phố..."
+                                     TextField="@nameof(CityModel.Name)"
+                                     ValueField="@nameof(CityModel.Id)"
+                                     Filterable="true"
+                                     ClearButton="false"
+                                     Id="txtDistinct_Id" Width="100%">
+                    </TelerikComboBox>
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Distinct_Id)" Id="txtDistinct_Id" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Xã phường:" IsRequired="true" />
+                    <TelerikComboBox Data="@ListWard"
+                                     Value="@UserUpdate.Ward_Id"
+                                     ValueExpression="@(() => UserUpdate.Ward_Id)"
+                                     ValueChanged="@((int value) => UserUpdate.Ward_Id = value)"
+                                     Placeholder="Chọn thành phố..."
+                                     TextField="@nameof(CityModel.Name)"
+                                     ValueField="@nameof(CityModel.Id)"
+                                     Filterable="true"
+                                     ClearButton="false"
+                                     Id="txtWard_Id" Width="100%">
+                    </TelerikComboBox>
+                    <BHValidationTooltip ValidationFor="@(()=> UserUpdate.Ward_Id)" Id="txtWard_Id" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Đia chỉ cụ thể:" />
+                    <TelerikTextBox @bind-Value="@UserUpdate!.Address" />
+                </div>
+                <div class="mt-2">
+                    <BHLabel Value="Email:" />
+                    <TelerikTextBox @bind-Value="@UserUpdate!.Email" />
+                </div>
+                <div class="mt-2">
+                    <TelerikButton ButtonType="@Telerik.Blazor.ButtonType.Button"
+                                   ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)" OnClick="@(()=> SaveDataHandler())">
+                        Lưu thông tin
+                    </TelerikButton>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+<BHConfirm @ref="@_rDialogs" />

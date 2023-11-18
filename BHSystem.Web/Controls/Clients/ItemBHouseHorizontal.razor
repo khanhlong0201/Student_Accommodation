@@ -45,7 +45,24 @@
             </div>
             <div style="margin-left: 5px;">
                 <p class="mb-0">@FullName</p>
-                <p class="mb-0">@CreateTime</p>
+                <p class="mb-0">
+                    @("Đăng tin ")
+                    @((DateTime.Now - CreateDate).Days / 365 > 0 ?
+                        (DateTime.Now - CreateDate).Days / 365 + " năm trước" :
+                        (DateTime.Now - CreateDate).Days / 30 > 0 ?
+                        (DateTime.Now - CreateDate).Days / 30 + " tháng trước" :
+                        (DateTime.Now - CreateDate).Days / 7 > 0 ?
+                        (DateTime.Now - CreateDate).Days / 7 + " tuần trước" :
+                        (DateTime.Now - CreateDate).Days > 0 ?
+                        (DateTime.Now - CreateDate).Days + " ngày trước" :
+                        (DateTime.Now - CreateDate).Hours + (DateTime.Now - CreateDate).Days * 24 > 0 ?
+                        (DateTime.Now - CreateDate).Hours + (DateTime.Now - CreateDate).Days * 24 + " giờ trước" :
+                        (DateTime.Now - CreateDate).Minutes + (DateTime.Now - CreateDate).Days * 24 * 60 > 0 ?
+                        (DateTime.Now - CreateDate).Minutes + (DateTime.Now - CreateDate).Days * 24 * 60 + " phút trước" :
+                        (DateTime.Now - CreateDate).Seconds + (DateTime.Now - CreateDate).Days * 24 * 60 * 60 > 0 ?
+                        (DateTime.Now - CreateDate).Seconds + (DateTime.Now - CreateDate).Days * 24 * 60 * 60 + " giây trước" : ""
+                        )
+                </p>
             </div>
         </div>
         <div>
@@ -69,4 +86,5 @@
     [Parameter] public string? Contact { get; set; } // liên hệ
     [Parameter] public string? ImageUrlBHouse { get; set; } = "./images/img-default.png";
     [Parameter] public int RoomId { get; set; }
+    [Parameter] public DateTime CreateDate { get; set; }
 }
