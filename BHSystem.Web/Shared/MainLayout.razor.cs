@@ -23,6 +23,7 @@ namespace BHSystem.Web.Shared
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
         [Inject] IConfiguration? _configuration { get; set; }
+        [Inject] NavigationManager? _navigationManager { get; set; }
 
         public string breadcumb { get; set; } = "";
         public DateTime dt { get; set; } = DateTime.Now;
@@ -34,46 +35,70 @@ namespace BHSystem.Web.Shared
         private bool preventOnAfterRender { get; set; } = false;
 
         private HubConnection? hubConnection;
-        public List<Messages> ListMeassges { get; set; } = new List<Messages>();
+        public List<MessageModel> ListMeassges { get; set; } = new List<MessageModel>();
         public int CountMessages { get; set; } = 0;
-        protected override void OnInitialized()
+        protected override async Task  OnInitializedAsync()
         {
-            preventOnAfterRender = false;
-            base.OnInitialized();
+            await base.OnInitializedAsync();
+            try
+            {
+                var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();
+                if (oUser != null)
+                {
+                    UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
+                    IsSupperAdmin = oUser.User.Claims.FirstOrDefault(m => m.Type == "IsAdmin")?.Value + "" == "Admin";
+                    FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
+                    UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
+                    await showLoading(true);
+                    await getMenu();
+                    //await getUnReadMessageByUser();
+                    //string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
+                    //hubConnection = new HubConnectionBuilder()
+                    //.WithUrl(url, options =>
+                    //{
+                    //    options.Headers.Add("UserName", $"{UserId}"); // kết nối user
+
+                    //}).Build();
+                    //hubConnection.On<Messages>("ReceiveMessage", async (incomingMess) =>
+                    //{
+                    //    _toastService!.ShowInfo($"{incomingMess.Message}");
+                    //    await getUnReadMessageByUser();
+                    //    _ = InvokeAsync(StateHasChanged);
+                    //});
+
+                    //await hubConnection.StartAsync();
+                }
+            }
+            catch
+            {
+
+            }
+
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && !preventOnAfterRender)
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
                 try
                 {
-                    var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();
-                    if (oUser != null)
+                    await getUnReadMessageByUser();
+                    string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
+                    hubConnection = new HubConnectionBuilder()
+                    .WithUrl(url, options =>
                     {
-                        UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
-                        IsSupperAdmin = oUser.User.Claims.FirstOrDefault(m => m.Type == "IsAdmin")?.Value + "" == "Admin";
-                        FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
-                        UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
-                        await showLoading(true);
-                        await getMenu();
+                        options.Headers.Add("UserName", $"{UserId}"); // kết nối user
+
+                    }).Build();
+                    hubConnection.On<MessageModel>("ReceiveMessage", async (incomingMess) =>
+                    {
+                        _toastService!.ShowInfo($"{incomingMess.Message}");
                         await getUnReadMessageByUser();
-                        string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
-                        hubConnection = new HubConnectionBuilder()
-                        .WithUrl(url, options =>
-                        {
-                            options.Headers.Add("UserName", $"{UserId}"); // kết nối user
+                        _ = InvokeAsync(StateHasChanged);
+                    });
 
-                        }).Build();
-                        hubConnection.On<Messages>("ReceiveMessage", async (incomingMess) =>
-                        {
-                            _toastService!.ShowInfo($"{incomingMess.Message}");
-                            await getUnReadMessageByUser();
-                            _ = InvokeAsync(StateHasChanged);
-                        });
-
-                        await hubConnection.StartAsync();
-                    }
+                    await hubConnection.StartAsync();
                 }
                 catch (Exception ex)
                 {
@@ -113,19 +138,50 @@ namespace BHSystem.Web.Shared
         /// <returns></returns>
         private async Task getUnReadMessageByUser()
         {
-            ListMeassges = new List<Messages>();
+            ListMeassges = new List<MessageModel>();
             Dictionary<string, object> pParams = new Dictionary<string, object>()
             {
                 {"pUserId", $"{UserId}"},
                 {"pIsAll", $"{false}"}
             };
             string resString = await _apiService!.GetData(EndpointConstants.URL_MESSAGE_BY_USER, pParams);
-            if (!string.IsNullOrEmpty(resString)) ListMeassges = JsonConvert.DeserializeObject<List<Messages>>(resString);
+            if (!string.IsNullOrEmpty(resString)) ListMeassges = JsonConvert.DeserializeObject<List<MessageModel>>(resString);
             CountMessages = ListMeassges?.Count() ?? 0;
         }
 
         public void Dispose() => hubConnection?.DisposeAsync();
         #endregion
+
+        protected void Navigato(string link) => _navigationManager!.NavigateTo(link);
+
+        protected async void ReadMessageHander(MessageModel item)
+        {
+            try
+            {
+                await showLoading();
+                RequestModel request = new RequestModel()
+                {
+                    Json = JsonConvert.SerializeObject(item),
+                    UserId = UserId,
+                };
+                string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_MESSAGE_UPDATE_ISREAD, request);
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    await getUnReadMessageByUser();
+                    _navigationManager!.NavigateTo(item.Type == "Booking" ? "/admin/approve-booking" : "/admin/approve-room");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "ConfirmDeleteHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
     }
 
 

@@ -28,6 +28,7 @@ namespace BHSystem.API.Extensions
             services.AddScoped<IBoardingHousesRepository, BoardingHousesRepository>();
             services.AddScoped<IBHousesRepository, BHousesRepository>();
             services.AddScoped<IMessagesRepository, MessagesRepository>();
+            services.AddScoped<IUserMessagesRepository, UserMessagesRepository>();
             return services;
         }
         public static IServiceCollection AddClientScopeService(this IServiceCollection services)

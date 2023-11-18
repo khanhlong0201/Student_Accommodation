@@ -56,6 +56,7 @@
         public const string URL_BOOKING_UPDATE_STATUS = "Bookings/UpdateStatus";
 
         public const string URL_MESSAGE_BY_USER = "Messages/GetUnReadMessageByUser";
+        public const string URL_MESSAGE_UPDATE_ISREAD = "Messages/UpdateReadMessage";
 
         #region Client URL
         public const string URL_CLI_BHOUSE_GETDATA = "BHouses/CliGetDataBHouse";

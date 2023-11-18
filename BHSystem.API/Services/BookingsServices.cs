@@ -98,53 +98,5 @@ namespace BHSystem.API.Services
             await _unitOfWork.CompleteAsync();
             return true;
         }
-
-        /// <summary>
-        /// gửi thông báo đến user chịu trách nhiệm trên phòng đó và các user admin
-        /// </summary>
-        /// <param name="pUserCreate"></param>
-        /// <param name="pBooking"></param>
-        /// <returns></returns>
-        private async Task createMessageTicket(int pUserCreate, Bookings pBooking)
-        {
-            try
-            {
-                var roomEntity = await _roomsRepository.GetSingleByCondition(m => m.Id == pBooking.Room_Id);
-                if (roomEntity == null) return;
-                List<int> lstUserId = new List<int>();
-                lstUserId.Add(roomEntity.User_Create ?? 0); // gửi cho user tạo phòng
-                var lstUserAdmin = await _usersRepository.GetAll(m => m.IsDeleted == false && m.Type == "Admin");
-                // gửi cho user Admin
-                if (lstUserAdmin != null && lstUserAdmin.Any()) lstUserId.AddRange(lstUserAdmin.Select(m => m.UserId));
-
-                await _unitOfWork.BeginTransactionAsync();
-                Messages entity = new Messages();
-                entity.Type = "Booking";
-                entity.Message = $"Đã có người đặt phòng [{roomEntity.Name}].";
-                entity.JText = JsonConvert.SerializeObject(pBooking);
-                entity.User_Create = pUserCreate;
-                entity.Date_Create = DateTime.Now;
-                await _messageRepo.Add(entity);
-                await _unitOfWork.CompleteAsync();
-
-                for (int i = 0; i < lstUserId.Count(); i++)
-                {
-                    UserMessages userMessage = new UserMessages();
-                    userMessage.Message_Id = entity.Id;
-                    userMessage.UserId = lstUserId[i];
-                    userMessage.IsReaded = false;
-                    userMessage.User_Create = pUserCreate;
-                    userMessage.Date_Create = DateTime.Now;
-                    await _unitOfWork.CompleteAsync();
-                    await _hubContext.Clients.Group($"{lstUserId[i]}").SendAsync("ReceiveMessage", entity);
-                }
-                await _unitOfWork.CommitAsync();
-
-            }
-            catch (Exception)
-            {
-                await _unitOfWork.RollbackAsync();
-            }
-        }
     }
 }

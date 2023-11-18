@@ -1,0 +1,107 @@
+﻿@page "/admin/message"
+
+
+<TelerikTabStrip>
+    <TabStripTab Title="Chờ xử lý">
+        <TelerikToolBar Class="border-bottom-0">
+            <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler(false))">Làm mới</ToolBarButton>
+        </TelerikToolBar>
+        <div class="bh-table-content" style=" height: calc(100vh - 215px);">
+            <TelerikGrid Data="@ListMessages"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable">
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridAggregates>
+                    <GridAggregate Field=@nameof(MessageModel.Id) Aggregate="@GridAggregateType.Count" />
+                </GridAggregates>
+                <GridColumns>
+                    @*<GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>*@
+                    <GridColumn Field=@nameof(MessageModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã thông báo">
+                        <Template>
+                            @{
+                                var model = (context as MessageModel);
+                                <span class="h-link">@model!.Id</span>
+                            }
+                        </Template>
+                        <FooterTemplate>
+                            Số dòng: @context.Count
+                        </FooterTemplate>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.Type) Width="140px" Title="Loại thông báo"></GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.Message) Width="270px" Title="Thông báo"></GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.IsReaded) Width="110px" Title="Đã đọc ?">
+                        <Template>
+                            @{
+                                var model = (context as MessageModel);
+                                <TelerikCheckBox @bind-Value="@model!.IsReaded" Enabled="false" />
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </TabStripTab>
+    <TabStripTab Title="Tất cả">
+        <TelerikToolBar Class="border-bottom-0">
+            <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler(true))">Làm mới</ToolBarButton>
+        </TelerikToolBar>
+        <div class="bh-table-content" style=" height: calc(100vh - 215px);">
+            <TelerikGrid Data="@ListMessagesAll"
+                         Height="100%"
+                         Width="100%"
+                         RowHeight="25"
+                         Pageable="true"
+                         PageSize="50"
+                         Sortable="true"
+                         Resizable="true"
+                         FilterMode="@GridFilterMode.FilterMenu"
+                         SelectionMode="@GridSelectionMode.Multiple"
+                         ScrollMode="@GridScrollMode.Scrollable">
+                <GridSettings>
+                    <GridPagerSettings InputType="PagerInputType.Input" />
+                </GridSettings>
+                <GridAggregates>
+                    <GridAggregate Field=@nameof(MessageModel.Id) Aggregate="@GridAggregateType.Count" />
+                </GridAggregates>
+                <GridColumns>
+                    @*<GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>*@
+                    <GridColumn Field=@nameof(MessageModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã thông báo">
+                        <Template>
+                            @{
+                                var model = (context as MessageModel);
+                                <span class="h-link">@model!.Id</span>
+                            }
+                        </Template>
+                        <FooterTemplate>
+                            Số dòng: @context.Count
+                        </FooterTemplate>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.Type) Width="140px" Title="Loại thông báo"></GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.Message) Width="270px" Title="Thông báo"></GridColumn>
+                    <GridColumn Field=@nameof(MessageModel.IsReaded) Width="110px" Title="Đã đọc ?">
+                        <Template>
+                            @{
+                                var model = (context as MessageModel);
+                                <TelerikCheckBox @bind-Value="@model!.IsReaded" Enabled="false" />
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày tạo"></GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </TabStripTab>
+</TelerikTabStrip>
+
+<BHConfirm @ref="@_rDialogs" />

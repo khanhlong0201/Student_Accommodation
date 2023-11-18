@@ -124,7 +124,7 @@ namespace BHSystem.Web.Features.Admin
         {
             if (SelectedBookingWaitting == null || !SelectedBookingWaitting.Any())
             {
-                _toastService!.ShowWarning("Vui lòng chọn dòng để từ chối");
+                _toastService!.ShowWarning("Vui lòng chọn dòng dữ liệu");
                 return;
             }
             var confirm = await _rDialogs!.ConfirmAsync($"Bạn có chắc muốn {type} các dòng được chọn? ");

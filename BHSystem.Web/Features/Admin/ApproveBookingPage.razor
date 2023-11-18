@@ -4,7 +4,7 @@
     <TabStripTab Title="Chờ xử lý">
         <TelerikToolBar Class="border-bottom-0">
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler("Chờ xử lý"))">Làm mới</ToolBarButton>
-            <ToolBarButton IconClass="fa-solid fa-check bh-color-green" OnClick="@(()=> ConfirmHandler("Phê duyệt"))">Phê duyệt</ToolBarButton>
+            <ToolBarButton IconClass="fa-solid fa-check bh-color-green" OnClick="@(()=> ConfirmHandler("Phê duyệt"))">Xác nhận</ToolBarButton>
             <ToolBarButton IconClass="fa-solid fa-xmark bh-color-red" OnClick="@(()=> ConfirmHandler("Từ chối"))">Từ chối</ToolBarButton>
         </TelerikToolBar>
 
@@ -40,10 +40,11 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                     <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Phone) Width="170px" Title="Số điện thoại"></GridColumn>
                     <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
                 </GridColumns>
             </TelerikGrid>
         </div>
@@ -84,9 +85,11 @@
                             Số dòng: @context.Count
                         </FooterTemplate>
                     </GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
-                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.FullName) Width="170px" Title="Người đặt"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Phone) Width="170px" Title="Số điện thoại"></GridColumn>
+                    <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.Room_Name) Width="170px" Title="Tên phòng"></GridColumn>
+                    <GridColumn Field=@nameof(BookingModel.BHouse_Name) Width="170px" Title="Tên trọ"></GridColumn>
                     <GridColumn Field=@nameof(BookingModel.Status) Width="170px" Title="Trạng thái"></GridColumn>
                     <GridColumn Field=@nameof(BHouseModel.Date_Create) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày đặt phòng"></GridColumn>
                      <GridColumn Field=@nameof(BHouseModel.Date_Update) DisplayFormat="@DefaultConstants.FORMAT_GRID_DATE_TIME" Width="120px" Title="Ngày xác nhận"></GridColumn>

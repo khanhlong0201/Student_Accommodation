@@ -25,12 +25,13 @@ namespace BHSystem.API.Repositories
                                     Id = a.Id,
                                     Room_Id = a.Room_Id,
                                     Room_Name = b.Name,
-                                    FullName = c.FullName== null ? a.FullName : c.FullName,
+                                    FullName = a.FullName,
+                                    Phone =a.Phone,
                                     Date_Create = a.Date_Create ,
                                     Date_Update = a.Date_Update,
                                     Status = a.Status,
                                     BHouse_Name = d.Name
-                                }).ToListAsync();
+                                }).OrderByDescending(m => m.Date_Create).ToListAsync();
             return result;
         }
 
@@ -46,12 +47,13 @@ namespace BHSystem.API.Repositories
                                     Id = a.Id,
                                     Room_Id = a.Room_Id,
                                     Room_Name = b.Name,
-                                    FullName = c.FullName == null ? a.FullName : c.FullName,
+                                    FullName = a.FullName,
+                                    Phone = a.Phone,
                                     Date_Create = a.Date_Create,
                                     Date_Update = a.Date_Update,
                                     Status = a.Status,
                                     BHouse_Name = d.Name
-                                }).ToListAsync();
+                                }).OrderByDescending(m => m.Date_Create).ToListAsync();
             return result;
         }
     }

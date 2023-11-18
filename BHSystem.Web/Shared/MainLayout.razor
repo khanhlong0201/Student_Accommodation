@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.RenderTree
 
 <style>
     body{
@@ -40,8 +41,8 @@
                     @if(ListMeassges != null && ListMeassges.Any())
                     {
                         foreach (var item in ListMeassges)
-                        {                       
-                                <a class="dropdown-item " title="@item.Message"
+                        {
+                                <a class="dropdown-item " title="@item.Message" @onclick="@(()=> ReadMessageHander(item))"
                                    style="cursor: pointer; text-overflow:ellipsis;white-space: nowrap;overflow: hidden">
                                     <span><i class="fas fa-envelope mr-1"></i> @(item.Type == "Booking" ? "Đặt phòng" : "Phuê duyệt trọ")</span>
                                     <br />
@@ -69,7 +70,7 @@
                         }
                     }
                     <DropdownDivider></DropdownDivider>
-                    <DropdownFooter Link="/admin/thong-bao">Xem tất cả</DropdownFooter>
+                        <DropdownFooter OnClick="@(()=> Navigato("/admin/message"))">Xem tất cả</DropdownFooter>
                 </NavBarDropDownMenu>
             </NavBarDropDown>
             <div class="nav-item dropdown">

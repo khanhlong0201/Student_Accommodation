@@ -13,7 +13,8 @@ namespace BHSystem.API.Extensions
                 new Menus() {MenuId = "000-003", Name = "Phê duyệt phòng", Icon = "fa-solid fa-user-check", Link= "/admin/approve-room", Parent = "" },
                 new Menus() {MenuId = "000-004", Name = "Xác nhận đặt phòng", Icon = "fa-solid fa-user-pen", Link= "/admin/approve-booking", Parent = "" },
                 new Menus() {MenuId = "000-005", Name = "Quản lý người dùng", Icon = "fa-solid fa-users", Link= "/admin/user", Parent = "" },
-                new Menus() {MenuId = "000-006", Name = "Quản lý nhóm quyền", Icon = "fa-solid fa-folder-tree", Link= "/admin/role", Parent = "" }
+                new Menus() {MenuId = "000-006", Name = "Quản lý nhóm quyền", Icon = "fa-solid fa-folder-tree", Link= "/admin/role", Parent = "" },
+                new Menus() {MenuId = "000-007", Name = "Theo dõi thông báo", Icon = "fa-solid fa-bell", Link= "/admin/message", Parent = "" }
                 );
             return modelBuilder;
         }
@@ -45,7 +46,8 @@ namespace BHSystem.API.Extensions
                 new RoleMenus() { Role_Id = 1, Menu_Id = "000-003" },
                 new RoleMenus() { Role_Id = 1, Menu_Id = "000-004" },
                 new RoleMenus() { Role_Id = 1, Menu_Id = "000-005" },
-                new RoleMenus() { Role_Id = 1, Menu_Id = "000-006" }
+                new RoleMenus() { Role_Id = 1, Menu_Id = "000-006" },
+                new RoleMenus() { Role_Id = 1, Menu_Id = "000-007" }
                 );
             return modelBuilder;
         }
