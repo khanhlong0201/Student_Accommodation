@@ -46,25 +46,19 @@ namespace BHSystem.Web.Features.Admin
         private List<MenuModel>? ListMenus { get; set; } // giá trị từ MainLayout
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
             {
                 try
                 {
-                    //var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/user".ToUpper()); // tìm lấy menu không
-                    //if(findMenu == null)
-                    //{
-                    //    _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
-                    //    var fisrtMenu = ListMenus?.FirstOrDefault();
-                    //    if(fisrtMenu == null)
-                    //    {
-                    //        await Task.Delay(4500);
-                    //        _navigationManager!.NavigateTo("/admin/login");
-                    //        return;
-                    //    }
-                    //    await Task.Delay(4500);
-                    //    _navigationManager!.NavigateTo($"{fisrtMenu.Link}");
-                    //    return;
-                    //}    
+                    var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/user".ToUpper()); // tìm lấy menu không
+                    if (findMenu == null)
+                    {
+                        _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
+                        await Task.Delay(4500);
+                        _navigationManager!.NavigateTo("/admin/logout");
+                        return;
+                    }
                     await showLoading();
                     await getCity();
                     await getDataUser();

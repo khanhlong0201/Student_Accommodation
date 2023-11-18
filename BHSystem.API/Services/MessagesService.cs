@@ -145,7 +145,7 @@ namespace BHSystem.API.Services
                 if(user != null) fullName = user.FullName + "";
                 await _unitOfWork.BeginTransactionAsync();
                 Messages entity = new Messages();
-                entity.Type = "ApprovalBooking";
+                entity.Type = "Phê duyệt/Từ chối phòng";
                 entity.Message = $"[{fullName}] đã {pType} phòng [{pRoomId.Name}]. Vui lòng Phê duyệt/Từ chối phòng.";
                 entity.JText = JsonConvert.SerializeObject(new
                 {
@@ -204,7 +204,7 @@ namespace BHSystem.API.Services
                     if (user != null) fullName = user.FullName + "";
                     await _unitOfWork.BeginTransactionAsync();
                     Messages entity = new Messages();
-                    entity.Type = "ApprovalBooking";
+                    entity.Type = "Phê duyệt/Từ chối phòng";
                     entity.Message = $"Quản trị viên: [{fullName}] đã {pType} phòng [{pRoomId.Name}].";
                     entity.JText = JsonConvert.SerializeObject(new
                     {

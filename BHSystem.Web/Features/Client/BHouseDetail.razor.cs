@@ -41,7 +41,7 @@ namespace BHSystem.Web.Features.Client
 
 
         [CascadingParameter(Name = "pUserId")]
-        private int pUserId { get; set; } // giá trị từ MainLayout
+        private int pUserId { get; set; } // giá trị từ ClientLayout
 
         [CascadingParameter(Name = "pIsSupperAdmin")]
         private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
@@ -244,7 +244,7 @@ namespace BHSystem.Web.Features.Client
                 {
                     Json = JsonConvert.SerializeObject(BookingUpdate),
                     Type = nameof(EnumType.Add),
-                    UserId = 1    
+                    UserId = pUserId > 0 ? pUserId : 1
                 };
                 string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_BOOKING_UPDATE, request);
                 if (!string.IsNullOrEmpty(resString))

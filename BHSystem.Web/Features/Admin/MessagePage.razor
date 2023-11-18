@@ -5,6 +5,7 @@
     <TabStripTab Title="Chờ xử lý">
         <TelerikToolBar Class="border-bottom-0">
             <ToolBarButton IconClass="fa-solid fa-repeat bh-color-green" OnClick="@(()=> ReLoadDataHandler(false))">Làm mới</ToolBarButton>
+            <ToolBarButton IconClass="fa-solid fa-check bh-color-green" OnClick="@(()=> UpdateStatusMultiHandler())">Đánh dấu đã đọc</ToolBarButton>
         </TelerikToolBar>
         <div class="bh-table-content" style=" height: calc(100vh - 215px);">
             <TelerikGrid Data="@ListMessages"
@@ -17,7 +18,8 @@
                          Resizable="true"
                          FilterMode="@GridFilterMode.FilterMenu"
                          SelectionMode="@GridSelectionMode.Multiple"
-                         ScrollMode="@GridScrollMode.Scrollable">
+                         ScrollMode="@GridScrollMode.Scrollable"
+                         @bind-SelectedItems="@SelectedMessages">
                 <GridSettings>
                     <GridPagerSettings InputType="PagerInputType.Input" />
                 </GridSettings>
@@ -25,7 +27,7 @@
                     <GridAggregate Field=@nameof(MessageModel.Id) Aggregate="@GridAggregateType.Count" />
                 </GridAggregates>
                 <GridColumns>
-                    @*<GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>*@
+                    <GridCheckboxColumn Width="30px" SelectAll="@true"></GridCheckboxColumn>
                     <GridColumn Field=@nameof(MessageModel.Id) Width="130px" MaxResizableWidth="150" Title="Mã thông báo">
                         <Template>
                             @{

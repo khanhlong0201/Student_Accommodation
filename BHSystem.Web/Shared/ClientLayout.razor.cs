@@ -26,42 +26,55 @@ namespace BHSystem.Web.Shared
         public string UserName { get; set; } = "";
         public int UserId { get; set; } = -1;
         public List<MenuModel>? ListMenus { get; set; }
-        private bool preventOnAfterRender { get; set; } = false;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            preventOnAfterRender = false;
-            base.OnInitialized();
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender && !preventOnAfterRender)
+            await base.OnInitializedAsync();
+            try
             {
-                try
+                var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();
+                if (oUser != null)
                 {
-                    var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();
-                    if (oUser != null)
-                    {
-                        UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
-                        FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
-                        UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
-                        await showLoading(true);
-                    }
+                    UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
+                    FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
+                    UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
+                    //await showLoading(true);
                 }
-                catch (Exception ex)
-                {
-                    _logger?.LogError(ex, "OnAfterRenderAsync");
-                    //_toastService!.ShowError(ex.Message);
-                }
-                finally
-                {
-                    await showLoading(false);
-                    await InvokeAsync(StateHasChanged);
-                }
+            }
+            catch(Exception)
+            {
 
             }
         }
+
+        //protected override async Task OnAfterRenderAsync(bool firstRender)
+        //{
+        //    if (firstRender)
+        //    {
+        //        try
+        //        {
+        //            var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();
+        //            if (oUser != null)
+        //            {
+        //                UserName = oUser.User.Claims.FirstOrDefault(m => m.Type == "UserName")?.Value + "";
+        //                FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
+        //                UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
+        //                await showLoading(true);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger?.LogError(ex, "OnAfterRenderAsync");
+        //            //_toastService!.ShowError(ex.Message);
+        //        }
+        //        finally
+        //        {
+        //            await showLoading(false);
+        //            await InvokeAsync(StateHasChanged);
+        //        }
+
+        //    }
+        //}
 
         #region "Private Functions"
         private async Task showLoading(bool isShow = true)

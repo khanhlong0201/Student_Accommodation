@@ -7,19 +7,20 @@ namespace BHSystem.API.Repositories
 {
     public interface IBookingsRepository : IGenericRepository<Bookings>
     {
-        Task<IEnumerable<BookingModel>> GetAllAsync(string type);
+        Task<IEnumerable<BookingModel>> GetAllAsync(string type, int pUserId, bool pIsAdmin);
         Task<IEnumerable<BookingModel>> GetAllByPhoneAsync(string type);
     }
     public class BookingsRepository : GenericRepository<Bookings>, IBookingsRepository
     {
         public BookingsRepository(ApplicationDbContext context) : base(context){ }
-        public async Task<IEnumerable<BookingModel>> GetAllAsync(string type)
+        public async Task<IEnumerable<BookingModel>> GetAllAsync(string type, int pUserId, bool pIsAdmin)
         {
             var result = await (from a in _context.Bookings
                                 join b in _context.Rooms on a.Room_Id equals b.Id
                                 join c in _context.Users on a.UserId equals c.UserId
                                 join d in _context.BoardingHouses on b.Boarding_House_Id equals d.Id
                                 where a.IsDeleted == false && (type +""=="" || a.Status == type)
+                                && (pIsAdmin == true || (d.User_Id == pUserId && pIsAdmin == false))
                                 select new BookingModel()
                                 {
                                     Id = a.Id,

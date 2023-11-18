@@ -33,13 +33,25 @@ namespace BHSystem.Web.Features.Admin
 
         [CascadingParameter(Name = "pIsSupperAdmin")]
         private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pListMenus")]
+        private List<MenuModel>? ListMenus { get; set; } // giá trị từ MainLayout
         #region
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender)
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
                 try
                 {
+                    var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/approve-booking".ToUpper()); // tìm lấy menu không
+                    if (findMenu == null)
+                    {
+                        _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
+                        await Task.Delay(4500);
+                        _navigationManager!.NavigateTo("/admin/logout");
+                        return;
+                    }
                     await showLoading();
                     await getDataBooking("Chờ xử lý");
                 }   
@@ -73,7 +85,9 @@ namespace BHSystem.Web.Features.Admin
             // Gọi hàm và truyền giá trị cho pParams
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                { "type", type }
+                { "type", type },
+                {"pUserId", $"{pUserId}"},
+                {"pIsAdmin", $"{pIsSupperAdmin}"}
             };
            
             string resString = await _apiService!.GetData(EndpointConstants.URL_BOOKING_GET_BY_STATUS, parameters);

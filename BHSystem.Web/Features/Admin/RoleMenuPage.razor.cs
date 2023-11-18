@@ -33,6 +33,9 @@ namespace BHSystem.Web.Features.Admin
 
         [CascadingParameter(Name = "pIsSupperAdmin")]
         private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
+
+        [CascadingParameter(Name = "pListMenus")]
+        private List<MenuModel>? ListMenus { get; set; } // giá trị từ MainLayout
         #region "Override Functions"
         protected override Task OnInitializedAsync()
         {
@@ -64,10 +67,19 @@ namespace BHSystem.Web.Features.Admin
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
             {
                 try
                 {
+                    var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/role".ToUpper()); // tìm lấy menu không
+                    if (findMenu == null)
+                    {
+                        _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
+                        await Task.Delay(4500);
+                        _navigationManager!.NavigateTo("/admin/logout");
+                        return;
+                    }
                     await showLoading();
                     if (pRoleId > 0) await getListMenu();
                 }

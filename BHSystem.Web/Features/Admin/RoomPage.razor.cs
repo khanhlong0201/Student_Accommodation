@@ -49,23 +49,13 @@ namespace BHSystem.Web.Features.Admin
         [CascadingParameter(Name = "pIsSupperAdmin")]
         private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
 
-        public List<IEditorTool> Tools { get; set; } =
-        new List<IEditorTool>()
-        {
-            new EditorButtonGroup(new Telerik.Blazor.Components.Editor.Bold(), new Telerik.Blazor.Components.Editor.Italic(), new Telerik.Blazor.Components.Editor.Underline()),
-            new EditorButtonGroup(new Telerik.Blazor.Components.Editor.AlignLeft(), new Telerik.Blazor.Components.Editor.AlignCenter(), new Telerik.Blazor.Components.Editor.AlignRight()),
-            new UnorderedList(),
-            new EditorButtonGroup(new CreateLink(), new Telerik.Blazor.Components.Editor.Unlink(), new InsertImage()),
-            new InsertTable(),
-            new EditorButtonGroup(new AddRowBefore(), new AddRowAfter(), new MergeCells(), new SplitCell()),
-            new Format(),
-            new Telerik.Blazor.Components.Editor.FontSize(),
-            new Telerik.Blazor.Components.Editor.FontFamily()
-        };
+        [CascadingParameter(Name = "pListMenus")]
+        private List<MenuModel>? ListMenus { get; set; } // giá trị từ MainLayout
 
         #region "Override Functions"
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             try
             {
                 // đọc giá tri câu query
@@ -89,16 +79,24 @@ namespace BHSystem.Web.Features.Admin
             {
                 _logger?.LogError(ex, "OnInitializedAsync");
             }
-            return base.OnInitializedAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender)
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
                 try
                 {
-                    if(pBHouseId > 0)
+                    var findMenu = ListMenus?.FirstOrDefault(m => m.Link?.ToUpper() == "/admin/boarding-house".ToUpper()); // tìm lấy menu không
+                    if (findMenu == null)
+                    {
+                        _toastService!.ShowInfo("Bạn không có quyền vào menu này!!!");
+                        await Task.Delay(4500);
+                        _navigationManager!.NavigateTo("/admin/logout");
+                        return;
+                    }
+                    if (pBHouseId > 0)
                     {
                         await showLoading();
                         await getDataRoomByBHouse();

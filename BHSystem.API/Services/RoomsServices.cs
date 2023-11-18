@@ -16,7 +16,7 @@ namespace BHSystem.API.Services
     public interface IRoomsService
     {
         Task<IEnumerable<Rooms>> GetDataAsync();
-        Task<IEnumerable<Rooms>> GetDataByBHouseAsync(int iBHouseId);
+        Task<IEnumerable<RoomModel>> GetDataByBHouseAsync(int iBHouseId);
         Task<ResponseModel> UpdateDataAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<IEnumerable<RoomModel>> GetAllByStatusAsync(string type);
@@ -44,7 +44,7 @@ namespace BHSystem.API.Services
         
         public async Task<IEnumerable<Rooms>> GetDataAsync() => await _roomsRepository.GetAll();
 
-        public async Task<IEnumerable<Rooms>> GetDataByBHouseAsync(int iBHouseId) => await _roomsRepository.GetAll(m=>m.IsDeleted == false && m.Boarding_House_Id == iBHouseId);
+        public async Task<IEnumerable<RoomModel>> GetDataByBHouseAsync(int iBHouseId) => await _roomsRepository.GetDataByBHouseAsync(iBHouseId);
 
         public async Task<ResponseModel> UpdateDataAsync(RequestModel entity)
         {
@@ -145,9 +145,9 @@ namespace BHSystem.API.Services
                 oImgDetail.File_Path = oItem.ListFile![i].File_Name;
                 await _imageDetailRepository.Add(oImgDetail);
             }
-
+            string status = roomEntity.Status;
             roomEntity.Image_Id = images.Id;
-            roomEntity.Status = "Chờ xử lý"; // cập nhật thì đợi duyệt lại
+            roomEntity.Status = status != "Chờ xử lý" ? "Chờ xử lý" : roomEntity.Status; // cập nhật thì đợi duyệt lại
             roomEntity.Address = oItem.Address + "";
             roomEntity.Name = oItem.Name + "";
             roomEntity.Description = oItem.Description + "";
@@ -160,7 +160,7 @@ namespace BHSystem.API.Services
             await _unitOfWork.CompleteAsync();
             await _unitOfWork.CommitAsync();
 
-            await _messagesService.CreateMessageApprovalRoom(entity.UserId, roomEntity, "Cập nhật"); // gửi thông báo
+            if(status != "Chờ xử lý") await _messagesService.CreateMessageApprovalRoom(entity.UserId, roomEntity, "Cập nhật"); // gửi thông báo
         }
 
         /// <summary>

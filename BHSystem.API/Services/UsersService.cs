@@ -53,7 +53,13 @@ namespace BHSystem.API.Services
                         response.StatusCode = -1;
                         response.Message = "Tên đăng nhập đã tồn tại";
                         break;
-                    }    
+                    }
+                    if (await _usersRepository.CheckContainsAsync(m => m.Phone == user.Phone))
+                    {
+                        response.StatusCode = -1;
+                        response.Message = "Số điện thoại đã tồn tại";
+                        break;
+                    }
                     user.Password = EncryptHelper.Encrypt(user.Password+"");
                     user.User_Create = entity.UserId;
                     user.Date_Create = DateTime.Now;
@@ -138,7 +144,7 @@ namespace BHSystem.API.Services
                 await _unitOfWork.CompleteAsync();
                 var role = await _rolesRepository.GetDataByNameAsync("Client");
                 UserRoles userRoles = new UserRoles();
-                userRoles.UserId = entity.UserId;
+                userRoles.UserId = user.UserId;
                 userRoles.Role_Id = role.Id;
                 await _userRolesRepository.Add(userRoles);//tạo quyền userRole
                 await _unitOfWork.CompleteAsync();

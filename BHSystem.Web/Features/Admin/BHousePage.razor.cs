@@ -45,7 +45,8 @@ namespace BHSystem.Web.Features.Admin
         #region
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender)
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
                 try
                 {

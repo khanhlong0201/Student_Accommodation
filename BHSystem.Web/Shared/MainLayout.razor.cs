@@ -39,7 +39,7 @@ namespace BHSystem.Web.Shared
         public int CountMessages { get; set; } = 0;
         protected override async Task  OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
+            //await base.OnInitializedAsync();
             try
             {
                 var oUser = await ((Providers.ApiAuthenticationStateProvider)_authenticationStateProvider!).GetAuthenticationStateAsync();

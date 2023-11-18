@@ -48,18 +48,13 @@ namespace BHSystem.Web.Features.Client
                     Json = JsonConvert.SerializeObject(RegisterRequest),
                 };
                 var resString = await _service!.AddOrUpdateData(EndpointConstants.URL_USER_REGISTER, request);
-                var response = JsonConvert.DeserializeObject<ResponseModel<UserModel>>(resString);
-                if (response != null && response.StatusCode == 200)
+                if(!string.IsNullOrEmpty(resString))
                 {
-                    _toastService?.ShowSuccess(response?.Message);
+                    _toastService?.ShowSuccess("Đăng kí thành công");
                     // Chờ một khoảng thời gian trước khi chuyển hướng
                     await Task.Delay(1000); // Thời gian delay là 2000 milliseconds (2 giây)
                     _navigationManager!.NavigateTo("/client/login");
-                }
-                else
-                {
-                    _toastService?.ShowError(response?.Message);
-                }
+                }    
             }
             catch (Exception ex) {
                 ErrorMessage = ex.Message; 

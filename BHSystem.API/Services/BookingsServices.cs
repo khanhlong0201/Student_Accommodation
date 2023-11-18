@@ -17,7 +17,7 @@ namespace BHSystem.API.Services
 {
     public interface IBookingsService
     {
-        Task<IEnumerable<BookingModel>> GetDataAsync(string type);
+        Task<IEnumerable<BookingModel>> GetDataAsync(string type, int pUserId, bool pIsAdmin);
         Task<ResponseModel> UpdateUserAsync(RequestModel entity);
         Task<bool> UpdateStatusMulti(RequestModel entity);
         Task<IEnumerable<BookingModel>> GetAllByPhoneAsync(string phone);
@@ -44,9 +44,9 @@ namespace BHSystem.API.Services
             _messagesService = messagesService;
         }
         
-        public async Task<IEnumerable<BookingModel>> GetDataAsync(string type)
+        public async Task<IEnumerable<BookingModel>> GetDataAsync(string type, int pUserId, bool pIsAdmin)
         {
-            return await _bookingsRepository.GetAllAsync(type);
+            return await _bookingsRepository.GetAllAsync(type, pUserId, pIsAdmin);
           
         }
         public async Task<IEnumerable<BookingModel>> GetAllByPhoneAsync(string phone)

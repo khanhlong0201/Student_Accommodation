@@ -107,5 +107,49 @@ namespace BHSystem.Web.Features.Admin
                 await InvokeAsync(StateHasChanged);
             }
         }
+
+        protected async void UpdateStatusMultiHandler()
+        {
+            try
+            {
+                if (SelectedMessages == null || !SelectedMessages.Any())
+                {
+                    _toastService!.ShowWarning("Vui lòng chọn dòng dữ liệu");
+                    return;
+                }
+                var confirm = await _rDialogs!.ConfirmAsync($"Bạn có chắc muốn đánh dấu đã đọc các thông báo được chọn? ");
+                if(confirm)
+                {
+                    await showLoading();
+                    bool isUpdate = false;
+                    foreach(var item in SelectedMessages)
+                    {
+                        RequestModel request = new RequestModel()
+                        {
+                            Json = JsonConvert.SerializeObject(item),
+                            UserId = pUserId,
+                        };
+                        string resString = await _apiService!.AddOrUpdateData(EndpointConstants.URL_MESSAGE_UPDATE_ISREAD, request);
+                        if (!string.IsNullOrEmpty(resString)) isUpdate = true;
+                    } 
+                    if(isUpdate)
+                    {
+                        _toastService!.ShowSuccess("Đã đánh dấu thông báo đã đọc");
+                        SelectedMessages = new List<MessageModel>();
+                        await getUnReadMessageByUser(false);
+                    }    
+                }    
+            }
+            catch (Exception ex)
+            {
+                _logger!.LogError(ex, "UpdateStatusMultiHandler");
+                _toastService!.ShowError(ex.Message);
+            }
+            finally
+            {
+                await showLoading(false);
+                await InvokeAsync(StateHasChanged);
+            }
+        }    
     }
 }

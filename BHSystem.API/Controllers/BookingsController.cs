@@ -56,11 +56,11 @@ namespace BHSystem.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult> Get(string type)
+        public async Task<IActionResult> Get(string type, int pUserId, bool pIsAdmin)
         {
             try
             {
-                var data = await _bookingsService.GetDataAsync(type);
+                var data = await _bookingsService.GetDataAsync(type, pUserId, pIsAdmin);
                 return Ok(data);
             }
             catch (Exception ex)
