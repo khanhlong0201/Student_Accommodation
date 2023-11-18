@@ -5,30 +5,37 @@ using BHSystem.Web.Services;
 using BHSystem.Web.ViewModels;
 using BHSytem.Models.Entities;
 using BHSytem.Models.Models;
+using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 
 namespace BHSystem.Web.Shared
 {
-    public partial class MainLayout
+    public partial class MainLayout : IDisposable
     {
         [Inject] AuthenticationStateProvider? _authenticationStateProvider { get; set; }
         [Inject] private ILoadingCore? _spinner { get; set; }
         [Inject] private ILogger<MainLayout>? _logger { get; init; }
         [Inject] private IToastService? _toastService { get; set; }
         [Inject] private IApiService? _apiService { get; set; }
+        [Inject] IConfiguration? _configuration { get; set; }
+
         public string breadcumb { get; set; } = "";
         public DateTime dt { get; set; } = DateTime.Now;
-        public string FullName { get; set; } = "";
+        public string FullName { get; set; } = "TTI";
         public string UserName { get; set; } = "";
         public int UserId { get; set; } = -1;
         public bool IsSupperAdmin { get; set; } = false;
         public List<MenuModel>? ListMenus { get; set; }
         private bool preventOnAfterRender { get; set; } = false;
 
+        private HubConnection? hubConnection;
+        public List<Messages> ListMeassges { get; set; } = new List<Messages>();
+        public int CountMessages { get; set; } = 0;
         protected override void OnInitialized()
         {
             preventOnAfterRender = false;
@@ -50,6 +57,22 @@ namespace BHSystem.Web.Shared
                         UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
                         await showLoading(true);
                         await getMenu();
+                        await getUnReadMessageByUser();
+                        string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
+                        hubConnection = new HubConnectionBuilder()
+                        .WithUrl(url, options =>
+                        {
+                            options.Headers.Add("UserName", $"{UserId}"); // kết nối user
+
+                        }).Build();
+                        hubConnection.On<Messages>("ReceiveMessage", async (incomingMess) =>
+                        {
+                            _toastService!.ShowInfo($"{incomingMess.Message}");
+                            await getUnReadMessageByUser();
+                            _ = InvokeAsync(StateHasChanged);
+                        });
+
+                        await hubConnection.StartAsync();
                     }
                 }
                 catch (Exception ex)
@@ -83,6 +106,25 @@ namespace BHSystem.Web.Shared
             string resString = await _apiService!.GetData(EndpointConstants.URL_MENU_GET_BY_USER, pParams);
             if (!string.IsNullOrEmpty(resString)) ListMenus = JsonConvert.DeserializeObject<List<MenuModel>>(resString);
         }
+
+        /// <summary>
+        /// lấy danh sách message theo user
+        /// </summary>
+        /// <returns></returns>
+        private async Task getUnReadMessageByUser()
+        {
+            ListMeassges = new List<Messages>();
+            Dictionary<string, object> pParams = new Dictionary<string, object>()
+            {
+                {"pUserId", $"{UserId}"},
+                {"pIsAll", $"{false}"}
+            };
+            string resString = await _apiService!.GetData(EndpointConstants.URL_MESSAGE_BY_USER, pParams);
+            if (!string.IsNullOrEmpty(resString)) ListMeassges = JsonConvert.DeserializeObject<List<Messages>>(resString);
+            CountMessages = ListMeassges?.Count() ?? 0;
+        }
+
+        public void Dispose() => hubConnection?.DisposeAsync();
         #endregion
     }
 

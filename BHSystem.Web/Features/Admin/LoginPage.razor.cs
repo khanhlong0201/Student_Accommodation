@@ -22,7 +22,7 @@ namespace BHSystem.Web.Features.Admin
                 await Task.Yield();
                 var response = await _userService!.LoginAsync(LoginRequest);
                 if (!string.IsNullOrWhiteSpace(response)) { ErrorMessage = response; return; }
-                _navigationManager!.NavigateTo("/admin/user");
+                _navigationManager!.NavigateTo("/admin/boarding-house");
             }
             catch (Exception ex) { ErrorMessage = ex.Message; }
             finally

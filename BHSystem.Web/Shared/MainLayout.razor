@@ -33,28 +33,58 @@
         </NavBarLeft>
         <NavBarRight>
             <NavBarDropDown>
-                <NavBarBadge Color="Color.Warning" Icon="far fa-bell">15</NavBarBadge>
+                <NavBarBadge Color="Color.Warning" Icon="far fa-bell">@CountMessages</NavBarBadge>
                 <NavBarDropDownMenu>
-                    <DropdownHeader>15 Notifications</DropdownHeader>
+                    <DropdownHeader>@CountMessages Thông báo mới</DropdownHeader>
                     <DropdownDivider></DropdownDivider>
-                    <NotificationMessage DateTime="dt.AddMinutes(-3)" Icon="fas fa-envelope mr-2">
-                        <Message>4 new messages</Message>
-                    </NotificationMessage>
+                    @if(ListMeassges != null && ListMeassges.Any())
+                    {
+                        foreach (var item in ListMeassges)
+                        {                       
+                                <a class="dropdown-item " title="@item.Message"
+                                   style="cursor: pointer; text-overflow:ellipsis;white-space: nowrap;overflow: hidden">
+                                    <span><i class="fas fa-envelope mr-1"></i> @(item.Type == "Booking" ? "Đặt phòng" : "Phuê duyệt trọ")</span>
+                                    <br />
+                                    @item.Message
+                                    <p class="float-right text-muted text-sm w1FontName w1FontSize">
+                                        <i class="fa-regular fa-clock mr-2"></i>
+                                        @((DateTime.Now - @item.Date_Create.Value).Days / 365 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Days / 365 + " năm trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Days / 30 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Days / 30 + " tháng trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Days / 7 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Days / 7 + " tuần trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Days > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Days + " ngày trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Hours + (DateTime.Now - @item.Date_Create.Value).Days * 24 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Hours + (DateTime.Now - @item.Date_Create.Value).Days * 24 + " giờ trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Minutes + (DateTime.Now - @item.Date_Create.Value).Days * 24 * 60 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Minutes + (DateTime.Now - @item.Date_Create.Value).Days * 24 * 60 + " phút trước" :
+                                            (DateTime.Now - @item.Date_Create.Value).Seconds + (DateTime.Now - @item.Date_Create.Value).Days * 24 * 60 * 60 > 0 ?
+                                            (DateTime.Now - @item.Date_Create.Value).Seconds + (DateTime.Now - @item.Date_Create.Value).Days * 24 * 60 * 60 + " giây trước" : ""
+                                            )
+                                    </p>
+                                </a>
+                                <DropdownDivider></DropdownDivider>
+                        }
+                    }
                     <DropdownDivider></DropdownDivider>
-                    <NotificationMessage DateTime="dt.AddHours(-12)" Icon="fas fa-users mr-2">
-                        <Message>8 friend requests</Message>
-                    </NotificationMessage>
-                    <DropdownDivider></DropdownDivider>
-                    <NotificationMessage DateTime="dt.AddDays(-2)" Icon="fas fa-file mr-2">
-                        <Message>3 new reports</Message>
-                    </NotificationMessage>
-                    <DropdownDivider></DropdownDivider>
-                    @*<DropdownFooter OnClick="SeeAllNotifications">See All Notifications</DropdownFooter>*@
+                    <DropdownFooter Link="/admin/thong-bao">Xem tất cả</DropdownFooter>
                 </NavBarDropDownMenu>
             </NavBarDropDown>
-                <a class="" href="/admin/logout" style="padding-top: 7.5px;font-size: 12px; color: #1f2d3d; margin-left: 5px">Đăng xuất<i style="margin-left: 5px" class="fa-solid fa-arrow-right-from-bracket"></i></a>
-            
-            @*<NavBarSideBarControl></NavBarSideBarControl>*@
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-toggle="dropdown" aria-label="Open user menu">
+                    <img src="../dist/img/user.jpg" width="90" height="27" alt="HSystem" class="navbar-brand-image">
+                    <div class="d-none d-xl-block ps-2">
+                        <div class="text-muted" style="font-size: 11.5px;">@FullName</div>
+                        <div class="text-muted" style="font-size: 11px;">@(IsSupperAdmin ? "Admin" : "Client")</div>
+                    </div>
+                </a>
+                <NavBarDropDownMenu>
+                        <a href="/admin/chi-tiet-nguoi-dung" class="dropdown-item"> <i style="margin-right: 5px" class="fa-solid fa-circle-info"></i>Thông tin chi tiết</a>
+                     <a href="/admin/logout" class="dropdown-item"><i style="margin-right: 5px" class="fa-solid fa-arrow-right-from-bracket"></i>Logout </a>
+                </NavBarDropDownMenu>
+            </div>
         </NavBarRight>
     </NavBar>
     <!-- Main Sidebar Container -->
@@ -96,16 +126,17 @@
             <TelerikRootComponent>
                 <CascadingValue Value="@UserId" Name="pUserId">
                     <CascadingValue Value="@IsSupperAdmin" Name="pIsSupperAdmin">
-                        @Body
+                        <CascadingValue Value="@ListMenus" Name="pListMenus">
+                            @Body
+                        </CascadingValue>
                     </CascadingValue>
-                    
+
                 </CascadingValue>
                 
                 <BHConfirmPassword FullName="@FullName" UserName="@UserName" />
             </TelerikRootComponent>
         </section>
     </ContentWrapper>
-    @*<ControlSideBar>Hello World!</ControlSideBar>*@
 
     <MainFooter>
         <Default>

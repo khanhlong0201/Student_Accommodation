@@ -55,6 +55,8 @@
         public const string URL_BOOKING_GET_BY_STATUS = "Bookings/GetAll";
         public const string URL_BOOKING_UPDATE_STATUS = "Bookings/UpdateStatus";
 
+        public const string URL_MESSAGE_BY_USER = "Messages/GetUnReadMessageByUser";
+
         #region Client URL
         public const string URL_CLI_BHOUSE_GETDATA = "BHouses/CliGetDataBHouse";
         public const string URL_CLI_BHOUSE_GETDATA_DETAIL = "BHouses/CliGetDataDetails";
