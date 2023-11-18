@@ -128,10 +128,11 @@
                 <CascadingValue Value="@UserId" Name="pUserId">
                     <CascadingValue Value="@IsSupperAdmin" Name="pIsSupperAdmin">
                         <CascadingValue Value="@ListMenus" Name="pListMenus">
-                            @Body
+                                <CascadingValue Value="@ListMeassgesHandler" Name="pListMeassgesHandler">
+                                    @Body
+                                </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
-
                 </CascadingValue>
                 
                 <BHConfirmPassword FullName="@FullName" UserName="@UserName" />

@@ -25,8 +25,8 @@ namespace BHSystem.Web.Features.Admin
         [CascadingParameter(Name = "pUserId")]
         private int pUserId { get; set; } // giá trị từ MainLayout
 
-        [CascadingParameter(Name = "pIsSupperAdmin")]
-        private bool pIsSupperAdmin { get; set; } // giá trị từ MainLayout
+        [CascadingParameter(Name = "pListMeassgesHandler")] // giá trị từ MainLayout
+        public EventCallback<List<MessageModel>> NotifyMessage { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -137,6 +137,7 @@ namespace BHSystem.Web.Features.Admin
                         _toastService!.ShowSuccess("Đã đánh dấu thông báo đã đọc");
                         SelectedMessages = new List<MessageModel>();
                         await getUnReadMessageByUser(false);
+                        await NotifyMessage.InvokeAsync(ListMessages); // gửi về lại MainLayout cập nhật giá trị
                     }    
                 }    
             }

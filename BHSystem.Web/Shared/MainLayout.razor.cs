@@ -1,17 +1,11 @@
 ﻿using BHSystem.Web.Constants;
 using BHSystem.Web.Core;
-using BHSystem.Web.Features.Admin;
-using BHSystem.Web.Services;
-using BHSystem.Web.ViewModels;
-using BHSytem.Models.Entities;
 using BHSytem.Models.Models;
-using Blazored.LocalStorage;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
 namespace BHSystem.Web.Shared
 {
@@ -32,11 +26,27 @@ namespace BHSystem.Web.Shared
         public int UserId { get; set; } = -1;
         public bool IsSupperAdmin { get; set; } = false;
         public List<MenuModel>? ListMenus { get; set; }
-        private bool preventOnAfterRender { get; set; } = false;
 
         private HubConnection? hubConnection;
         public List<MessageModel> ListMeassges { get; set; } = new List<MessageModel>();
         public int CountMessages { get; set; } = 0;
+
+        // Event Call back -> đến danh sách message
+        EventCallback<List<MessageModel>> ListMeassgesHandler =>
+        EventCallback.Factory.Create(this, (Action<List<MessageModel>>)NotifyMessage);
+
+        /// <summary>
+        /// callback lại danh sách message khi người dùng từ page theo dõi danh sách thông báo
+        /// đánh dấu đã đọc -> call back lại tg này
+        /// </summary>
+        /// <param name="_breadcrumbs"></param>
+        private void NotifyMessage(List<MessageModel> _breadcrumbs)
+        {
+            ListMeassges = _breadcrumbs;
+            CountMessages = ListMeassges?.Count() ?? 0;
+        }    
+
+
         protected override async Task  OnInitializedAsync()
         {
             //await base.OnInitializedAsync();
