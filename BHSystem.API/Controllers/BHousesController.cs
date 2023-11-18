@@ -24,11 +24,11 @@ namespace BHSystem.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int pUserId, bool pIsAdmin)
         {
             try
             {
-                var data = await _boardinghousesService.GetDataAsync();
+                var data = await _boardinghousesService.GetDataAsync(pUserId, pIsAdmin);
                 return Ok(data);
             }
             catch (Exception ex)

@@ -9,7 +9,7 @@ namespace BHSystem.API.Repositories
 {
     public interface IBHousesRepository : IGenericRepository<BoardingHouses>
     {
-        Task<IEnumerable<BoardingHouseModel>> GetAllAsync();
+        Task<IEnumerable<BoardingHouseModel>> GetAllAsync(int pUserId, bool pIsAdmin);
         Task<CliResponseModel<CliBoardingHouseModel>?> GetDataPagination(BHouseSearchModel oSearch);
         Task<CliBoardingHouseModel?> GetDataBHDetail(int pRoomId);
     }
@@ -17,14 +17,14 @@ namespace BHSystem.API.Repositories
     {
         private List<string> ListStatus = new List<string>() { "Phê duyệt", "Phòng trống" };
         public BHousesRepository(ApplicationDbContext context) : base(context) { }
-        public async Task<IEnumerable<BoardingHouseModel>> GetAllAsync()
+        public async Task<IEnumerable<BoardingHouseModel>> GetAllAsync(int pUserId, bool pIsAdmin)
         {
             var result = await (from d in _context.BoardingHouses
                                 join c in _context.Wards on d.Ward_Id equals c.Id
                                 join b in _context.Distincts on c.Distincts_Id equals b.Id
                                 join a in _context.Citys on b.City_Id equals a.Id
                                 join u in _context.Users on d.User_Id equals u.UserId
-                                where d.IsDeleted == false
+                                where d.IsDeleted == false && (pIsAdmin == true || (d.User_Id== pUserId && pIsAdmin == false))
                                 select new BoardingHouseModel()
                                 {
                                     Id = d.Id,
@@ -39,8 +39,9 @@ namespace BHSystem.API.Repositories
                                     Distinct_Id = b.Id,
                                     Qty = d.Qty,
                                     UserName = u.FullName,
-                                    Phone = u.Phone
-                                }).ToListAsync();
+                                    Phone = u.Phone,
+                                    Date_Create = d.Date_Create
+                                }).OrderByDescending(m => m.Date_Create).ToListAsync();
             return result;
         }
 

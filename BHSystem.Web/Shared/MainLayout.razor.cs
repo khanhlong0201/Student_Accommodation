@@ -49,69 +49,37 @@ namespace BHSystem.Web.Shared
                     IsSupperAdmin = oUser.User.Claims.FirstOrDefault(m => m.Type == "IsAdmin")?.Value + "" == "Admin";
                     FullName = oUser.User.Claims.FirstOrDefault(m => m.Type == "FullName")?.Value + "";
                     UserId = int.Parse(oUser.User.Claims.FirstOrDefault(m => m.Type == "UserId")?.Value + "");
-                    await showLoading(true);
-                    await getMenu();
-                    //await getUnReadMessageByUser();
-                    //string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
-                    //hubConnection = new HubConnectionBuilder()
-                    //.WithUrl(url, options =>
-                    //{
-                    //    options.Headers.Add("UserName", $"{UserId}"); // kết nối user
-
-                    //}).Build();
-                    //hubConnection.On<Messages>("ReceiveMessage", async (incomingMess) =>
-                    //{
-                    //    _toastService!.ShowInfo($"{incomingMess.Message}");
-                    //    await getUnReadMessageByUser();
-                    //    _ = InvokeAsync(StateHasChanged);
-                    //});
-
-                    //await hubConnection.StartAsync();
-                }
-            }
-            catch
-            {
-
-            }
-
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            await base.OnAfterRenderAsync(firstRender);
-            if (firstRender)
-            {
-                try
-                {
-                    await getUnReadMessageByUser();
-                    string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
-                    hubConnection = new HubConnectionBuilder()
-                    .WithUrl(url, options =>
+                    try
                     {
-                        options.Headers.Add("UserName", $"{UserId}"); // kết nối user
-
-                    }).Build();
-                    hubConnection.On<MessageModel>("ReceiveMessage", async (incomingMess) =>
-                    {
-                        _toastService!.ShowInfo($"{incomingMess.Message}");
+                        await showLoading(true);
+                        await getMenu();
                         await getUnReadMessageByUser();
-                        _ = InvokeAsync(StateHasChanged);
-                    });
+                        string url = _configuration!.GetSection("appSettings:ApiUrl").Value + "Signalhub";
+                        hubConnection = new HubConnectionBuilder()
+                        .WithUrl(url, options =>
+                        {
+                            options.Headers.Add("UserName", $"{UserId}"); // kết nối user
 
-                    await hubConnection.StartAsync();
-                }
-                catch (Exception ex)
-                {
-                    _logger?.LogError(ex, "OnAfterRenderAsync");
-                    _toastService!.ShowError(ex.Message);
-                }
-                finally
-                {
-                    await showLoading(false);
-                    await InvokeAsync(StateHasChanged);
-                }
+                        }).Build();
+                        hubConnection.On<MessageModel>("ReceiveMessage", async (incomingMess) =>
+                        {
+                            _toastService!.ShowInfo($"{incomingMess.Message}");
+                            await getUnReadMessageByUser();
+                            _ = InvokeAsync(StateHasChanged);
+                        });
 
+                        await hubConnection.StartAsync();
+                    }
+                    catch (Exception) { }
+                    finally
+                    {
+                        await showLoading(false);
+                    }
+
+                }
             }
+            catch(Exception){}
+
         }
 
         #region "Private Functions"

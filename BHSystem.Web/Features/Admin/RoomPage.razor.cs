@@ -285,7 +285,7 @@ namespace BHSystem.Web.Features.Admin
                     string resString = await _apiService!.AddOrUpdateData("Rooms/Update", request);
                     if (!string.IsNullOrEmpty(resString))
                     {
-                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin phòng trọ.");
+                        _toastService!.ShowSuccess($"Đã {sMessage} thông tin phòng trọ. Vui lòng đợi Admin hệ thống duyệt.");
                         await getDataRoomByBHouse();
                         if (pEnum == EnumType.SaveAndCreate)
                         {

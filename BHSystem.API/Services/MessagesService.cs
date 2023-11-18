@@ -15,6 +15,8 @@ namespace BHSystem.API.Services
         Task CreateMessageTicket(int pUserCreate, Bookings pBooking);
         Task<IEnumerable<MessageModel>> GetUnReadMessageByUserAsync(int pUserId, bool pIsAll);
         Task<bool> UpdateReadMessage(RequestModel entity);
+        Task CreateMessageApprovalRoom(int pUserCreate, Rooms pRoomId, string pType = "Tạo mới");
+        Task CreateMessageApprovalOrDenyRoom(int pUserCreate, Rooms pRoomId, string pType = "Phê duyệt");
     }
     public class MessagesService : IMessagesService
     {
@@ -24,10 +26,11 @@ namespace BHSystem.API.Services
         private readonly IHubContext<SignalHubProvider> _hubContext;
         private readonly IUsersRepository _usersRepository;
         private readonly IUserMessagesRepository _userMessagesRepository;
+        private readonly IBHousesRepository _boardinghousesRepository;
 
         public MessagesService(IMessagesRepository messageRepo, IUnitOfWork unitOfWork
             , IHubContext<SignalHubProvider> hubContext, IRoomsRepository roomsRepository
-            , IUsersRepository usersRepository, IUserMessagesRepository userMessagesRepository)
+            , IUsersRepository usersRepository, IUserMessagesRepository userMessagesRepository, IBHousesRepository boardinghousesRepository)
         {
             _messageRepo = messageRepo;
             _unitOfWork = unitOfWork;
@@ -35,6 +38,7 @@ namespace BHSystem.API.Services
             _roomsRepository = roomsRepository;
             _usersRepository = usersRepository;
             _userMessagesRepository = userMessagesRepository;
+            _boardinghousesRepository = boardinghousesRepository;
         }
 
         /// <summary>
@@ -118,6 +122,125 @@ namespace BHSystem.API.Services
                 await _unitOfWork.RollbackAsync();
             }
         }
+
+        /// <summary>
+        /// khi tạo phòng hoặc cập nhật phòng -> tạo thông báo gửi đến các quản trị viên
+        /// </summary>
+        /// <param name="pUserCreate"></param>
+        /// <param name="pRoomId"></param>
+        /// <param name="pType"></param>
+        /// <returns></returns>
+        public async Task CreateMessageApprovalRoom(int pUserCreate, Rooms pRoomId, string pType = "Tạo mới")
+        {
+            try
+            {
+                // gửi message cho Admin phê duyệt chứng từ
+                List<int> lstUserId = new List<int>();
+                var lstUserAdmin = await _usersRepository.GetAll(m => m.IsDeleted == false && m.Type == "Admin");
+                // gửi cho user Admin
+                if (lstUserAdmin != null && lstUserAdmin.Any()) lstUserId.AddRange(lstUserAdmin.Select(m => m.UserId));
+                // lấy ra Name của User
+                string fullName = "Hệ thống";
+                Users? user = await _usersRepository.GetSingleByCondition(m => m.UserId == pUserCreate);
+                if(user != null) fullName = user.FullName + "";
+                await _unitOfWork.BeginTransactionAsync();
+                Messages entity = new Messages();
+                entity.Type = "ApprovalBooking";
+                entity.Message = $"[{fullName}] đã {pType} phòng [{pRoomId.Name}]. Vui lòng Phê duyệt/Từ chối phòng.";
+                entity.JText = JsonConvert.SerializeObject(new
+                {
+                    pRoomId.Id,
+                    pRoomId.Name,
+                    pRoomId.Boarding_House_Id,
+                    pRoomId.Status
+                });
+                entity.User_Create = pUserCreate;
+                entity.Date_Create = DateTime.Now;
+                await _messageRepo.Add(entity);
+                await _unitOfWork.CompleteAsync();
+
+                // duyệt qua các user không trùng nhau
+                for (int i = 0; i < lstUserId.Distinct().Count(); i++)
+                {
+                    UserMessages userMessage = new UserMessages();
+                    userMessage.Message_Id = entity.Id;
+                    userMessage.UserId = lstUserId[i];
+                    userMessage.IsReaded = false;
+                    userMessage.User_Create = pUserCreate;
+                    userMessage.Date_Create = DateTime.Now;
+                    await _userMessagesRepository.Add(userMessage);
+                    await _unitOfWork.CompleteAsync();
+                    await _hubContext.Clients.Group($"{lstUserId[i]}").SendAsync("ReceiveMessage", entity);
+                }
+                await _unitOfWork.CommitAsync();
+
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync();
+            }
+        }
+
+        /// <summary>
+        /// Duyệt hoặc từ chối phòng này
+        /// </summary>
+        /// <param name="pUserCreate"></param>
+        /// <param name="pRoomId"></param>
+        /// <param name="pType"></param>
+        /// <returns></returns>
+        public async Task CreateMessageApprovalOrDenyRoom(int pUserCreate, Rooms pRoomId, string pType = "Phê duyệt")
+        {
+            try
+            {
+                var bHouseByUser = await _boardinghousesRepository.GetSingleByCondition(m => m.Id == pRoomId.Boarding_House_Id);
+                if(bHouseByUser != null)
+                {
+                    // gửi message cho phòng của người tạo phê duyệt chứng từ
+                    List<int> lstUserId = new List<int>();
+                    lstUserId.Add(bHouseByUser.User_Id); // gửi thông báo cho trọ của người này
+                    // lấy ra Name của User
+                    string fullName = "Quản trị";
+                    Users? user = await _usersRepository.GetSingleByCondition(m => m.UserId == pUserCreate);
+                    if (user != null) fullName = user.FullName + "";
+                    await _unitOfWork.BeginTransactionAsync();
+                    Messages entity = new Messages();
+                    entity.Type = "ApprovalBooking";
+                    entity.Message = $"Quản trị viên: [{fullName}] đã {pType} phòng [{pRoomId.Name}].";
+                    entity.JText = JsonConvert.SerializeObject(new
+                    {
+                        pRoomId.Id,
+                        pRoomId.Name,
+                        pRoomId.Boarding_House_Id,
+                        pRoomId.Status
+                    });
+                    entity.User_Create = pUserCreate;
+                    entity.Date_Create = DateTime.Now;
+                    await _messageRepo.Add(entity);
+                    await _unitOfWork.CompleteAsync();
+
+                    // duyệt qua các user không trùng nhau
+                    for (int i = 0; i < lstUserId.Distinct().Count(); i++)
+                    {
+                        UserMessages userMessage = new UserMessages();
+                        userMessage.Message_Id = entity.Id;
+                        userMessage.UserId = lstUserId[i];
+                        userMessage.IsReaded = false;
+                        userMessage.User_Create = pUserCreate;
+                        userMessage.Date_Create = DateTime.Now;
+                        await _userMessagesRepository.Add(userMessage);
+                        await _unitOfWork.CompleteAsync();
+                        await _hubContext.Clients.Group($"{lstUserId[i]}").SendAsync("ReceiveMessage", entity);
+                    }
+                    await _unitOfWork.CommitAsync();
+                }    
+                
+
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync();
+            }
+        }    
 
         public async Task<IEnumerable<MessageModel>> GetUnReadMessageByUserAsync(int pUserId, bool pIsAll) => await _messageRepo.GetUnReadMessageByUser(pUserId, pIsAll);
 

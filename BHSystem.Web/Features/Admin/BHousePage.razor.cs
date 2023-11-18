@@ -139,7 +139,12 @@ namespace BHSystem.Web.Features.Admin
         {
             ListBHouses = new List<BHouseModel>();
             SelectedBHouses = new List<BHouseModel>();
-            string resString = await _apiService!.GetData("BHouses/GetAll");
+            Dictionary<string, object> pParams = new Dictionary<string, object>()
+            {
+                {"pUserId", $"{pUserId}"},
+                {"pIsAdmin", $"{pIsSupperAdmin}"}
+            };
+            string resString = await _apiService!.GetData("BHouses/GetAll", pParams);
             if (!string.IsNullOrEmpty(resString)) ListBHouses = JsonConvert.DeserializeObject<List<BHouseModel>>(resString);
         }
 

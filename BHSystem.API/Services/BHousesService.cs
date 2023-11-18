@@ -9,7 +9,7 @@ namespace BHSystem.API.Services
 {
     public interface IBHousesService
     {
-        Task<IEnumerable<BoardingHouseModel>> GetDataAsync();
+        Task<IEnumerable<BoardingHouseModel>> GetDataAsync(int pUserId, bool pIsAdmin);
         Task<ResponseModel> UpdateDataAsync(RequestModel entity);
         Task<bool> DeleteMulti(RequestModel entity);
         Task<CliResponseModel<CliBoardingHouseModel>?> CliGetDataBHouse(BHouseSearchModel oSearch);
@@ -30,7 +30,7 @@ namespace BHSystem.API.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<BoardingHouseModel>> GetDataAsync() => await _boardinghousesRepository.GetAllAsync();
+        public async Task<IEnumerable<BoardingHouseModel>> GetDataAsync(int pUserId, bool pIsAdmin) => await _boardinghousesRepository.GetAllAsync(pUserId, pIsAdmin);
         public async Task<ResponseModel> UpdateDataAsync(RequestModel entity)
         {
             ResponseModel response = new ResponseModel();

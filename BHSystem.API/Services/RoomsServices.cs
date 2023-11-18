@@ -29,14 +29,17 @@ namespace BHSystem.API.Services
         private readonly IImagesDetailsRepository _imageDetailRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBHousesRepository _boardinghousesRepository;
+        private readonly IMessagesService _messagesService;
         public RoomsService(IRoomsRepository roomsRepository, IImagesRepository imageRepository
-            , IImagesDetailsRepository imageDetailRepository, IUnitOfWork unitOfWork, IBHousesRepository bHousesRepository)
+            , IImagesDetailsRepository imageDetailRepository, IUnitOfWork unitOfWork, IBHousesRepository bHousesRepository
+            , IMessagesService messagesService)
         {
             _roomsRepository = roomsRepository;
             _unitOfWork = unitOfWork;
             _imageRepository = imageRepository;
             _imageDetailRepository = imageDetailRepository;
             _boardinghousesRepository = bHousesRepository;
+            _messagesService = messagesService;
         }
         
         public async Task<IEnumerable<Rooms>> GetDataAsync() => await _roomsRepository.GetAll();
@@ -53,11 +56,9 @@ namespace BHSystem.API.Services
                 switch (entity.Type)
                 {
                     case "Add":
-                        await _unitOfWork.BeginTransactionAsync();
                         await createRoomAsync(entity, oItem);
                         response.StatusCode = 0;
                         response.Message = "Success";
-                        await _unitOfWork.CommitAsync();
                         await UpdateQtyBHouse(oItem.BHouseId); // Cập nhật lại số lượng phòng
                         break;
                     case "Update":
@@ -68,11 +69,10 @@ namespace BHSystem.API.Services
                             response.Message = "Không tìm thấy dữ liệu";
                             break;
                         }
-                        await _unitOfWork.BeginTransactionAsync();
+                        
                         await updateRoomAsync(entity, oItem, roomEntity);
                         response.StatusCode = 0;
                         response.Message = "Success";
-                        await _unitOfWork.CommitAsync();
                         //await UpdateQtyBHouse(oItem.BHouseId); // Cập nhật lại số lượng phòng
                         break;
                     default: break;
@@ -89,6 +89,7 @@ namespace BHSystem.API.Services
 
         private async Task createRoomAsync(RequestModel entity, RoomModel oItem)
         {
+            await _unitOfWork.BeginTransactionAsync();
             // Add Images
             Images images = new Images();
             images.Type = "Room";
@@ -120,10 +121,13 @@ namespace BHSystem.API.Services
             oRoom.User_Create = entity.UserId;
             await _roomsRepository.Add(oRoom);
             await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CommitAsync();
+            await _messagesService.CreateMessageApprovalRoom(entity.UserId, oRoom); // gửi thông báo
         }
 
         private async Task updateRoomAsync(RequestModel entity, RoomModel oItem, Rooms roomEntity)
         {
+            await _unitOfWork.BeginTransactionAsync();
             // Add Images
             Images images = new Images();
             images.Type = "Room";
@@ -143,6 +147,7 @@ namespace BHSystem.API.Services
             }
 
             roomEntity.Image_Id = images.Id;
+            roomEntity.Status = "Chờ xử lý"; // cập nhật thì đợi duyệt lại
             roomEntity.Address = oItem.Address + "";
             roomEntity.Name = oItem.Name + "";
             roomEntity.Description = oItem.Description + "";
@@ -153,6 +158,9 @@ namespace BHSystem.API.Services
             roomEntity.User_Update = entity.UserId;
             _roomsRepository.Update(roomEntity);
             await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CommitAsync();
+
+            await _messagesService.CreateMessageApprovalRoom(entity.UserId, roomEntity, "Cập nhật"); // gửi thông báo
         }
 
         /// <summary>
@@ -172,6 +180,8 @@ namespace BHSystem.API.Services
                     boardinghousesEntity.Date_Update = DateTime.Now;
                     boardinghousesEntity.User_Update = entity.UserId;
                     _roomsRepository.Update(boardinghousesEntity);
+                    await _unitOfWork.CompleteAsync();
+                    await UpdateQtyBHouse(boardinghousesEntity.Boarding_House_Id);
                 }
             }
             await _unitOfWork.CompleteAsync();
@@ -201,9 +211,10 @@ namespace BHSystem.API.Services
                     roomEntity.Date_Update = DateTime.Now;
                     roomEntity.User_Update = entity.UserId;
                     _roomsRepository.Update(roomEntity);
+                    await _unitOfWork.CompleteAsync();
+                    await _messagesService.CreateMessageApprovalOrDenyRoom(entity.UserId, roomEntity, entity.Type+"");
                 }
             }
-            await _unitOfWork.CompleteAsync();
             return true;
         }
 
